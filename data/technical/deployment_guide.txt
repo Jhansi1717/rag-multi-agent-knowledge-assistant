@@ -1,0 +1,21 @@
+
+Deployment Procedure for Backend Services
+
+1. Pre-deployment Checklist:
+- Ensure all unit and integration tests pass successfully in the CI pipeline.
+- Verify that the target environment has the required database schema changes applied.
+- Confirm that the Docker image has been built and pushed to the container registry.
+
+2. Deployment Steps:
+a. Log in to the deployment server using SSH.
+b. Pull the latest Docker image: `docker pull registry.internal/backend-service:latest`
+c. Stop the currently running container: `docker stop backend-service`
+d. Remove the old container: `docker rm backend-service`
+e. Start the new container: 
+   `docker run -d --name backend-service -p 8080:8080 --env-file .env registry.internal/backend-service:latest`
+f. Check the logs for any startup errors: `docker logs backend-service -f`
+
+3. Post-deployment:
+- Run the health check endpoint: `curl -I http://localhost:8080/health`
+- Monitor system metrics in the observability dashboard for 15 minutes.
+- If errors spike, initiate a rollback to the previous version immediately.

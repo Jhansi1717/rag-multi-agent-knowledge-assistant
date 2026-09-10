@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Secrets
+.env.local
+*.key
+*.pem
+
+# FAISS index and generated data (rebuilt via index_samples.py)
+data/index.faiss
+data/metadata.json
+data/uploads/
+data/test_index.faiss
+data/test_metadata.json
+data/evaluation_results.json
+data/evaluation/index.faiss
+data/evaluation/metadata.json
+data/evaluation/ingestion_report.json
+
+# Tests
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

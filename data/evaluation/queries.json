@@ -1,0 +1,158 @@
+{
+  "version": "1.0",
+  "description": "M1 evaluation queries — Software Engineering and Hospital Administration",
+  "queries": [
+    {
+      "query_id": "se_q01",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "How long is a typical agile sprint in the engineering guide?",
+      "expected_document": "microservices_architecture.pdf",
+      "expected_keywords": ["two-week", "sprint", "agile"]
+    },
+    {
+      "query_id": "se_q02",
+      "domain": "Software Engineering",
+      "category": "procedural",
+      "query": "What are the steps to create a feature branch in git?",
+      "expected_document": "git_workflow.txt",
+      "expected_keywords": ["checkout", "feature", "branch", "pull request"]
+    },
+    {
+      "query_id": "se_q03",
+      "domain": "Software Engineering",
+      "category": "comparative",
+      "query": "How do microservices differ from a monolithic architecture?",
+      "expected_document": "microservices_architecture.pdf",
+      "expected_keywords": ["microservices", "monolith", "independently deployable"]
+    },
+    {
+      "query_id": "se_q04",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "What naming convention should classes use in the coding standards?",
+      "expected_document": "coding_standards.docx",
+      "expected_keywords": ["PascalCase", "Classes"]
+    },
+    {
+      "query_id": "se_q05",
+      "domain": "Software Engineering",
+      "category": "procedural",
+      "query": "How should production errors be logged according to coding standards?",
+      "expected_document": "coding_standards.docx",
+      "expected_keywords": ["structured JSON", "correlation_id", "stack trace"]
+    },
+    {
+      "query_id": "se_q06",
+      "domain": "Software Engineering",
+      "category": "comparative",
+      "query": "Compare Rust and Go for systems and cloud infrastructure programming.",
+      "expected_document": "programming_languages.csv",
+      "expected_keywords": ["Rust", "Go", "Systems", "Cloud infrastructure"]
+    },
+    {
+      "query_id": "se_q07",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "Which programming languages use static typing?",
+      "expected_document": "programming_languages.csv",
+      "expected_keywords": ["Static", "Java", "Rust", "Go"]
+    },
+    {
+      "query_id": "se_q08",
+      "domain": "Software Engineering",
+      "category": "unavailable-information",
+      "query": "What is the annual revenue of TechCorp International?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "se_q09",
+      "domain": "Software Engineering",
+      "category": "unavailable-information",
+      "query": "Who invented the Python programming language and in what year?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "ha_q01",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "How many hours do non-emergency patients have to finalize admission paperwork?",
+      "expected_document": "patient_admission_policy.pdf",
+      "expected_keywords": ["4 hours", "admission paperwork"]
+    },
+    {
+      "query_id": "ha_q02",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "What insurance documents are required at patient registration?",
+      "expected_document": "patient_admission_policy.pdf",
+      "expected_keywords": ["insurance card", "photo ID", "registration"]
+    },
+    {
+      "query_id": "ha_q03",
+      "domain": "Hospital Administration",
+      "category": "procedural",
+      "query": "What are the five rights of medication administration?",
+      "expected_document": "nursing_procedures.docx",
+      "expected_keywords": ["right patient", "right drug", "right dose", "right route", "right time"]
+    },
+    {
+      "query_id": "ha_q04",
+      "domain": "Hospital Administration",
+      "category": "procedural",
+      "query": "How should nurses perform hand hygiene before patient contact?",
+      "expected_document": "nursing_procedures.docx",
+      "expected_keywords": ["alcohol-based rub", "20 seconds", "hand hygiene"]
+    },
+    {
+      "query_id": "ha_q05",
+      "domain": "Hospital Administration",
+      "category": "comparative",
+      "query": "What is the difference between Code Blue and Code Red emergencies?",
+      "expected_document": "emergency_protocols.txt",
+      "expected_keywords": ["Code Blue", "Code Red", "cardiac arrest", "fire"]
+    },
+    {
+      "query_id": "ha_q06",
+      "domain": "Hospital Administration",
+      "category": "comparative",
+      "query": "Compare oral versus intravenous Ibuprofen dosing limits.",
+      "expected_document": "medication_dosage_reference.csv",
+      "expected_keywords": ["Ibuprofen", "Oral", "Intravenous", "Max_Daily_Dose"]
+    },
+    {
+      "query_id": "ha_q07",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "What is the standard oral dose of Acetaminophen?",
+      "expected_document": "medication_dosage_reference.csv",
+      "expected_keywords": ["Acetaminophen", "650 mg", "Oral"]
+    },
+    {
+      "query_id": "ha_q08",
+      "domain": "Hospital Administration",
+      "category": "procedural",
+      "query": "What steps should staff follow during a Code Blue cardiac arrest?",
+      "expected_document": "emergency_protocols.txt",
+      "expected_keywords": ["CPR", "AED", "Code Blue", "compressions"]
+    },
+    {
+      "query_id": "ha_q09",
+      "domain": "Hospital Administration",
+      "category": "unavailable-information",
+      "query": "What was Riverside General Hospital's total revenue last fiscal year?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "ha_q10",
+      "domain": "Hospital Administration",
+      "category": "unavailable-information",
+      "query": "Who won the Nobel Prize in Medicine this year?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    }
+  ]
+}

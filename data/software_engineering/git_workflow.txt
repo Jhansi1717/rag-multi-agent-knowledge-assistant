@@ -1,0 +1,21 @@
+Git Workflow for Software Teams
+
+1. Branch Naming
+Feature branches use the format feature/<ticket-id>-short-description.
+Bug fixes use bugfix/<ticket-id>-short-description.
+Hotfixes branch from main using hotfix/<ticket-id>.
+
+2. Creating a Feature Branch
+Step 1: Pull latest changes from the develop branch.
+Step 2: Create a new branch: git checkout -b feature/123-add-login-form develop
+Step 3: Commit changes with conventional commit messages.
+Step 4: Push the branch and open a pull request.
+
+3. Pull Request Rules
+Every pull request requires at least two approving reviews.
+All CI checks must pass before merge.
+Squash merge is preferred for feature branches.
+
+4. Release Process
+Releases are tagged on main using semantic versioning (vMAJOR.MINOR.PATCH).
+Release notes are generated from merged pull request titles.

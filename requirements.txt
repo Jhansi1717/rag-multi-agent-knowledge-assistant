@@ -1,0 +1,20 @@
+# Runtime dependencies — Milestone 1
+fastapi
+uvicorn
+python-multipart
+pymupdf
+python-docx
+pandas
+numpy
+sentence-transformers
+faiss-cpu
+fpdf
+tiktoken
+
+# Test dependencies
+httpx
+pytest
+
+# Future — not imported in Milestone 1 code
+# openai
+# python-dotenv

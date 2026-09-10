@@ -1,0 +1,6 @@
+Medication,Standard_Dose,Route,Frequency,Max_Daily_Dose
+Acetaminophen,650 mg,Oral,Every 6 hours,3000 mg
+Ibuprofen,400 mg,Oral,Every 8 hours,1200 mg
+Ibuprofen,800 mg,Intravenous,Every 8 hours,2400 mg
+Ondansetron,4 mg,Intravenous,Every 8 hours,12 mg
+Normal Saline,1000 mL,Intravenous,As needed,3000 mL

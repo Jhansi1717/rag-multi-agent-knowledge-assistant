@@ -1,0 +1,6 @@
+Leave_Type,Days_Allowed,Carry_Forward_Limit,Approval_Required
+Annual,20,5,Manager
+Sick,10,0,Manager
+Maternity,84,0,HR
+Paternity,84,0,HR
+Bereavement,3,0,Manager

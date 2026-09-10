@@ -1,0 +1,24 @@
+Riverside General Hospital - Emergency Response Protocols
+
+1. Code Blue (Cardiac Arrest)
+Activate Code Blue for unresponsive patients without a pulse.
+Step 1: Call the emergency response team via the overhead alert.
+Step 2: Begin CPR at 100-120 compressions per minute.
+Step 3: Apply AED pads and follow device prompts.
+Step 4: Assign roles for airway, medications, and documentation.
+
+2. Code Red (Fire)
+Code Red indicates an active fire. RACE protocol applies:
+Rescue patients in immediate danger.
+Activate the alarm and call security.
+Confine the fire by closing doors.
+Extinguish only if safe; otherwise evacuate.
+
+3. Disaster Triage Levels
+Triage Level 1 (Red): Immediate life-threatening injuries.
+Triage Level 2 (Yellow): Urgent but stable conditions.
+Triage Level 3 (Green): Minor injuries, can wait.
+Triage Level 4 (Black): Deceased or expectant cases.
+
+4. Mass Casualty Activation
+Mass casualty incidents require opening the surge capacity plan and notifying the incident commander.

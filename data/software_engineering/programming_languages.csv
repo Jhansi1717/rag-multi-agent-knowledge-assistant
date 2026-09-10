@@ -1,0 +1,6 @@
+Language,Paradigm,Typing,Primary_Use_Case,Learning_Curve
+Python,Multi-paradigm,Dynamic,Data science and backends,Low
+Java,Object-oriented,Static,Enterprise applications,Medium
+JavaScript,Multi-paradigm,Dynamic,Web frontends,Low
+Rust,Systems,Static,Systems programming,High
+Go,Procedural,Static,Cloud infrastructure,Medium
