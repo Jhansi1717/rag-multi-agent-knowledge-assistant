@@ -10,6 +10,14 @@ Build an end-to-end knowledge retrieval pipeline that returns sourced, ranked ch
 
 ---
 
+## Milestone status
+
+| Milestone | Status | Scope |
+|---|---|---|
+| M1 | **COMPLETED** | Ingestion, cleaning, chunking, embeddings, FAISS storage, semantic retrieval, and API foundation |
+| M2 | **COMPLETED** | Query understanding, evidence-aware retrieval, grounded response generation, and fixed orchestration |
+| M3 | **FUTURE** | Rich multi-turn clarification and later retrieval/UI infrastructure |
+
 ## M1 scope
 
 **In scope and implemented**
@@ -302,19 +310,22 @@ The recorded M1 baseline for `python evaluation/evaluate_retrieval.py`
 | Hit@3 | 100.0% | 78.95% |
 | Hit@5 | 100.0% | 78.95% |
 
-The final M2 evaluation used 21 queries: 19 corpus queries plus two explicit
-ambiguous cases. Results were generated in mock context-echo mode because no
-OpenAI key was configured; no automated LLM factual-accuracy claim is made.
+The final M2 evaluation used 20 queries: four factual, four procedural, four
+comparative, four ambiguous, and four unavailable-information queries across
+Software Engineering and Hospital Administration. The evaluator ran the real
+QueryUnderstandingAgent, RetrievalAgent, ResponseGenerationAgent, and
+Orchestrator. Only the external OpenAI chat-completions API was mocked; no
+automated factual-accuracy claim is made for the mocked LLM output.
 
 | Metric | Result |
 |---|---:|
 | Classification accuracy | 100.0% |
-| Retrieval success | 5.9% |
-| Grounded-response rate | 0.0% |
-| Citation coverage | 0.0% |
+| Retrieval evidence success | 100.0% |
+| Grounded-response rate | 100.0% |
+| Citation coverage | 100.0% |
 | Ambiguous detection rate | 100.0% |
-| No-evidence handling rate | 100.0% |
-| End-to-end completion rate | 100.0% |
+| No-evidence handling rate | 75.0% |
+| End-to-end success rate | 95.0% |
 
 Details: [`evaluation/m2_end_to_end_results.md`](evaluation/m2_end_to_end_results.md).
 

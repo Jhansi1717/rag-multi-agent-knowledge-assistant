@@ -1,62 +1,117 @@
 {
   "configuration": {
-    "top_k": 3,
-    "minimum_relevance": 0.0,
+    "top_k": 5,
+    "minimum_relevance": 0.45,
     "relevance_transform": "1 / (1 + distance_score)"
   },
   "summary": {
-    "total_queries": 19,
+    "total_queries": 27,
     "available_queries": 15,
-    "unavailable_queries": 4,
-    "retrieval_hit_rate": 0.0,
-    "empty_result_rate": 1.0,
-    "low_confidence_rate": 1.0,
-    "unavailable_neighbors_rejected_as_evidence": 4,
-    "unavailable_queries_with_sufficient_evidence": 0,
+    "unavailable_queries": 12,
+    "retrieval_hit_rate": 1.0,
+    "empty_result_rate": 0.4074074074074074,
+    "low_confidence_rate": 0.4074074074074074,
+    "unavailable_neighbors_rejected_as_evidence": 11,
+    "unavailable_queries_with_sufficient_evidence": 1,
     "domain_performance": {
       "Hospital Administration": {
-        "total_queries": 10,
+        "total_queries": 14,
         "available_queries": 8,
-        "retrieval_hit_rate": 0.0,
-        "empty_result_rate": 1.0,
-        "low_confidence_rate": 1.0
+        "retrieval_hit_rate": 1.0,
+        "empty_result_rate": 0.35714285714285715,
+        "low_confidence_rate": 0.35714285714285715
       },
       "Software Engineering": {
-        "total_queries": 9,
+        "total_queries": 13,
         "available_queries": 7,
-        "retrieval_hit_rate": 0.0,
-        "empty_result_rate": 1.0,
-        "low_confidence_rate": 1.0
+        "retrieval_hit_rate": 1.0,
+        "empty_result_rate": 0.46153846153846156,
+        "low_confidence_rate": 0.46153846153846156
       }
     },
     "query_type_performance": {
+      "ambiguous": {
+        "total_queries": 8,
+        "available_queries": 0,
+        "retrieval_hit_rate": null,
+        "empty_result_rate": 1.0,
+        "low_confidence_rate": 1.0
+      },
       "comparative": {
         "total_queries": 4,
         "available_queries": 4,
-        "retrieval_hit_rate": 0.0,
-        "empty_result_rate": 1.0,
-        "low_confidence_rate": 1.0
+        "retrieval_hit_rate": 1.0,
+        "empty_result_rate": 0.0,
+        "low_confidence_rate": 0.0
       },
       "factual": {
         "total_queries": 10,
         "available_queries": 6,
-        "retrieval_hit_rate": 0.0,
-        "empty_result_rate": 1.0,
-        "low_confidence_rate": 1.0
+        "retrieval_hit_rate": 1.0,
+        "empty_result_rate": 0.3,
+        "low_confidence_rate": 0.3
       },
       "procedural": {
         "total_queries": 5,
         "available_queries": 5,
-        "retrieval_hit_rate": 0.0,
-        "empty_result_rate": 1.0,
-        "low_confidence_rate": 1.0
+        "retrieval_hit_rate": 1.0,
+        "empty_result_rate": 0.0,
+        "low_confidence_rate": 0.0
       }
     },
+    "threshold_comparison": {
+      "0.0": {
+        "evidence_hit_rate": 1.0,
+        "no_result_rate": 0.0,
+        "low_confidence_rate": 0.4074074074074074,
+        "top_1_evidence_presence": 1.0,
+        "top_3_evidence_presence": 1.0,
+        "top_5_evidence_presence": 1.0,
+        "unavailable_neighbors_rejected": 0.0
+      },
+      "0.45": {
+        "evidence_hit_rate": 1.0,
+        "no_result_rate": 0.4074074074074074,
+        "low_confidence_rate": 0.4074074074074074,
+        "top_1_evidence_presence": 1.0,
+        "top_3_evidence_presence": 1.0,
+        "top_5_evidence_presence": 1.0,
+        "unavailable_neighbors_rejected": 0.9166666666666666
+      },
+      "0.48": {
+        "evidence_hit_rate": 0.7333333333333333,
+        "no_result_rate": 0.5555555555555556,
+        "low_confidence_rate": 0.5555555555555556,
+        "top_1_evidence_presence": 0.7333333333333333,
+        "top_3_evidence_presence": 0.7333333333333333,
+        "top_5_evidence_presence": 0.7333333333333333,
+        "unavailable_neighbors_rejected": 0.9166666666666666
+      },
+      "0.5": {
+        "evidence_hit_rate": 0.4666666666666667,
+        "no_result_rate": 0.7037037037037037,
+        "low_confidence_rate": 0.7037037037037037,
+        "top_1_evidence_presence": 0.4666666666666667,
+        "top_3_evidence_presence": 0.4666666666666667,
+        "top_5_evidence_presence": 0.4666666666666667,
+        "unavailable_neighbors_rejected": 0.9166666666666666
+      },
+      "0.55": {
+        "evidence_hit_rate": 0.3333333333333333,
+        "no_result_rate": 0.8148148148148148,
+        "low_confidence_rate": 0.8148148148148148,
+        "top_1_evidence_presence": 0.3333333333333333,
+        "top_3_evidence_presence": 0.3333333333333333,
+        "top_5_evidence_presence": 0.3333333333333333,
+        "unavailable_neighbors_rejected": 1.0
+      }
+    },
+    "threshold_rationale": "0.45 retained all available expected documents at Top-1/3/5 while rejecting 3 of 4 unavailable-query neighbors. Higher thresholds removed relevant evidence; 0.0 retained every neighbor.",
     "m1_baseline": {
       "source": "evaluation\\results.json",
-      "hit_at_1": 78.95,
-      "hit_at_3": 78.95,
-      "hit_at_5": 78.95
+      "hit_at_1": 55.56,
+      "hit_at_3": 55.56,
+      "hit_at_5": 55.56
     }
   },
   "queries": [
@@ -66,13 +121,86 @@
       "domain": "Software Engineering",
       "query_type": "factual",
       "expected_document": "microservices_architecture.pdf",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.068699,
+          "relevance_score": 0.483396
+        },
+        {
+          "rank": 2,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.550363,
+          "relevance_score": 0.392101
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.576152,
+          "relevance_score": 0.388176
+        },
+        {
+          "rank": 4,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.584208,
+          "relevance_score": 0.386966
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.637386,
+          "relevance_score": 0.379163
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "microservices_architecture.pdf",
+          "chunk_id": "ac8f68fc-1c11-43d8-a013-3389c10969f6_0",
+          "distance_score": 1.068699,
+          "relevance_score": 0.483396,
+          "metadata": {
+            "source_location": "data\\software_engineering\\microservices_architecture.pdf",
+            "document_name": "microservices_architecture.pdf",
+            "file_size_bytes": 1706,
+            "format": "pdf",
+            "page_count": 1,
+            "page_texts": [
+              {
+                "page_number": 1,
+                "text": "Microservices and Agile Delivery Guide\n1. Agile Sprint Cadence\nTeams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with\na retrospective. Sprint goals must be demo-ready by the review meeting.\n2. Microservices vs Monolith\nMicroservices decompose applications into independently deployable services with bounded contexts.\nMonolithic architectures keep all modules in one deployable unit. Microservices improve scalability but add\nnetwork complexity.\n3. Continuous Integration\nEvery pull request triggers automated unit tests, lint checks, and security scans. Builds must pass before\nmerge to the main branch.\n4. Service Communication\nServices communicate via REST APIs or asynchronous message queues. Synchronous calls require circuit\nbreakers and timeout policies.\n"
+              }
+            ],
+            "empty_page_count": 0,
+            "empty_page_numbers": [],
+            "pdf_producer": "PyFPDF 1.7.2 http://pyfpdf.googlecode.com/",
+            "pdf_creator": "",
+            "pdf_creation_date": "D:20260909224641",
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 814,
+            "filename": "microservices_architecture.pdf",
+            "file_type": ".pdf",
+            "token_start": 0,
+            "token_end": 153,
+            "token_count": 153,
+            "char_count": 814,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "page_number": 1,
+            "page_start": 1,
+            "page_end": 1
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.483396,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -81,13 +209,72 @@
       "domain": "Software Engineering",
       "query_type": "procedural",
       "expected_document": "git_workflow.txt",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "git_workflow.txt",
+          "distance_score": 0.614015,
+          "relevance_score": 0.619573
+        },
+        {
+          "rank": 2,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.613221,
+          "relevance_score": 0.38267
+        },
+        {
+          "rank": 3,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.675422,
+          "relevance_score": 0.373773
+        },
+        {
+          "rank": 4,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.692482,
+          "relevance_score": 0.371405
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.695489,
+          "relevance_score": 0.37099
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "git_workflow.txt",
+          "chunk_id": "4479bcf6-01f8-47a0-8339-6dcaeb38d46a_0",
+          "distance_score": 0.614015,
+          "relevance_score": 0.619573,
+          "metadata": {
+            "source_location": "data\\software_engineering\\git_workflow.txt",
+            "document_name": "git_workflow.txt",
+            "file_size_bytes": 842,
+            "format": "txt",
+            "line_count": 21,
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 820,
+            "filename": "git_workflow.txt",
+            "file_type": ".txt",
+            "token_start": 0,
+            "token_end": 181,
+            "token_count": 181,
+            "char_count": 820,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.619573,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -96,13 +283,86 @@
       "domain": "Software Engineering",
       "query_type": "comparative",
       "expected_document": "microservices_architecture.pdf",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 0.90492,
+          "relevance_score": 0.524956
+        },
+        {
+          "rank": 2,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.745775,
+          "relevance_score": 0.364196
+        },
+        {
+          "rank": 3,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.783466,
+          "relevance_score": 0.359264
+        },
+        {
+          "rank": 4,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.807041,
+          "relevance_score": 0.356247
+        },
+        {
+          "rank": 5,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.837035,
+          "relevance_score": 0.352481
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "microservices_architecture.pdf",
+          "chunk_id": "ac8f68fc-1c11-43d8-a013-3389c10969f6_0",
+          "distance_score": 0.90492,
+          "relevance_score": 0.524956,
+          "metadata": {
+            "source_location": "data\\software_engineering\\microservices_architecture.pdf",
+            "document_name": "microservices_architecture.pdf",
+            "file_size_bytes": 1706,
+            "format": "pdf",
+            "page_count": 1,
+            "page_texts": [
+              {
+                "page_number": 1,
+                "text": "Microservices and Agile Delivery Guide\n1. Agile Sprint Cadence\nTeams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with\na retrospective. Sprint goals must be demo-ready by the review meeting.\n2. Microservices vs Monolith\nMicroservices decompose applications into independently deployable services with bounded contexts.\nMonolithic architectures keep all modules in one deployable unit. Microservices improve scalability but add\nnetwork complexity.\n3. Continuous Integration\nEvery pull request triggers automated unit tests, lint checks, and security scans. Builds must pass before\nmerge to the main branch.\n4. Service Communication\nServices communicate via REST APIs or asynchronous message queues. Synchronous calls require circuit\nbreakers and timeout policies.\n"
+              }
+            ],
+            "empty_page_count": 0,
+            "empty_page_numbers": [],
+            "pdf_producer": "PyFPDF 1.7.2 http://pyfpdf.googlecode.com/",
+            "pdf_creator": "",
+            "pdf_creation_date": "D:20260909224641",
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 814,
+            "filename": "microservices_architecture.pdf",
+            "file_type": ".pdf",
+            "token_start": 0,
+            "token_end": 153,
+            "token_count": 153,
+            "char_count": 814,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "page_number": 1,
+            "page_start": 1,
+            "page_end": 1
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.524956,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -111,13 +371,73 @@
       "domain": "Software Engineering",
       "query_type": "factual",
       "expected_document": "coding_standards.docx",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.002768,
+          "relevance_score": 0.499309
+        },
+        {
+          "rank": 2,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.338654,
+          "relevance_score": 0.427596
+        },
+        {
+          "rank": 3,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.558043,
+          "relevance_score": 0.390924
+        },
+        {
+          "rank": 4,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.650543,
+          "relevance_score": 0.377281
+        },
+        {
+          "rank": 5,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.809678,
+          "relevance_score": 0.355913
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "coding_standards.docx",
+          "chunk_id": "fa100121-56ff-4380-8eff-9f995a6bd96b_0",
+          "distance_score": 1.002768,
+          "relevance_score": 0.499309,
+          "metadata": {
+            "source_location": "data\\software_engineering\\coding_standards.docx",
+            "document_name": "coding_standards.docx",
+            "file_size_bytes": 37243,
+            "format": "docx",
+            "paragraph_count": 8,
+            "table_count": 1,
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 782,
+            "filename": "coding_standards.docx",
+            "file_type": ".docx",
+            "token_start": 0,
+            "token_end": 139,
+            "token_count": 139,
+            "char_count": 782,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.499309,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -126,13 +446,73 @@
       "domain": "Software Engineering",
       "query_type": "procedural",
       "expected_document": "coding_standards.docx",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.199671,
+          "relevance_score": 0.454613
+        },
+        {
+          "rank": 2,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.53368,
+          "relevance_score": 0.394683
+        },
+        {
+          "rank": 3,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.574804,
+          "relevance_score": 0.388379
+        },
+        {
+          "rank": 4,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.597461,
+          "relevance_score": 0.384991
+        },
+        {
+          "rank": 5,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.699237,
+          "relevance_score": 0.370475
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "coding_standards.docx",
+          "chunk_id": "fa100121-56ff-4380-8eff-9f995a6bd96b_0",
+          "distance_score": 1.199671,
+          "relevance_score": 0.454613,
+          "metadata": {
+            "source_location": "data\\software_engineering\\coding_standards.docx",
+            "document_name": "coding_standards.docx",
+            "file_size_bytes": 37243,
+            "format": "docx",
+            "paragraph_count": 8,
+            "table_count": 1,
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 782,
+            "filename": "coding_standards.docx",
+            "file_type": ".docx",
+            "token_start": 0,
+            "token_end": 139,
+            "token_count": 139,
+            "char_count": 782,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.454613,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -141,13 +521,82 @@
       "domain": "Software Engineering",
       "query_type": "comparative",
       "expected_document": "programming_languages.csv",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.108776,
+          "relevance_score": 0.474209
+        },
+        {
+          "rank": 2,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.286462,
+          "relevance_score": 0.437357
+        },
+        {
+          "rank": 3,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.4043,
+          "relevance_score": 0.415922
+        },
+        {
+          "rank": 4,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.744862,
+          "relevance_score": 0.364317
+        },
+        {
+          "rank": 5,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.94393,
+          "relevance_score": 0.339682
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "chunk_id": "41551921-146f-4b51-8862-adb27a8ea0cd_0",
+          "distance_score": 1.108776,
+          "relevance_score": 0.474209,
+          "metadata": {
+            "source_location": "data\\software_engineering\\programming_languages.csv",
+            "document_name": "programming_languages.csv",
+            "file_size_bytes": 328,
+            "format": "csv",
+            "row_count": 5,
+            "column_count": 5,
+            "column_names": [
+              "Language",
+              "Paradigm",
+              "Typing",
+              "Primary_Use_Case",
+              "Learning_Curve"
+            ],
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 649,
+            "filename": "programming_languages.csv",
+            "file_type": ".csv",
+            "token_start": 0,
+            "token_end": 177,
+            "token_count": 177,
+            "char_count": 653,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "row_start": 1,
+            "row_end": 5
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.474209,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -156,13 +605,82 @@
       "domain": "Software Engineering",
       "query_type": "factual",
       "expected_document": "programming_languages.csv",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.1766,
+          "relevance_score": 0.459432
+        },
+        {
+          "rank": 2,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.453201,
+          "relevance_score": 0.407631
+        },
+        {
+          "rank": 3,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.828292,
+          "relevance_score": 0.35357
+        },
+        {
+          "rank": 4,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.908597,
+          "relevance_score": 0.343808
+        },
+        {
+          "rank": 5,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.967918,
+          "relevance_score": 0.336937
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "chunk_id": "41551921-146f-4b51-8862-adb27a8ea0cd_0",
+          "distance_score": 1.1766,
+          "relevance_score": 0.459432,
+          "metadata": {
+            "source_location": "data\\software_engineering\\programming_languages.csv",
+            "document_name": "programming_languages.csv",
+            "file_size_bytes": 328,
+            "format": "csv",
+            "row_count": 5,
+            "column_count": 5,
+            "column_names": [
+              "Language",
+              "Paradigm",
+              "Typing",
+              "Primary_Use_Case",
+              "Learning_Curve"
+            ],
+            "has_text": true,
+            "domain": "Software Engineering",
+            "cleaned": true,
+            "cleaned_char_count": 649,
+            "filename": "programming_languages.csv",
+            "file_type": ".csv",
+            "token_start": 0,
+            "token_end": 177,
+            "token_count": 177,
+            "char_count": 653,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "row_start": 1,
+            "row_end": 5
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.459432,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -171,9 +689,41 @@
       "domain": "Software Engineering",
       "query_type": "factual",
       "expected_document": "NONE",
-      "top_k_before_filtering": 1,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.773314,
+          "relevance_score": 0.360579
+        },
+        {
+          "rank": 2,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.80009,
+          "relevance_score": 0.357131
+        },
+        {
+          "rank": 3,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.852749,
+          "relevance_score": 0.350539
+        },
+        {
+          "rank": 4,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.867446,
+          "relevance_score": 0.348742
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.87856,
+          "relevance_score": 0.347396
+        }
+      ],
       "results_after_filtering": [],
-      "filtered_count": 1,
+      "filtered_count": 5,
       "retrieval_confidence": 0.0,
       "sufficient_evidence": false,
       "no_relevant_information": true,
@@ -186,9 +736,41 @@
       "domain": "Software Engineering",
       "query_type": "factual",
       "expected_document": "NONE",
-      "top_k_before_filtering": 1,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.466786,
+          "relevance_score": 0.405386
+        },
+        {
+          "rank": 2,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.49273,
+          "relevance_score": 0.401167
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 2.041099,
+          "relevance_score": 0.328829
+        },
+        {
+          "rank": 4,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 2.044904,
+          "relevance_score": 0.328418
+        },
+        {
+          "rank": 5,
+          "filename": "git_workflow.txt",
+          "distance_score": 2.050335,
+          "relevance_score": 0.327833
+        }
+      ],
       "results_after_filtering": [],
-      "filtered_count": 1,
+      "filtered_count": 5,
       "retrieval_confidence": 0.0,
       "sufficient_evidence": false,
       "no_relevant_information": true,
@@ -201,13 +783,139 @@
       "domain": "Hospital Administration",
       "query_type": "factual",
       "expected_document": "patient_admission_policy.pdf",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 0.784162,
+          "relevance_score": 0.560487
+        },
+        {
+          "rank": 2,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.13335,
+          "relevance_score": 0.468746
+        },
+        {
+          "rank": 3,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.193607,
+          "relevance_score": 0.45587
+        },
+        {
+          "rank": 4,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.47335,
+          "relevance_score": 0.40431
+        },
+        {
+          "rank": 5,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.71975,
+          "relevance_score": 0.367681
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "patient_admission_policy.pdf",
+          "chunk_id": "eb56554a-977e-43b2-a2a1-c7c269031601_0",
+          "distance_score": 0.784162,
+          "relevance_score": 0.560487,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\patient_admission_policy.pdf",
+            "document_name": "patient_admission_policy.pdf",
+            "file_size_bytes": 1673,
+            "format": "pdf",
+            "page_count": 1,
+            "page_texts": [
+              {
+                "page_number": 1,
+                "text": "Riverside General Hospital - Patient Admission Policy\n1. Registration Requirements\nPatients must present a government-issued photo ID and insurance card at admission. Emergency\nadmissions may proceed with partial information but must complete registration within 24 hours.\n2. Insurance Verification\nAdmitting staff verify coverage through the electronic eligibility system before assigning an inpatient bed.\nPre-authorization is required for elective surgeries.\n3. Admission Paperwork Timeline\nNon-emergency patients must finalize admission paperwork within 4 hours of arrival. Incomplete forms are\nflagged for patient financial services follow-up.\n4. Discharge Planning\nDischarge planning begins within 24 hours of admission for expected stays longer than 48 hours. Social work\nconsults are available for transitional care.\n"
+              }
+            ],
+            "empty_page_count": 0,
+            "empty_page_numbers": [],
+            "pdf_producer": "PyFPDF 1.7.2 http://pyfpdf.googlecode.com/",
+            "pdf_creator": "",
+            "pdf_creation_date": "D:20260909224641",
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 824,
+            "filename": "patient_admission_policy.pdf",
+            "file_type": ".pdf",
+            "token_start": 0,
+            "token_end": 152,
+            "token_count": 152,
+            "char_count": 824,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "page_number": 1,
+            "page_start": 1,
+            "page_end": 1
+          }
+        },
+        {
+          "rank": 2,
+          "filename": "emergency_protocols.txt",
+          "chunk_id": "6931230b-6eff-4e04-8efe-99f9d3e7516f_0",
+          "distance_score": 1.13335,
+          "relevance_score": 0.468746,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\emergency_protocols.txt",
+            "document_name": "emergency_protocols.txt",
+            "file_size_bytes": 1017,
+            "format": "txt",
+            "line_count": 24,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 992,
+            "filename": "emergency_protocols.txt",
+            "file_type": ".txt",
+            "token_start": 0,
+            "token_end": 225,
+            "token_count": 225,
+            "char_count": 992,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        },
+        {
+          "rank": 3,
+          "filename": "nursing_procedures.docx",
+          "chunk_id": "33594724-0bee-43c3-a65a-13296c42a8f6_0",
+          "distance_score": 1.193607,
+          "relevance_score": 0.45587,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\nursing_procedures.docx",
+            "document_name": "nursing_procedures.docx",
+            "file_size_bytes": 37042,
+            "format": "docx",
+            "paragraph_count": 9,
+            "table_count": 0,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 786,
+            "filename": "nursing_procedures.docx",
+            "file_type": ".docx",
+            "token_start": 0,
+            "token_end": 141,
+            "token_count": 141,
+            "char_count": 786,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 2,
+      "retrieval_confidence": 0.560487,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -216,13 +924,86 @@
       "domain": "Hospital Administration",
       "query_type": "factual",
       "expected_document": "patient_admission_policy.pdf",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.074527,
+          "relevance_score": 0.482038
+        },
+        {
+          "rank": 2,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.229224,
+          "relevance_score": 0.448587
+        },
+        {
+          "rank": 3,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.342896,
+          "relevance_score": 0.426822
+        },
+        {
+          "rank": 4,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.559107,
+          "relevance_score": 0.390761
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.645832,
+          "relevance_score": 0.377953
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "patient_admission_policy.pdf",
+          "chunk_id": "eb56554a-977e-43b2-a2a1-c7c269031601_0",
+          "distance_score": 1.074527,
+          "relevance_score": 0.482038,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\patient_admission_policy.pdf",
+            "document_name": "patient_admission_policy.pdf",
+            "file_size_bytes": 1673,
+            "format": "pdf",
+            "page_count": 1,
+            "page_texts": [
+              {
+                "page_number": 1,
+                "text": "Riverside General Hospital - Patient Admission Policy\n1. Registration Requirements\nPatients must present a government-issued photo ID and insurance card at admission. Emergency\nadmissions may proceed with partial information but must complete registration within 24 hours.\n2. Insurance Verification\nAdmitting staff verify coverage through the electronic eligibility system before assigning an inpatient bed.\nPre-authorization is required for elective surgeries.\n3. Admission Paperwork Timeline\nNon-emergency patients must finalize admission paperwork within 4 hours of arrival. Incomplete forms are\nflagged for patient financial services follow-up.\n4. Discharge Planning\nDischarge planning begins within 24 hours of admission for expected stays longer than 48 hours. Social work\nconsults are available for transitional care.\n"
+              }
+            ],
+            "empty_page_count": 0,
+            "empty_page_numbers": [],
+            "pdf_producer": "PyFPDF 1.7.2 http://pyfpdf.googlecode.com/",
+            "pdf_creator": "",
+            "pdf_creation_date": "D:20260909224641",
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 824,
+            "filename": "patient_admission_policy.pdf",
+            "file_type": ".pdf",
+            "token_start": 0,
+            "token_end": 152,
+            "token_count": 152,
+            "char_count": 824,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "page_number": 1,
+            "page_start": 1,
+            "page_end": 1
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.482038,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -231,13 +1012,109 @@
       "domain": "Hospital Administration",
       "query_type": "procedural",
       "expected_document": "nursing_procedures.docx",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.098022,
+          "relevance_score": 0.47664
+        },
+        {
+          "rank": 2,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.220556,
+          "relevance_score": 0.450338
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.497272,
+          "relevance_score": 0.400437
+        },
+        {
+          "rank": 4,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.610967,
+          "relevance_score": 0.383
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.724298,
+          "relevance_score": 0.367067
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "nursing_procedures.docx",
+          "chunk_id": "33594724-0bee-43c3-a65a-13296c42a8f6_0",
+          "distance_score": 1.098022,
+          "relevance_score": 0.47664,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\nursing_procedures.docx",
+            "document_name": "nursing_procedures.docx",
+            "file_size_bytes": 37042,
+            "format": "docx",
+            "paragraph_count": 9,
+            "table_count": 0,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 786,
+            "filename": "nursing_procedures.docx",
+            "file_type": ".docx",
+            "token_start": 0,
+            "token_end": 141,
+            "token_count": 141,
+            "char_count": 786,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        },
+        {
+          "rank": 2,
+          "filename": "medication_dosage_reference.csv",
+          "chunk_id": "011824cf-c121-45d8-aef8-0a5dfe498f99_0",
+          "distance_score": 1.220556,
+          "relevance_score": 0.450338,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\medication_dosage_reference.csv",
+            "document_name": "medication_dosage_reference.csv",
+            "file_size_bytes": 306,
+            "format": "csv",
+            "row_count": 5,
+            "column_count": 5,
+            "column_names": [
+              "Medication",
+              "Standard_Dose",
+              "Route",
+              "Frequency",
+              "Max_Daily_Dose"
+            ],
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 623,
+            "filename": "medication_dosage_reference.csv",
+            "file_type": ".csv",
+            "token_start": 0,
+            "token_end": 209,
+            "token_count": 209,
+            "char_count": 627,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "row_start": 1,
+            "row_end": 5
+          }
+        }
+      ],
+      "filtered_count": 3,
+      "retrieval_confidence": 0.47664,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -246,13 +1123,73 @@
       "domain": "Hospital Administration",
       "query_type": "procedural",
       "expected_document": "nursing_procedures.docx",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 0.739789,
+          "relevance_score": 0.574782
+        },
+        {
+          "rank": 2,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.445894,
+          "relevance_score": 0.408849
+        },
+        {
+          "rank": 3,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.565862,
+          "relevance_score": 0.389733
+        },
+        {
+          "rank": 4,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.707069,
+          "relevance_score": 0.369403
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.722336,
+          "relevance_score": 0.367332
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "nursing_procedures.docx",
+          "chunk_id": "33594724-0bee-43c3-a65a-13296c42a8f6_0",
+          "distance_score": 0.739789,
+          "relevance_score": 0.574782,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\nursing_procedures.docx",
+            "document_name": "nursing_procedures.docx",
+            "file_size_bytes": 37042,
+            "format": "docx",
+            "paragraph_count": 9,
+            "table_count": 0,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 786,
+            "filename": "nursing_procedures.docx",
+            "file_type": ".docx",
+            "token_start": 0,
+            "token_end": 141,
+            "token_count": 141,
+            "char_count": 786,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.574782,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -261,13 +1198,72 @@
       "domain": "Hospital Administration",
       "query_type": "comparative",
       "expected_document": "emergency_protocols.txt",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.048858,
+          "relevance_score": 0.488077
+        },
+        {
+          "rank": 2,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.37437,
+          "relevance_score": 0.421164
+        },
+        {
+          "rank": 3,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.605864,
+          "relevance_score": 0.38375
+        },
+        {
+          "rank": 4,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.666975,
+          "relevance_score": 0.374957
+        },
+        {
+          "rank": 5,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.782669,
+          "relevance_score": 0.359367
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "emergency_protocols.txt",
+          "chunk_id": "6931230b-6eff-4e04-8efe-99f9d3e7516f_0",
+          "distance_score": 1.048858,
+          "relevance_score": 0.488077,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\emergency_protocols.txt",
+            "document_name": "emergency_protocols.txt",
+            "file_size_bytes": 1017,
+            "format": "txt",
+            "line_count": 24,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 992,
+            "filename": "emergency_protocols.txt",
+            "file_type": ".txt",
+            "token_start": 0,
+            "token_end": 225,
+            "token_count": 225,
+            "char_count": 992,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.488077,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -276,13 +1272,82 @@
       "domain": "Hospital Administration",
       "query_type": "comparative",
       "expected_document": "medication_dosage_reference.csv",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 0.990246,
+          "relevance_score": 0.50245
+        },
+        {
+          "rank": 2,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.495578,
+          "relevance_score": 0.400709
+        },
+        {
+          "rank": 3,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.669501,
+          "relevance_score": 0.374602
+        },
+        {
+          "rank": 4,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.728734,
+          "relevance_score": 0.36647
+        },
+        {
+          "rank": 5,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.784059,
+          "relevance_score": 0.359188
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "medication_dosage_reference.csv",
+          "chunk_id": "011824cf-c121-45d8-aef8-0a5dfe498f99_0",
+          "distance_score": 0.990246,
+          "relevance_score": 0.50245,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\medication_dosage_reference.csv",
+            "document_name": "medication_dosage_reference.csv",
+            "file_size_bytes": 306,
+            "format": "csv",
+            "row_count": 5,
+            "column_count": 5,
+            "column_names": [
+              "Medication",
+              "Standard_Dose",
+              "Route",
+              "Frequency",
+              "Max_Daily_Dose"
+            ],
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 623,
+            "filename": "medication_dosage_reference.csv",
+            "file_type": ".csv",
+            "token_start": 0,
+            "token_end": 209,
+            "token_count": 209,
+            "char_count": 627,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "row_start": 1,
+            "row_end": 5
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.50245,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -291,13 +1356,82 @@
       "domain": "Hospital Administration",
       "query_type": "factual",
       "expected_document": "medication_dosage_reference.csv",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 0.809069,
+          "relevance_score": 0.552771
+        },
+        {
+          "rank": 2,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.555344,
+          "relevance_score": 0.391337
+        },
+        {
+          "rank": 3,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.733301,
+          "relevance_score": 0.365858
+        },
+        {
+          "rank": 4,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.741053,
+          "relevance_score": 0.364823
+        },
+        {
+          "rank": 5,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.781572,
+          "relevance_score": 0.359509
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "medication_dosage_reference.csv",
+          "chunk_id": "011824cf-c121-45d8-aef8-0a5dfe498f99_0",
+          "distance_score": 0.809069,
+          "relevance_score": 0.552771,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\medication_dosage_reference.csv",
+            "document_name": "medication_dosage_reference.csv",
+            "file_size_bytes": 306,
+            "format": "csv",
+            "row_count": 5,
+            "column_count": 5,
+            "column_names": [
+              "Medication",
+              "Standard_Dose",
+              "Route",
+              "Frequency",
+              "Max_Daily_Dose"
+            ],
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 623,
+            "filename": "medication_dosage_reference.csv",
+            "file_type": ".csv",
+            "token_start": 0,
+            "token_end": 209,
+            "token_count": 209,
+            "char_count": 627,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "row_start": 1,
+            "row_end": 5
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.552771,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -306,13 +1440,99 @@
       "domain": "Hospital Administration",
       "query_type": "procedural",
       "expected_document": "emergency_protocols.txt",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
-      "expected_document_retrieved": false,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 0.705223,
+          "relevance_score": 0.586434
+        },
+        {
+          "rank": 2,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.021973,
+          "relevance_score": 0.494566
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.260726,
+          "relevance_score": 0.442336
+        },
+        {
+          "rank": 4,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.614924,
+          "relevance_score": 0.38242
+        },
+        {
+          "rank": 5,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.617773,
+          "relevance_score": 0.382004
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "emergency_protocols.txt",
+          "chunk_id": "6931230b-6eff-4e04-8efe-99f9d3e7516f_0",
+          "distance_score": 0.705223,
+          "relevance_score": 0.586434,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\emergency_protocols.txt",
+            "document_name": "emergency_protocols.txt",
+            "file_size_bytes": 1017,
+            "format": "txt",
+            "line_count": 24,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 992,
+            "filename": "emergency_protocols.txt",
+            "file_type": ".txt",
+            "token_start": 0,
+            "token_end": 225,
+            "token_count": 225,
+            "char_count": 992,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        },
+        {
+          "rank": 2,
+          "filename": "nursing_procedures.docx",
+          "chunk_id": "33594724-0bee-43c3-a65a-13296c42a8f6_0",
+          "distance_score": 1.021973,
+          "relevance_score": 0.494566,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\nursing_procedures.docx",
+            "document_name": "nursing_procedures.docx",
+            "file_size_bytes": 37042,
+            "format": "docx",
+            "paragraph_count": 9,
+            "table_count": 0,
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 786,
+            "filename": "nursing_procedures.docx",
+            "file_type": ".docx",
+            "token_start": 0,
+            "token_end": 141,
+            "token_count": 141,
+            "char_count": 786,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75
+          }
+        }
+      ],
+      "filtered_count": 3,
+      "retrieval_confidence": 0.586434,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
+      "expected_document_retrieved": true,
       "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
@@ -321,14 +1541,87 @@
       "domain": "Hospital Administration",
       "query_type": "factual",
       "expected_document": "NONE",
-      "top_k_before_filtering": 1,
-      "results_after_filtering": [],
-      "filtered_count": 1,
-      "retrieval_confidence": 0.0,
-      "sufficient_evidence": false,
-      "no_relevant_information": true,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 0.873441,
+          "relevance_score": 0.533777
+        },
+        {
+          "rank": 2,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.418245,
+          "relevance_score": 0.413523
+        },
+        {
+          "rank": 3,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.673756,
+          "relevance_score": 0.374006
+        },
+        {
+          "rank": 4,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.687145,
+          "relevance_score": 0.372142
+        },
+        {
+          "rank": 5,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.804423,
+          "relevance_score": 0.35658
+        }
+      ],
+      "results_after_filtering": [
+        {
+          "rank": 1,
+          "filename": "patient_admission_policy.pdf",
+          "chunk_id": "eb56554a-977e-43b2-a2a1-c7c269031601_0",
+          "distance_score": 0.873441,
+          "relevance_score": 0.533777,
+          "metadata": {
+            "source_location": "data\\hospital_administration\\patient_admission_policy.pdf",
+            "document_name": "patient_admission_policy.pdf",
+            "file_size_bytes": 1673,
+            "format": "pdf",
+            "page_count": 1,
+            "page_texts": [
+              {
+                "page_number": 1,
+                "text": "Riverside General Hospital - Patient Admission Policy\n1. Registration Requirements\nPatients must present a government-issued photo ID and insurance card at admission. Emergency\nadmissions may proceed with partial information but must complete registration within 24 hours.\n2. Insurance Verification\nAdmitting staff verify coverage through the electronic eligibility system before assigning an inpatient bed.\nPre-authorization is required for elective surgeries.\n3. Admission Paperwork Timeline\nNon-emergency patients must finalize admission paperwork within 4 hours of arrival. Incomplete forms are\nflagged for patient financial services follow-up.\n4. Discharge Planning\nDischarge planning begins within 24 hours of admission for expected stays longer than 48 hours. Social work\nconsults are available for transitional care.\n"
+              }
+            ],
+            "empty_page_count": 0,
+            "empty_page_numbers": [],
+            "pdf_producer": "PyFPDF 1.7.2 http://pyfpdf.googlecode.com/",
+            "pdf_creator": "",
+            "pdf_creation_date": "D:20260909224641",
+            "has_text": true,
+            "domain": "Hospital Administration",
+            "cleaned": true,
+            "cleaned_char_count": 824,
+            "filename": "patient_admission_policy.pdf",
+            "file_type": ".pdf",
+            "token_start": 0,
+            "token_end": 152,
+            "token_count": 152,
+            "char_count": 824,
+            "chunk_size_target": 650,
+            "chunk_overlap_target": 75,
+            "page_number": 1,
+            "page_start": 1,
+            "page_end": 1
+          }
+        }
+      ],
+      "filtered_count": 4,
+      "retrieval_confidence": 0.533777,
+      "sufficient_evidence": true,
+      "no_relevant_information": false,
       "expected_document_retrieved": false,
-      "unavailable_query_neighbor_not_valid_evidence": true
+      "unavailable_query_neighbor_not_valid_evidence": false
     },
     {
       "query_id": "ha_q10",
@@ -336,9 +1629,417 @@
       "domain": "Hospital Administration",
       "query_type": "factual",
       "expected_document": "NONE",
-      "top_k_before_filtering": 1,
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.894756,
+          "relevance_score": 0.345452
+        },
+        {
+          "rank": 2,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.938562,
+          "relevance_score": 0.340303
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.975238,
+          "relevance_score": 0.336108
+        },
+        {
+          "rank": 4,
+          "filename": "programming_languages.csv",
+          "distance_score": 2.015339,
+          "relevance_score": 0.331638
+        },
+        {
+          "rank": 5,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 2.06991,
+          "relevance_score": 0.325742
+        }
+      ],
       "results_after_filtering": [],
-      "filtered_count": 1,
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "se_q10",
+      "query": "Which protocol?",
+      "domain": "Software Engineering",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.583744,
+          "relevance_score": 0.387035
+        },
+        {
+          "rank": 2,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.622277,
+          "relevance_score": 0.381348
+        },
+        {
+          "rank": 3,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.751753,
+          "relevance_score": 0.363405
+        },
+        {
+          "rank": 4,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.755936,
+          "relevance_score": 0.362853
+        },
+        {
+          "rank": 5,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.772589,
+          "relevance_score": 0.360674
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "se_q11",
+      "query": "What about that?",
+      "domain": "Software Engineering",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.787581,
+          "relevance_score": 0.358734
+        },
+        {
+          "rank": 2,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.831768,
+          "relevance_score": 0.353136
+        },
+        {
+          "rank": 3,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.904609,
+          "relevance_score": 0.34428
+        },
+        {
+          "rank": 4,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.939197,
+          "relevance_score": 0.340229
+        },
+        {
+          "rank": 5,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.976653,
+          "relevance_score": 0.335948
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "se_q12",
+      "query": "That process?",
+      "domain": "Software Engineering",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.724596,
+          "relevance_score": 0.367027
+        },
+        {
+          "rank": 2,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.757477,
+          "relevance_score": 0.36265
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.820927,
+          "relevance_score": 0.354493
+        },
+        {
+          "rank": 4,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.829863,
+          "relevance_score": 0.353374
+        },
+        {
+          "rank": 5,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.838146,
+          "relevance_score": 0.352343
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "se_q13",
+      "query": "Can you explain this?",
+      "domain": "Software Engineering",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.94565,
+          "relevance_score": 0.339484
+        },
+        {
+          "rank": 2,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.954178,
+          "relevance_score": 0.338504
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 2.04139,
+          "relevance_score": 0.328797
+        },
+        {
+          "rank": 4,
+          "filename": "coding_standards.docx",
+          "distance_score": 2.051993,
+          "relevance_score": 0.327655
+        },
+        {
+          "rank": 5,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 2.093718,
+          "relevance_score": 0.323236
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "ha_q11",
+      "query": "Which protocol?",
+      "domain": "Hospital Administration",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.583744,
+          "relevance_score": 0.387035
+        },
+        {
+          "rank": 2,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.622277,
+          "relevance_score": 0.381348
+        },
+        {
+          "rank": 3,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 1.751753,
+          "relevance_score": 0.363405
+        },
+        {
+          "rank": 4,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.755936,
+          "relevance_score": 0.362853
+        },
+        {
+          "rank": 5,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.772589,
+          "relevance_score": 0.360674
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "ha_q12",
+      "query": "What about that?",
+      "domain": "Hospital Administration",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.787581,
+          "relevance_score": 0.358734
+        },
+        {
+          "rank": 2,
+          "filename": "coding_standards.docx",
+          "distance_score": 1.831768,
+          "relevance_score": 0.353136
+        },
+        {
+          "rank": 3,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.904609,
+          "relevance_score": 0.34428
+        },
+        {
+          "rank": 4,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.939197,
+          "relevance_score": 0.340229
+        },
+        {
+          "rank": 5,
+          "filename": "medication_dosage_reference.csv",
+          "distance_score": 1.976653,
+          "relevance_score": 0.335948
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "ha_q13",
+      "query": "That process?",
+      "domain": "Hospital Administration",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.724596,
+          "relevance_score": 0.367027
+        },
+        {
+          "rank": 2,
+          "filename": "git_workflow.txt",
+          "distance_score": 1.757477,
+          "relevance_score": 0.36265
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 1.820927,
+          "relevance_score": 0.354493
+        },
+        {
+          "rank": 4,
+          "filename": "microservices_architecture.pdf",
+          "distance_score": 1.829863,
+          "relevance_score": 0.353374
+        },
+        {
+          "rank": 5,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.838146,
+          "relevance_score": 0.352343
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
+      "retrieval_confidence": 0.0,
+      "sufficient_evidence": false,
+      "no_relevant_information": true,
+      "expected_document_retrieved": false,
+      "unavailable_query_neighbor_not_valid_evidence": true
+    },
+    {
+      "query_id": "ha_q14",
+      "query": "Can you explain this?",
+      "domain": "Hospital Administration",
+      "query_type": "ambiguous",
+      "expected_document": "NONE",
+      "top_k_before_filtering": 5,
+      "raw_results": [
+        {
+          "rank": 1,
+          "filename": "emergency_protocols.txt",
+          "distance_score": 1.94565,
+          "relevance_score": 0.339484
+        },
+        {
+          "rank": 2,
+          "filename": "programming_languages.csv",
+          "distance_score": 1.954178,
+          "relevance_score": 0.338504
+        },
+        {
+          "rank": 3,
+          "filename": "patient_admission_policy.pdf",
+          "distance_score": 2.04139,
+          "relevance_score": 0.328797
+        },
+        {
+          "rank": 4,
+          "filename": "coding_standards.docx",
+          "distance_score": 2.051993,
+          "relevance_score": 0.327655
+        },
+        {
+          "rank": 5,
+          "filename": "nursing_procedures.docx",
+          "distance_score": 2.093718,
+          "relevance_score": 0.323236
+        }
+      ],
+      "results_after_filtering": [],
+      "filtered_count": 5,
       "retrieval_confidence": 0.0,
       "sufficient_evidence": false,
       "no_relevant_information": true,

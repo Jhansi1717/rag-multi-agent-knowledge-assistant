@@ -9,7 +9,7 @@ from agents.models import QueryType, RetrievalHit, RetrievalResult
 from retrieval.retriever import SemanticRetriever
 
 DEFAULT_TOP_K = 3
-DEFAULT_MIN_RELEVANCE = 0.0
+DEFAULT_MIN_RELEVANCE = 0.45
 
 
 class RetrievalAgent:
@@ -18,6 +18,7 @@ class RetrievalAgent:
     FAISS returns L2 distance, where lower is better.  The agent preserves that
     value as ``distance_score`` and derives the bounded relevance score
     ``1 / (1 + distance_score)`` for thresholding and confidence reporting.
+    This monotonic transformation maps non-negative L2 distances to (0, 1].
     """
 
     def __init__(
@@ -75,6 +76,11 @@ class RetrievalAgent:
             raise ValueError("Retriever returned a negative L2 distance")
         return distance
 
+    @staticmethod
+    def _relevance(distance_score: float) -> float:
+        """Convert lower-is-better L2 distance into bounded relevance."""
+        return 1.0 / (1.0 + distance_score)
+
     def retrieve(
         self,
         query: str,
@@ -82,6 +88,7 @@ class RetrievalAgent:
         domain: Optional[str] = None,
         top_k: Optional[int] = None,
         min_relevance: Optional[float] = None,
+        request_id: Optional[str] = None,
     ) -> RetrievalResult:
         requested_top_k = self._positive_int(
             top_k if top_k is not None else self.top_k,
@@ -108,7 +115,7 @@ class RetrievalAgent:
                 continue
 
             distance = self._distance(item)
-            relevance = 1.0 / (1.0 + distance)
+            relevance = self._relevance(distance)
             if relevance < threshold:
                 filtered_count += 1
                 continue

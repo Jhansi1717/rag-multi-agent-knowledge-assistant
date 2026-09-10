@@ -129,23 +129,26 @@ python evaluation/evaluate_retrieval.py
 
 ## M2 Evaluation
 
-The final M2 end-to-end run used the 19 corpus queries plus two explicit
-ambiguous routing cases. The source corpus contains Software Engineering and
-Hospital Administration queries. Unavailable-information labels remain factual
-for classification; evidence availability is measured at retrieval and response
-stages.
+The final M2 end-to-end run used 20 selected queries: four factual, four
+procedural, four comparative, four ambiguous, and four
+unavailable-information queries. The source corpus contains Software
+Engineering and Hospital Administration queries. Unavailable-information
+labels remain factual for classification; evidence availability is measured at
+retrieval and response stages.
 
 | Metric | Actual result |
 |---|---:|
 | Classification accuracy | 100.0% |
-| Retrieval success | 5.9% |
-| Grounded-response rate | 0.0% |
-| Citation coverage | 0.0% |
+| Retrieval evidence success | 100.0% |
+| Grounded-response rate | 100.0% |
+| Citation coverage | 100.0% |
 | Ambiguous detection rate | 100.0% |
-| No-evidence handling rate | 100.0% |
-| End-to-end completion rate | 100.0% |
+| No-evidence handling rate | 75.0% |
+| End-to-end success rate | 95.0% |
 
-The run used `mock_context_echo` because no OpenAI API key was configured.
+The evaluation ran the real M2 agents and orchestrator and mocked only the
+external OpenAI chat-completions API. No automated LLM factual-accuracy claim
+is made for the mocked output.
 Therefore these results do not measure real LLM factual accuracy or readability.
 The query-level records, request IDs, agent sequence, ranked/filtered evidence,
 confidence values, and response fields are in

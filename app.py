@@ -100,6 +100,7 @@ class RetrieveResponse(BaseModel):
     confidence_level: str
     citations: list[CitationResponse]
     retrieval: Optional[RetrievalResponse] = None
+    results: list[dict[str, Any]] = Field(default_factory=list)
     no_information_found: bool
     clarification_needed: bool
     error: Optional[ErrorResponse] = None
@@ -186,6 +187,17 @@ def _retrieval_payload(response: ResponseResult) -> Optional[dict[str, Any]]:
 
 
 def _response_payload(query: str, response: ResponseResult) -> dict[str, Any]:
+    legacy_results = [
+        {
+            "text": hit.text,
+            "document_name": hit.filename,
+            "document_id": hit.document_id,
+            "chunk_id": hit.chunk_id,
+            "similarity_score": hit.distance_score,
+            "relevance_score": hit.relevance_score,
+        }
+        for hit in response.retrieval_hits
+    ]
     return {
         "request_id": response.request_id,
         "query": query,
@@ -197,6 +209,7 @@ def _response_payload(query: str, response: ResponseResult) -> dict[str, Any]:
         "confidence_level": response.confidence_level,
         "citations": _citation_payload(response),
         "retrieval": _retrieval_payload(response),
+        "results": legacy_results,
         "no_information_found": response.no_information_found,
         "clarification_needed": response.status == "clarification_needed",
         "error": (

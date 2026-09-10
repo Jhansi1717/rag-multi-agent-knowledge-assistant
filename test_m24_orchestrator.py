@@ -158,6 +158,97 @@ def test_response_generation_failure_returns_structured_error():
     assert result.error.code == "RESPONSE_GENERATION_ERROR"
 
 
+def test_empty_or_all_filtered_retrieval_is_handed_to_response_agent():
+    retrieval_result = RetrievalResult(
+        query="input",
+        query_type="factual",
+        top_k=3,
+        results=[],
+        filtered_count=3,
+        retrieval_confidence=0.0,
+        sufficient_evidence=False,
+        no_relevant_information=True,
+    )
+    retrieval = FakeRetrieval(retrieval_result)
+    response = FakeResponse()
+
+    result = orchestrator(retrieval=retrieval, response=response).handle("input")
+
+    assert response.calls
+    assert response.calls[0][1] == []
+    assert response.calls[0][2]["confidence"] == 0.0
+    assert result.retrieval.filtered_count == 3
+    assert result.retrieval.no_relevant_information is True
+
+
+def test_response_generation_receives_original_query_and_structured_retrieval():
+    retrieval = FakeRetrieval()
+    response = FakeResponse()
+
+    orchestrator(retrieval=retrieval, response=response).handle("  Original query  ")
+
+    query, hits, kwargs = response.calls[0]
+    assert query == "  Original query  "
+    assert hits is retrieval.results.results
+    assert kwargs["query_type"] == "factual"
+    assert kwargs["confidence"] == retrieval.results.retrieval_confidence
+    assert kwargs["request_id"]
+    assert retrieval.calls[0][1]["request_id"] == kwargs["request_id"]
+
+
+def test_malformed_retrieval_output_returns_structured_error():
+    class MalformedRetrieval:
+        def retrieve(self, query, **kwargs):
+            return {"results": []}
+
+    result = orchestrator(
+        retrieval=MalformedRetrieval(),
+        response=FakeResponse(),
+    ).handle("input", request_id="req-malformed-retrieval")
+
+    assert result.status == "error"
+    assert result.request_id == "req-malformed-retrieval"
+    assert result.error.code == "RETRIEVAL_ERROR"
+
+
+def test_malformed_response_output_returns_structured_error():
+    class MalformedResponse:
+        def generate(self, query, hits, **kwargs):
+            return {"answer": "not a ResponseResult"}
+
+    result = orchestrator(
+        retrieval=FakeRetrieval(),
+        response=MalformedResponse(),
+    ).handle("input", request_id="req-malformed-response")
+
+    assert result.status == "error"
+    assert result.request_id == "req-malformed-response"
+    assert result.error.code == "RESPONSE_GENERATION_ERROR"
+
+
+def test_invalid_understanding_output_returns_structured_error():
+    class InvalidUnderstanding:
+        def analyze(self, query):
+            return QueryUnderstandingResult(
+                query=query,
+                normalized_query=query,
+                query_type="factual",
+                classification_confidence=0.9,
+                routing="INVALID",
+            )
+
+    result = Orchestrator(
+        vector_store=object(),
+        understanding=InvalidUnderstanding(),
+        retrieval=FakeRetrieval(),
+        response_gen=FakeResponse(),
+    ).handle("input", request_id="req-invalid-routing")
+
+    assert result.status == "error"
+    assert result.request_id == "req-invalid-routing"
+    assert result.error.code == "CLASSIFICATION_ERROR"
+
+
 def test_classification_failure_returns_structured_error():
     class BrokenUnderstanding:
         def analyze(self, query):

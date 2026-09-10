@@ -1,4 +1,4 @@
-# System Architecture — M1 + M2
+# System Architecture — M1 COMPLETED + M2 COMPLETED
 
 This document describes the implemented system. M1 provides ingestion, embeddings,
 FAISS storage, and retrieval. M2 adds deterministic query understanding, retrieval
@@ -13,12 +13,12 @@ flowchart TB
     EMBED["EmbeddingProvider\nall-MiniLM-L6-v2"]
     STORE["VectorStore\nFAISS IndexFlatL2 + metadata"]
     QUERY["User Query"]
-    QU["QueryUnderstandingAgent\n4 categories + routing"]
-    RET["RetrievalAgent\nTop-K, ranking, filtering"]
+    QU["Query Understanding\n4 categories + routing"]
+    RET["Retrieval\nTop-K, ranking, filtering"]
     SR["SemanticRetriever"]
-    RG["ResponseGenerationAgent\ncontext-only LLM prompt"]
+    RG["Response Generation\ncontext-only LLM prompt"]
     FINAL["Final Response\nanswer, citations, confidence, request_id"]
-    CLAR["Clarification-needed response"]
+    CLAR["M3 Clarification route"]
 
     UPLOAD --> PIPE --> EMBED --> STORE
     QUERY --> QU
@@ -26,7 +26,7 @@ flowchart TB
     RET --> SR --> STORE
     STORE --> SR --> RET
     RET --> RG --> FINAL
-    QU -->|"CLARIFICATION"| CLAR
+    QU -->|"ambiguous"| CLAR
 ```
 
 ### Query path
@@ -43,14 +43,14 @@ Response Generation
 Final Response
 ```
 
-Ambiguous queries take the implemented clarification route:
+Ambiguous queries take the implemented M2 boundary toward M3:
 
 ```text
 Ambiguous
     ↓
 Clarification route
     ↓
-M3 and later: richer multi-turn clarification
+M3 clarification
 ```
 
 The current route returns a structured clarification-needed response. It does not

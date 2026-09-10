@@ -101,8 +101,16 @@ Returns `{"status": "ok"}`.
 The final M2 evaluation uses the two existing domains and records stage-level
 outputs in [`../evaluation/m2_end_to_end_results.json`](../evaluation/m2_end_to_end_results.json).
 The report is in [`../evaluation/m2_end_to_end_results.md`](../evaluation/m2_end_to_end_results.md).
-When no OpenAI key is configured, the evaluator uses a labeled deterministic
-mock; no automated LLM factual-accuracy claim is made.
+The evaluator runs the real understanding, retrieval, response-generation, and
+orchestration stages. It mocks only the external OpenAI chat-completions API;
+no automated LLM factual-accuracy claim is made for that mocked output.
+
+The recorded 20-query M2 evaluation reported 100.0% classification accuracy,
+100.0% retrieval evidence success for available queries, 100.0% grounded
+response rate, 100.0% citation coverage, 75.0% unavailable-information
+handling, 100.0% ambiguous detection, and 95.0% outcome-based end-to-end
+success. One unavailable-information query retrieved sufficient-looking
+evidence and was retained as an observed limitation.
 
 ## Future: M3 and later
 

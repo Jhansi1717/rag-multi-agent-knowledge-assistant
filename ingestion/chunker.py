@@ -228,7 +228,7 @@ def _chunk_segments(
         seg_text = segment["text"]
         seg_tokens = _segment_token_count(segment, encoder)
 
-        if seg_tokens > max_chunk_size:
+        if seg_tokens > chunk_size or seg_tokens > max_chunk_size:
             if current_segments:
                 flush(current_segments)
                 current_segments = []

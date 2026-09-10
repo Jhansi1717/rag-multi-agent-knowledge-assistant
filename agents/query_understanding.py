@@ -14,6 +14,8 @@ _PROCEDURAL_PATTERNS = (
     r"\bwhat are the steps\b",
     r"\bprocedure\b",
     r"\bprotocol\b",
+    r"\bworkflow\b",
+    r"\bprocess\b",
     r"\bfollow\b",
     r"\bfive rights\b",
     r"\bmedication administration\b",
@@ -26,6 +28,8 @@ _COMPARATIVE_PATTERNS = (
     r"\bversus\b",
     r"\bvs\.?\b",
     r"\bcontrast\b",
+    r"\bsimilarities\b",
+    r"\bsimilarities and differences\b",
 )
 
 _SOFTWARE_KEYWORDS = (

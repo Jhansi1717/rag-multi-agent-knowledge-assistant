@@ -158,7 +158,11 @@ class VectorStore:
             if idx == -1:
                 continue
             meta = entries[str(idx)].copy()
-            meta["similarity_score"] = float(dist)
+            # FAISS IndexFlatL2 returns a distance: lower values are better.
+            # Keep the legacy key for existing M1 callers, but expose the
+            # unambiguous name for M2 retrieval normalization.
+            meta["distance_score"] = float(dist)
+            meta["similarity_score"] = meta["distance_score"]
             results.append(meta)
 
         return results

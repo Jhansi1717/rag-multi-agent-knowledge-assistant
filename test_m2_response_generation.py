@@ -73,6 +73,7 @@ def test_context_supported_factual_query_is_grounded():
     assert result.grounded is True
     assert result.no_information_found is False
     assert len(llm.calls) == 1
+    assert "metadata=" in llm.calls[0]["messages"][0]["content"]
 
 
 def test_context_supported_procedural_query_is_grounded():
@@ -93,6 +94,7 @@ def test_context_supported_procedural_query_is_grounded():
     )
 
     assert result.grounded is True
+    assert result.no_information_found is False
     assert result.query_type == "procedural"
     assert "numbered steps" in llm.calls[0]["messages"][0]["content"]
 
@@ -124,6 +126,7 @@ def test_context_supported_comparative_query_is_grounded():
 
     assert result.grounded is True
     assert result.query_type == "comparative"
+    assert result.no_information_found is False
     assert "structured comparison" in llm.calls[0]["messages"][0]["content"]
 
 
@@ -191,6 +194,14 @@ def test_citations_use_actual_document_and_chunk_metadata():
     assert citation.excerpt == "The standard oral dose is 650 mg."
 
 
+def test_openai_configuration_comes_only_from_environment(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv("OPENAI_MODEL", "test-model")
+    agent = ResponseGenerationAgent()
+    assert agent._api_key == "test-key"
+    assert agent._llm_model == "test-model"
+
+
 def test_llm_failure_returns_controlled_error_response():
     result = ResponseGenerationAgent(llm_client=FailingLLM()).generate(
         "What is supported by the guide?",
@@ -211,3 +222,75 @@ def test_llm_failure_returns_controlled_error_response():
     assert result.grounded is False
     assert result.answer == ResponseGenerationAgent.NO_INFORMATION_MESSAGE
     assert result.citations == []
+
+
+def test_grounding_prompt_and_response_contract():
+    llm = MockLLM("The context supports the documented answer.")
+    result = ResponseGenerationAgent(llm_client=llm).generate(
+        "What is documented?",
+        [
+            retrieval_hit(
+                "The documented answer is in the guide.",
+                "guide.txt",
+                "guide-0",
+                "guide-doc",
+                "Software Engineering",
+            )
+        ],
+        intent="factual",
+        confidence=0.8,
+    )
+
+    prompt = llm.calls[0]["messages"][0]["content"]
+    assert "ONLY the supplied context" in prompt
+    assert "outside knowledge" in prompt
+    assert "invent" in prompt
+    assert "insufficient" in prompt
+    assert result.answer
+    assert result.query_type == "factual"
+    assert result.confidence == 0.8
+    assert result.confidence_level == "HIGH"
+    assert result.grounded is True
+    assert result.no_information_found is False
+    assert result.citations[0].filename == "guide.txt"
+
+
+def test_empty_retrieved_chunk_is_insufficient_evidence():
+    llm = MockLLM("must not be used")
+    empty_hit = retrieval_hit("", "empty.txt", "empty-0", "empty-doc", "Software Engineering")
+
+    result = ResponseGenerationAgent(llm_client=llm).generate(
+        "What is documented?",
+        [empty_hit],
+        intent="factual",
+        confidence=0.8,
+    )
+
+    assert result.no_information_found is True
+    assert result.grounded is False
+    assert result.citations == []
+    assert llm.calls == []
+
+
+def test_low_confidence_does_not_present_context_as_supported():
+    llm = MockLLM("must not be used")
+    result = ResponseGenerationAgent(llm_client=llm).generate(
+        "What is documented?",
+        [
+            retrieval_hit(
+                "A weakly related passage.",
+                "weak.txt",
+                "weak-0",
+                "weak-doc",
+                "Software Engineering",
+                relevance_score=0.2,
+            )
+        ],
+        intent="factual",
+        confidence=0.2,
+    )
+
+    assert result.no_information_found is True
+    assert result.grounded is False
+    assert result.citations == []
+    assert llm.calls == []

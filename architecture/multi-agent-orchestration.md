@@ -1,4 +1,4 @@
-# M2 Orchestration
+# M2 Orchestration — M2 COMPLETED
 
 The implementation is a fixed sequential pipeline of plain Python classes. It
 does not use LangChain, LangGraph, autonomous planning, or agent-to-agent
@@ -18,7 +18,8 @@ sequenceDiagram
     O->>Q: analyze(query)
     Q-->>O: QueryUnderstandingResult
     alt routing = CLARIFICATION
-        O-->>U: clarification-needed ResponseResult
+        O-->>U: clarification-needed response
+        Note right of U: M3 clarification is future
     else routing = RETRIEVAL
         O->>R: retrieve(normalized_query, query_type, domain, top_k)
         R-->>O: RetrievalResult

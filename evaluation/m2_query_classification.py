@@ -30,10 +30,7 @@ def load_queries() -> list[dict[str, Any]]:
 
 
 def expected_type(query: dict[str, Any]) -> str:
-    """Map legacy unavailable labels to factual for M2.1 classification."""
     label = str(query.get("query_type") or query.get("category") or "").lower()
-    if label in {"unavailable-information", "unavailable_information", "unavailable"}:
-        return "factual"
     if label not in QUERY_TYPES:
         raise ValueError(f"Unsupported expected query type: {label!r}")
     return label
@@ -43,8 +40,9 @@ def render_markdown(summary: dict[str, Any], results: list[dict[str, Any]]) -> s
     lines = [
         "# M2.1 Query Classification Results",
         "",
-        "Unavailable-information labels in the M1 corpus are evaluated as factual "
-        "classification cases; evidence availability is determined by retrieval.",
+        "The official M2.1 corpus uses only factual, procedural, comparative, "
+        "and ambiguous classification labels. Evidence availability is determined "
+        "by retrieval, not classification.",
         "",
         "## Summary",
         "",

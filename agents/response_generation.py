@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
+import json
 from typing import Any, Optional
 
 from agents.models import Citation, QueryType, ResponseResult, RetrievalHit
@@ -74,10 +75,18 @@ class ResponseGenerationAgent:
                 f"[{index}] source_filename={hit.filename!r} "
                 f"chunk_id={hit.chunk_id!r} "
                 f"relevance_score={hit.relevance_score:.6f} "
-                f"distance_score={hit.distance_score:.6f}\n"
+                f"distance_score={hit.distance_score:.6f} "
+                f"metadata={json.dumps(hit.metadata, ensure_ascii=False, sort_keys=True)}\n"
                 f"{hit.text.strip()}"
             )
         return "\n\n".join(parts)
+
+    @staticmethod
+    def _has_usable_context(hits: list[RetrievalHit]) -> bool:
+        return any(
+            hit.text.strip() and (hit.filename or hit.chunk_id)
+            for hit in hits
+        )
 
     def _build_prompts(
         self,
@@ -94,9 +103,11 @@ class ResponseGenerationAgent:
         system = (
             "Answer using ONLY the supplied context passages. Do not use outside "
             "knowledge or fill gaps with assumptions. If the context is inadequate, "
-            f"respond exactly with: {self.NO_INFORMATION_MESSAGE} "
+            f"state that there is insufficient evidence and respond exactly with: "
+            f"{self.NO_INFORMATION_MESSAGE} "
             "Preserve source references using only the supplied source_filename values. "
-            "Never invent citations, URLs, document names, or facts. "
+            "Use only supplied metadata= fields for source attribution. Never invent "
+            "citations, URLs, document names, or facts. "
             f"{style}"
         )
         user = f"Context:\n{self._build_context(hits)}\n\nQuestion: {query}"
@@ -125,13 +136,18 @@ class ResponseGenerationAgent:
         confidence: float = 0.0,
         domain: str | None = None,
         query_type: Optional[QueryType] = None,
+        request_id: Optional[str] = None,
     ) -> ResponseResult:
         normalized_type = self._query_type(query_type or intent)
         confidence = max(0.0, min(1.0, float(confidence)))
         citations = [self._citation(hit) for hit in hits[:3]]
         level = self._confidence_level(confidence)
 
-        if not hits or confidence < self.LOW_CONFIDENCE_THRESHOLD:
+        if (
+            not hits
+            or not self._has_usable_context(hits)
+            or confidence < self.LOW_CONFIDENCE_THRESHOLD
+        ):
             return ResponseResult(
                 answer=self.NO_INFORMATION_MESSAGE,
                 citations=[],

@@ -1,14 +1,8 @@
-"""Run the final M2 end-to-end evaluation without changing the corpus.
-
-When OPENAI_API_KEY is unavailable, a deterministic context-echo client is used
-so the orchestration and contract metrics can still be measured. Those outputs
-are explicitly marked as mocked and are not used to claim LLM factual quality.
-"""
+"""Run the M2 end-to-end evaluation with only the external LLM mocked."""
 
 from __future__ import annotations
 
 import json
-import os
 import sys
 import uuid
 from pathlib import Path
@@ -29,16 +23,19 @@ from agents.query_understanding import QueryUnderstandingAgent
 from vector_store.store import VectorStore
 
 
-class ContextEchoClient:
-    """Offline test double matching the OpenAI chat-completions call shape."""
+class MockOpenAIClient:
+    """Mock only the OpenAI chat-completions boundary used by the real agent."""
 
     class _Completions:
         def create(self, *, messages: list[dict[str, str]], **_: Any) -> Any:
+            question = messages[1]["content"].rsplit("\n\nQuestion:", 1)[-1].strip()
             context = messages[1]["content"].split("\n\nQuestion:", 1)[0]
-            text = context.split("\n", 3)[-1].strip()
 
             class Message:
-                content = f"According to the supplied context: {text}"
+                content = (
+                    f"Based only on the retrieved context, the answer to "
+                    f"{question!r} is supported by these passages:\n{context}"
+                )
 
             class Choice:
                 message = Message()
@@ -48,35 +45,56 @@ class ContextEchoClient:
 
             return Result()
 
-    chat = type("Chat", (), {"completions": _Completions()})()
+    def __init__(self) -> None:
+        self.chat = type("Chat", (), {"completions": self._Completions()})()
 
 
 def load_queries() -> list[dict[str, Any]]:
     payload = json.loads(QUERIES_PATH.read_text(encoding="utf-8"))
-    queries = payload["queries"] if isinstance(payload, dict) else payload
-    if not isinstance(queries, list):
+    source = payload["queries"] if isinstance(payload, dict) else payload
+    if not isinstance(source, list):
         raise ValueError("Evaluation corpus must contain a query list")
-    # The source corpus has no ambiguous examples; these additions test routing
-    # while leaving the source dataset untouched.
-    return [
-        *queries,
-        {
-            "query_id": "se_ambiguous_01",
-            "domain": "Software Engineering",
-            "category": "ambiguous",
-            "query": "That one?",
-            "expected_document": "NONE",
-            "expected_keywords": [],
-        },
-        {
-            "query_id": "ha_ambiguous_01",
-            "domain": "Hospital Administration",
-            "category": "ambiguous",
-            "query": "What about it?",
-            "expected_document": "NONE",
-            "expected_keywords": [],
-        },
-    ]
+
+    selected: list[dict[str, Any]] = []
+    categories = {
+        "factual": lambda item: (
+            item.get("category") == "factual"
+            and item.get("expected_document") != "NONE"
+        ),
+        "procedural": lambda item: item.get("category") == "procedural",
+        "comparative": lambda item: item.get("category") == "comparative",
+        "ambiguous": lambda item: item.get("category") == "ambiguous",
+        "unavailable-information": lambda item: (
+            item.get("category") == "factual"
+            and item.get("expected_document") == "NONE"
+        ),
+    }
+    for category, predicate in categories.items():
+        matches = [item for item in source if predicate(item)]
+        chosen = [
+            item
+            for domain in ("Software Engineering", "Hospital Administration")
+            for item in matches
+            if item.get("domain") == domain
+        ]
+        chosen = chosen[:2] + [
+            item
+            for item in matches
+            if item.get("domain") == "Hospital Administration"
+        ][:2]
+        if len(chosen) != 4:
+            raise ValueError(
+                f"Evaluation corpus needs four {category} queries across both domains"
+            )
+        for item in chosen:
+            normalized = dict(item)
+            normalized["category"] = category
+            selected.append(normalized)
+
+    domains = {"Software Engineering", "Hospital Administration"}
+    if {item.get("domain") for item in selected} != domains:
+        raise ValueError("Selected evaluation queries must cover both domains")
+    return selected
 
 
 def expected_class(category: str) -> str:
@@ -96,15 +114,10 @@ def hit_payload(hit: RetrievalHit) -> dict[str, Any]:
     }
 
 
-def make_orchestrator(vector_store: VectorStore) -> tuple[Orchestrator, str]:
-    if os.getenv("OPENAI_API_KEY"):
-        return Orchestrator(vector_store), "openai"
-    return (
-        Orchestrator(
-            vector_store,
-            response_gen=ResponseGenerationAgent(llm_client=ContextEchoClient()),
-        ),
-        "mock_context_echo",
+def make_orchestrator(vector_store: VectorStore) -> Orchestrator:
+    return Orchestrator(
+        vector_store,
+        response_gen=ResponseGenerationAgent(llm_client=MockOpenAIClient()),
     )
 
 
@@ -114,63 +127,63 @@ def run() -> dict[str, Any]:
         meta_path=str(META_PATH),
     )
     vector_store.load()
-    orchestrator, generation_mode = make_orchestrator(vector_store)
+    orchestrator = make_orchestrator(vector_store)
     understanding = QueryUnderstandingAgent()
     records: list[dict[str, Any]] = []
 
     for item in load_queries():
         query = str(item["query"])
-        expected = str(item["category"])
+        expected_category = str(item["category"])
         parsed = understanding.analyze(query)
+        request_id = f"m2-eval-{item['query_id']}-{uuid.uuid4()}"
         response = orchestrator.handle(
             query,
             session_id="m2-evaluation",
             top_k=3,
-            request_id=f"m2-eval-{item['query_id']}-{uuid.uuid4()}",
+            request_id=request_id,
         )
         retrieval = response.retrieval
-        available_expected = expected != "unavailable-information"
-        classification_expected = expected_class(expected)
+        expected_available = expected_category not in {
+            "ambiguous",
+            "unavailable-information",
+        }
+        expected_document = item.get("expected_document")
+        expected_evidence = bool(
+            retrieval
+            and expected_document
+            and expected_document != "NONE"
+            and any(
+                hit.filename == expected_document
+                for hit in retrieval.results
+            )
+        )
         records.append(
             {
                 "query_id": item["query_id"],
                 "domain": item["domain"],
                 "query": query,
-                "expected_type": classification_expected,
-                "expected_category": expected,
-                "expected_document": item.get("expected_document"),
+                "expected_category": expected_category,
+                "expected_type": expected_class(expected_category),
+                "expected_document": expected_document,
                 "query_understanding": {
                     "predicted_type": parsed.query_type,
                     "classification_confidence": parsed.classification_confidence,
                     "routing": parsed.routing,
                 },
                 "retrieval": {
-                    "top_k": retrieval.top_k if retrieval is not None else None,
+                    "top_k": retrieval.top_k if retrieval else None,
                     "ranked_evidence": (
                         [hit_payload(hit) for hit in retrieval.results]
-                        if retrieval is not None
+                        if retrieval
                         else []
-                    ),
-                    "filtered_evidence": (
-                        [hit_payload(hit) for hit in retrieval.results]
-                        if retrieval is not None
-                        else []
-                    ),
-                    "filtered_count": (
-                        retrieval.filtered_count if retrieval is not None else None
                     ),
                     "retrieval_confidence": (
-                        retrieval.retrieval_confidence if retrieval is not None else 0.0
+                        retrieval.retrieval_confidence if retrieval else 0.0
                     ),
                     "sufficient_evidence": (
-                        retrieval.sufficient_evidence if retrieval is not None else False
+                        retrieval.sufficient_evidence if retrieval else False
                     ),
-                    "no_relevant_information": (
-                        retrieval.no_relevant_information
-                        if retrieval is not None
-                        else True
-                    ),
-                    "expected_information_available": available_expected,
+                    "expected_evidence_found": expected_evidence,
                 },
                 "response": {
                     "answer": response.answer,
@@ -180,6 +193,7 @@ def run() -> dict[str, Any]:
                             "chunk_id": citation.chunk_id,
                             "filename": citation.filename,
                             "document_id": citation.document_id,
+                            "excerpt": citation.excerpt,
                         }
                         for citation in response.citations
                     ],
@@ -187,83 +201,86 @@ def run() -> dict[str, Any]:
                     "confidence_level": response.confidence_level,
                     "no_information_found": response.no_information_found,
                 },
-                "orchestration": {
-                    "completed_successfully": response.error is None,
-                    "request_id": response.request_id,
-                    "agent_sequence": (
-                        ["QueryUnderstandingAgent", "RetrievalAgent", "ResponseGenerationAgent"]
-                        if parsed.routing == "RETRIEVAL"
-                        else ["QueryUnderstandingAgent"]
-                    ),
-                    "status": response.status,
-                },
+                "final_status": response.status,
+                "request_id": response.request_id,
             }
         )
 
     total = len(records)
-    classification_correct = sum(
-        r["query_understanding"]["predicted_type"] == r["expected_type"]
-        for r in records
-    )
-    available_records = [
-        r for r in records if r["expected_category"] != "unavailable-information"
+    classified = [
+        record["query_understanding"]["predicted_type"]
+        == record["expected_type"]
+        for record in records
     ]
-    ambiguous_records = [r for r in records if r["expected_category"] == "ambiguous"]
-    citation_eligible = [
-        r
-        for r in records
-        if r["expected_category"] not in {"ambiguous", "unavailable-information"}
+    available = [r for r in records if r["expected_category"] in {
+        "factual", "procedural", "comparative"
+    } and r["expected_document"] != "NONE"]
+    ambiguous = [r for r in records if r["expected_category"] == "ambiguous"]
+    unavailable = [
+        r for r in records if r["expected_category"] == "unavailable-information"
+    ]
+    grounded = [r for r in available if r["retrieval"]["expected_evidence_found"]]
+    cited = [r for r in grounded if r["response"]["citations"]]
+    no_evidence = [
+        r for r in unavailable if r["response"]["no_information_found"]
+    ]
+    successful = [
+        r for r in records
+        if (
+            (r["expected_category"] == "ambiguous"
+             and r["final_status"] == "clarification_needed")
+            or (
+                r["expected_category"] == "unavailable-information"
+                and r["response"]["no_information_found"]
+            )
+            or (
+                r in available
+                and r["retrieval"]["expected_evidence_found"]
+                and r["response"]["grounded"]
+                and bool(r["response"]["citations"])
+                and r["final_status"] == "answered"
+            )
+        )
     ]
     summary = {
         "total_queries": total,
-        "classification_accuracy": classification_correct / total if total else 0.0,
-        "retrieval_success": sum(
-            r["retrieval"]["sufficient_evidence"] for r in available_records
-        ) / len(available_records) if available_records else 0.0,
-        "grounded_response_rate": sum(
-            r["response"]["grounded"] for r in available_records
-        ) / len(available_records) if available_records else 0.0,
-        "citation_coverage": sum(
-            bool(r["response"]["citations"]) for r in citation_eligible
-        ) / len(citation_eligible) if citation_eligible else 0.0,
-        "ambiguous_detection_rate": sum(
-            r["query_understanding"]["predicted_type"] == "ambiguous"
-            and r["query_understanding"]["routing"] == "CLARIFICATION"
-            for r in ambiguous_records
-        ) / len(ambiguous_records) if ambiguous_records else 0.0,
-        "no_evidence_handling_rate": sum(
-            r["response"]["no_information_found"]
-            for r in records
-            if r["expected_category"] == "unavailable-information"
-        ) / max(
-            1,
-            sum(r["expected_category"] == "unavailable-information" for r in records),
+        "classification_accuracy": sum(classified) / total if total else 0.0,
+        "retrieval_evidence_success": (
+            sum(r["retrieval"]["expected_evidence_found"] for r in available)
+            / len(available) if available else 0.0
         ),
-        "end_to_end_success_rate": sum(
-            r["orchestration"]["completed_successfully"] for r in records
-        ) / total if total else 0.0,
+        "grounded_response_rate": (
+            sum(r["response"]["grounded"] for r in grounded) / len(grounded)
+            if grounded else 0.0
+        ),
+        "citation_coverage": len(cited) / len(grounded) if grounded else 0.0,
+        "no_evidence_handling_rate": (
+            len(no_evidence) / len(unavailable) if unavailable else 0.0
+        ),
+        "end_to_end_success_rate": len(successful) / total if total else 0.0,
+        "ambiguous_detection_rate": (
+            sum(
+                r["query_understanding"]["predicted_type"] == "ambiguous"
+                and r["query_understanding"]["routing"] == "CLARIFICATION"
+                for r in ambiguous
+            ) / len(ambiguous) if ambiguous else 0.0
+        ),
     }
     output = {
         "methodology": {
             "source_corpus": str(QUERIES_PATH.relative_to(ROOT)),
-            "corpus_queries": 19,
-            "added_ambiguous_queries": 2,
-            "domains": ["Software Engineering", "Hospital Administration"],
+            "query_count": total,
+            "queries_per_category": 4,
+            "domains": sorted({r["domain"] for r in records}),
             "top_k": 3,
-            "unavailable_labels_are_factual_for_classification": True,
-            "generation_mode": generation_mode,
-            "llm_quality_claim": "No automated factual-accuracy claim; manual review is required.",
-            "manual_review_sample": [
-                {
-                    "query_id": r["query_id"],
-                    "correctness": None,
-                    "relevance": None,
-                    "groundedness": None,
-                    "readability": None,
-                    "review_status": "pending_human_review",
-                }
-                for r in records[:4]
-            ],
+            "generation_path": (
+                "Real QueryUnderstandingAgent -> RetrievalAgent -> "
+                "ResponseGenerationAgent -> Orchestrator; only the external "
+                "OpenAI chat-completions API is mocked."
+            ),
+            "llm_quality_claim": (
+                "No automated factual-accuracy claim is made for mocked LLM output."
+            ),
         },
         "summary": summary,
         "queries": records,
@@ -282,13 +299,11 @@ def render_markdown(output: dict[str, Any]) -> str:
         "",
         "## Methodology",
         "",
-        f"- Source corpus: `{methodology['source_corpus']}` ({methodology['corpus_queries']} queries).",
+        f"- Source corpus: `{methodology['source_corpus']}`.",
+        f"- Query count: {methodology['query_count']} (four per category).",
         "- Domains: Software Engineering and Hospital Administration.",
-        "- Added two explicit ambiguous cases because the source corpus contains none.",
-        "- `unavailable-information` is treated as factual for classification; evidence availability is measured separately.",
-        f"- Generation mode: `{methodology['generation_mode']}`.",
-        "- No automated factual-accuracy claim is made for LLM output.",
-        "- Manual review fields are included for a small sample and remain pending human review.",
+        f"- Generation path: {methodology['generation_path']}",
+        f"- {methodology['llm_quality_claim']}",
         "",
         "## Actual metrics",
         "",
@@ -303,23 +318,25 @@ def render_markdown(output: dict[str, Any]) -> str:
             "",
             "## Query-level results",
             "",
-            "| ID | Domain | Expected | Predicted | Routing | Evidence | Grounded | Citations | Status |",
-            "|---|---|---|---|---|---:|---:|---:|---|",
+            "| ID | Domain | Expected | Predicted | Confidence | Routing | Evidence | Grounded | Citations | No information | Status |",
+            "|---|---|---|---|---:|---|---|---|---|---|---|",
         ]
     )
     for record in output["queries"]:
+        understanding = record["query_understanding"]
+        retrieval = record["retrieval"]
+        response = record["response"]
         lines.append(
-            f"| {record['query_id']} | {record['domain']} | {record['expected_category']} | "
-            f"{record['query_understanding']['predicted_type']} | "
-            f"{record['query_understanding']['routing']} | "
-            f"{'yes' if record['retrieval']['sufficient_evidence'] else 'no'} | "
-            f"{'yes' if record['response']['grounded'] else 'no'} | "
-            f"{'yes' if record['response']['citations'] else 'no'} | "
-            f"{record['orchestration']['status']} |"
+            f"| {record['query_id']} | {record['domain']} | "
+            f"{record['expected_category']} | {understanding['predicted_type']} | "
+            f"{understanding['classification_confidence']:.3f} | "
+            f"{understanding['routing']} | "
+            f"{'yes' if retrieval['expected_evidence_found'] else 'no'} | "
+            f"{'yes' if response['grounded'] else 'no'} | "
+            f"{'yes' if response['citations'] else 'no'} | "
+            f"{'yes' if response['no_information_found'] else 'no'} | "
+            f"{record['final_status']} |"
         )
-    lines.extend(["", "## Manual review sample", ""])
-    for item in methodology["manual_review_sample"]:
-        lines.append(f"- `{item['query_id']}`: pending human review.")
     return "\n".join(lines) + "\n"
 
 

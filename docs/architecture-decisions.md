@@ -148,13 +148,12 @@ flowchart LR
     ORCH --> RA["RetrievalAgent\nretrieval_agent.py"]
     RA --> SR["SemanticRetriever\nretriever.py"]
     ORCH --> RG["ResponseGeneration\nresponse_generation.py"]
-    ORCH --> CLAR["Clarification\nclarification.py"]
     ORCH <--> MEM["Memory\nmemory.py"]
 ```
 
 **Why no framework:**
 - Deterministic behaviour — no LLM non-determinism
-- Fully testable — 41 unit + integration tests, all passing
+- Covered by focused unit and integration tests for the implemented M1 and M2 stages
 - No external dependencies or framework versioning issues
 - Intent routing is rule-based regex, not probabilistic
 

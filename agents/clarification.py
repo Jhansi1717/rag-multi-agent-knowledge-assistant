@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
-from agents.models import ParsedQuery, RetrievalHit
+from agents.models import QueryUnderstandingResult, RetrievalHit
 
 
 class ClarificationAgent:
@@ -12,22 +12,18 @@ class ClarificationAgent:
 
     def should_clarify(
         self,
-        parsed: ParsedQuery,
+        parsed: QueryUnderstandingResult,
         hits: List[RetrievalHit],
         confidence: float,
         low_confidence_threshold: float,
     ) -> bool:
-        if parsed.is_ambiguous:
+        if parsed.query_type == "ambiguous":
             return True
-        if not hits:
-            return parsed.intent != "unavailable"
-        if confidence < low_confidence_threshold and parsed.intent != "unavailable":
-            return True
-        return False
+        return not hits or confidence < low_confidence_threshold
 
     def generate_question(
         self,
-        parsed: ParsedQuery,
+        parsed: QueryUnderstandingResult,
         hits: Optional[List[RetrievalHit]] = None,
     ) -> str:
         if not parsed.domain:
@@ -35,14 +31,14 @@ class ClarificationAgent:
                 "Could you specify whether your question relates to "
                 "Software Engineering or Hospital Administration?"
             )
-        if parsed.is_ambiguous:
+        if parsed.query_type == "ambiguous":
             return (
                 f"Your question seems broad. Could you provide more detail about "
                 f"what you need regarding {parsed.domain}?"
             )
         if not hits:
             return (
-                f"I could not find relevant documents for your {parsed.intent} question. "
+                f"I could not find relevant documents for your {parsed.query_type} question. "
                 "Could you rephrase or add more context?"
             )
         return (

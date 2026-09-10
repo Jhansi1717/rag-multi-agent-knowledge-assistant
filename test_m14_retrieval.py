@@ -134,6 +134,29 @@ class TestQueryUnderstanding:
         )
         assert parsed.query_type == "factual"
         assert parsed.routing == "RETRIEVAL"
+        assert parsed.classification_confidence > 0
+        assert parsed.reason
+
+    @pytest.mark.parametrize(
+        "query,expected_type,domain",
+        [
+            (
+                "What workflow should staff follow during patient admission?",
+                "procedural",
+                "Hospital Administration",
+            ),
+            (
+                "What are the similarities and differences between REST and SOAP?",
+                "comparative",
+                "Software Engineering",
+            ),
+        ],
+    )
+    def test_explicit_m2_cues(self, query, expected_type, domain):
+        result = QueryUnderstandingAgent().analyze(query)
+        assert result.query_type == expected_type
+        assert result.routing == "RETRIEVAL"
+        assert result.domain == domain
 
 
 class TestOrchestrator:

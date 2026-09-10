@@ -61,7 +61,7 @@
     {
       "query_id": "se_q08",
       "domain": "Software Engineering",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "What is the annual revenue of TechCorp International?",
       "expected_document": "NONE",
       "expected_keywords": []
@@ -69,7 +69,7 @@
     {
       "query_id": "se_q09",
       "domain": "Software Engineering",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "Who invented the Python programming language and in what year?",
       "expected_document": "NONE",
       "expected_keywords": []
@@ -141,7 +141,7 @@
     {
       "query_id": "ha_q09",
       "domain": "Hospital Administration",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "What was Riverside General Hospital's total revenue last fiscal year?",
       "expected_document": "NONE",
       "expected_keywords": []
@@ -149,8 +149,72 @@
     {
       "query_id": "ha_q10",
       "domain": "Hospital Administration",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "Who won the Nobel Prize in Medicine this year?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "se_q10",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "Which protocol?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "se_q11",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "What about that?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "se_q12",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "That process?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "se_q13",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "Can you explain this?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "ha_q11",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "Which protocol?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "ha_q12",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "What about that?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "ha_q13",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "That process?",
+      "expected_document": "NONE",
+      "expected_keywords": []
+    },
+    {
+      "query_id": "ha_q14",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "Can you explain this?",
       "expected_document": "NONE",
       "expected_keywords": []
     }

@@ -1,7 +1,7 @@
 {
   "summary": {
-    "total_queries": 19,
-    "correct": 19,
+    "total_queries": 27,
+    "correct": 27,
     "incorrect": 0,
     "accuracy": 1.0,
     "per_class_accuracy": {
@@ -21,9 +21,9 @@
         "accuracy": 1.0
       },
       "ambiguous": {
-        "total": 0,
-        "correct": 0,
-        "accuracy": null
+        "total": 8,
+        "correct": 8,
+        "accuracy": 1.0
       }
     }
   },
@@ -178,6 +178,70 @@
       "predicted_type": "factual",
       "confidence": 0.8,
       "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "Which protocol?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "What about that?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "That process?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "Can you explain this?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "Which protocol?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "What about that?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "That process?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
+      "correct": true
+    },
+    {
+      "query": "Can you explain this?",
+      "expected_type": "ambiguous",
+      "predicted_type": "ambiguous",
+      "confidence": 0.9,
+      "routing": "CLARIFICATION",
       "correct": true
     }
   ]

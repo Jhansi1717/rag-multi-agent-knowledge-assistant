@@ -88,6 +88,15 @@ class Orchestrator:
             domain=parsed.domain,
         )
 
+    @staticmethod
+    def _validate_understanding(parsed: QueryUnderstandingResult) -> None:
+        if parsed.query_type not in {"factual", "procedural", "comparative", "ambiguous"}:
+            raise ValueError("QueryUnderstandingAgent returned invalid query type")
+        if parsed.routing not in {"RETRIEVAL", "CLARIFICATION"}:
+            raise ValueError("QueryUnderstandingAgent returned invalid routing")
+        if not parsed.normalized_query:
+            raise ValueError("QueryUnderstandingAgent returned an empty normalized query")
+
     def handle(
         self,
         query: str,
@@ -100,6 +109,7 @@ class Orchestrator:
             parsed = self.understanding.analyze(query)
             if not isinstance(parsed, QueryUnderstandingResult):
                 raise TypeError("QueryUnderstandingAgent returned malformed output")
+            self._validate_understanding(parsed)
         except Exception as exc:
             return self._error_response(
                 correlation_id,
@@ -120,6 +130,7 @@ class Orchestrator:
                 query_type=parsed.query_type,
                 domain=parsed.domain,
                 top_k=top_k or self.top_k,
+                request_id=correlation_id,
             )
             if not isinstance(retrieval, RetrievalResult):
                 raise TypeError("RetrievalAgent returned malformed output")
@@ -134,12 +145,13 @@ class Orchestrator:
 
         try:
             response = self.response_gen.generate(
-                parsed.normalized_query,
+                query,
                 retrieval.results,
                 intent=parsed.query_type,
                 query_type=parsed.query_type,
                 confidence=retrieval.retrieval_confidence,
                 domain=parsed.domain,
+                request_id=correlation_id,
             )
             if not isinstance(response, ResponseResult):
                 raise TypeError("ResponseGenerationAgent returned malformed output")

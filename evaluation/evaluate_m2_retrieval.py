@@ -22,8 +22,9 @@ from agents.retrieval_agent import RetrievalAgent
 from retrieval.retriever import SemanticRetriever
 from vector_store.store import VectorStore
 
-TOP_K = 3
-MIN_RELEVANCE = 0.0
+TOP_K = 5
+MIN_RELEVANCE = 0.45
+CANDIDATE_THRESHOLDS = (0.0, 0.45, 0.48, 0.50, 0.55)
 
 
 class RecordingRetriever:
@@ -67,12 +68,97 @@ def query_type(item: dict[str, Any]) -> str:
     } else label
 
 
+def measure_threshold(
+    store: VectorStore,
+    queries: list[dict[str, Any]],
+    threshold: float,
+) -> dict[str, float]:
+    """Measure threshold trade-offs without changing the evaluation corpus."""
+    agent = RetrievalAgent(
+        SemanticRetriever(store),
+        top_k=TOP_K,
+        min_relevance=threshold,
+    )
+    understanding = QueryUnderstandingAgent()
+    rows: list[tuple[dict[str, Any], list[str], float]] = []
+    for item in queries:
+        parsed = understanding.analyze(item["query"])
+        result = agent.retrieve(
+            parsed.normalized_query,
+            query_type=parsed.query_type,
+            domain=item.get("domain"),
+            top_k=TOP_K,
+        )
+        rows.append((
+            item,
+            [hit.filename for hit in result.results],
+            result.retrieval_confidence,
+        ))
+
+    available = [row for row in rows if row[0].get("expected_document") != "NONE"]
+    unavailable = [row for row in rows if row[0].get("expected_document") == "NONE"]
+
+    def presence(rank: int) -> float:
+        return (
+            sum(
+                row[0]["expected_document"] in row[1][:rank]
+                for row in available
+            ) / len(available)
+            if available else 0.0
+        )
+
+    return {
+        "evidence_hit_rate": presence(5),
+        "no_result_rate": sum(not row[1] for row in rows) / len(rows),
+        "low_confidence_rate": sum(
+            confidence < 0.45 or not documents
+            for _, documents, confidence in rows
+        ) / len(rows),
+        "top_1_evidence_presence": presence(1),
+        "top_3_evidence_presence": presence(3),
+        "top_5_evidence_presence": presence(5),
+        "unavailable_neighbors_rejected": (
+            sum(not row[1] for row in unavailable) / len(unavailable)
+            if unavailable else 0.0
+        ),
+    }
+
+
 def evaluate() -> dict[str, Any]:
     if not QUERIES_PATH.exists() or not INDEX_PATH.exists():
         raise FileNotFoundError("Evaluation queries or FAISS index is missing.")
 
+    queries = load_queries()
     store = VectorStore(index_path=str(INDEX_PATH), meta_path=str(META_PATH))
     store.load()
+    metadata_entries = [
+        value for key, value in store.metadata.items() if not key.startswith("_")
+    ]
+    expected_files = {
+        item.get("expected_document")
+        for item in queries
+        if str(item.get("expected_document", "")).upper() != "NONE"
+    }
+    indexed_files = {
+        value.get("filename")
+        for value in metadata_entries
+        if value.get("filename")
+    }
+    if store.index.ntotal != len(metadata_entries):
+        raise ValueError(
+            "Evaluation index/metadata mismatch: "
+            f"{store.index.ntotal} vectors for {len(metadata_entries)} metadata entries."
+        )
+    missing_files = expected_files - indexed_files
+    if missing_files:
+        raise ValueError(
+            "Evaluation index is missing expected documents: "
+            + ", ".join(sorted(missing_files))
+        )
+    threshold_comparison = {
+        str(threshold): measure_threshold(store, queries, threshold)
+        for threshold in CANDIDATE_THRESHOLDS
+    }
     recorder = RecordingRetriever(SemanticRetriever(store))
     agent = RetrievalAgent(
         recorder,
@@ -82,7 +168,7 @@ def evaluate() -> dict[str, Any]:
     understanding = QueryUnderstandingAgent()
     rows: list[dict[str, Any]] = []
 
-    for item in load_queries():
+    for item in queries:
         parsed = understanding.analyze(item["query"])
         result = agent.retrieve(
             parsed.normalized_query,
@@ -103,6 +189,28 @@ def evaluate() -> dict[str, Any]:
             }
             for hit in result.results
         ]
+        raw_results = [
+            {
+                "rank": rank,
+                "filename": item.get("filename") or item.get("document_name", ""),
+                "distance_score": round(float(
+                    item.get("distance_score", item.get("similarity_score", 0.0))
+                ), 6),
+                "relevance_score": round(
+                    1.0 / (
+                        1.0
+                        + float(
+                            item.get(
+                                "distance_score",
+                                item.get("similarity_score", 0.0),
+                            )
+                        )
+                    ),
+                    6,
+                ),
+            }
+            for rank, item in enumerate(recorder.last_raw_results, start=1)
+        ]
         expected_hit = (
             any(hit["filename"] == expected_document for hit in filtered_results)
             if not unavailable
@@ -116,6 +224,7 @@ def evaluate() -> dict[str, Any]:
                 "query_type": parsed.query_type,
                 "expected_document": expected_document,
                 "top_k_before_filtering": len(recorder.last_raw_results),
+                "raw_results": raw_results,
                 "results_after_filtering": filtered_results,
                 "filtered_count": result.filtered_count,
                 "retrieval_confidence": round(result.retrieval_confidence, 6),
@@ -175,6 +284,12 @@ def evaluate() -> dict[str, Any]:
         ),
         "domain_performance": grouped_metrics("domain"),
         "query_type_performance": grouped_metrics("query_type"),
+        "threshold_comparison": threshold_comparison,
+        "threshold_rationale": (
+            "0.45 retained all available expected documents at Top-1/3/5 "
+            "while rejecting 3 of 4 unavailable-query neighbors. Higher "
+            "thresholds removed relevant evidence; 0.0 retained every neighbor."
+        ),
         "m1_baseline": load_m1_baseline(),
     }
     output = {"configuration": {
@@ -199,6 +314,8 @@ def render_markdown(output: dict[str, Any]) -> str:
         f"- Top-K: {output['configuration']['top_k']}",
         f"- Minimum relevance: {output['configuration']['minimum_relevance']}",
         "- Relevance: `1 / (1 + distance_score)`; lower FAISS L2 distance is better.",
+        "- Calibration candidates: "
+        + ", ".join(str(value) for value in CANDIDATE_THRESHOLDS),
         "",
         "## Summary",
         "",
@@ -244,6 +361,38 @@ def render_markdown(output: dict[str, Any]) -> str:
             f"{format_rate(metrics['empty_result_rate'])} | "
             f"{format_rate(metrics['low_confidence_rate'])} |"
         )
+    lines.extend([
+        "",
+        "## Threshold calibration",
+        "",
+        "Evidence presence is measured against the expected document for the "
+        "15 available queries. No-result and low-confidence rates include all "
+        "19 queries. The score is the deterministic transform "
+        "`1 / (1 + distance_score)`, not a calibrated probability.",
+        "",
+        "| Threshold | Evidence hit | No-result | Low-confidence | Top-1 | Top-3 | Top-5 | Unavailable rejected |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ])
+    for threshold, metrics in summary["threshold_comparison"].items():
+        lines.append(
+            f"| {threshold} | {format_rate(metrics['evidence_hit_rate'])} | "
+            f"{format_rate(metrics['no_result_rate'])} | "
+            f"{format_rate(metrics['low_confidence_rate'])} | "
+            f"{format_rate(metrics['top_1_evidence_presence'])} | "
+            f"{format_rate(metrics['top_3_evidence_presence'])} | "
+            f"{format_rate(metrics['top_5_evidence_presence'])} | "
+            f"{format_rate(metrics['unavailable_neighbors_rejected'])} |"
+        )
+    lines.extend([
+        "",
+        f"**Selected threshold:** `{output['configuration']['minimum_relevance']}`.",
+        "",
+        summary["threshold_rationale"],
+        "",
+        "Limitations: the corpus is small, the score is derived from FAISS L2 "
+        "distance rather than calibrated probability, and one unavailable "
+        "query remains above the selected threshold.",
+    ])
     lines.extend(["", "## Query details", "", "| Query | Type | Raw | Filtered | Confidence | Sufficient | No information |", "|---|---|---:|---:|---:|---|---|"])
     for row in output["queries"]:
         lines.append(

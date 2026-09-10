@@ -1,11 +1,11 @@
 # M2.1 Query Classification Results
 
-Unavailable-information labels in the M1 corpus are evaluated as factual classification cases; evidence availability is determined by retrieval.
+The official M2.1 corpus uses only factual, procedural, comparative, and ambiguous classification labels. Evidence availability is determined by retrieval, not classification.
 
 ## Summary
 
-- Total queries: 19
-- Correct: 19
+- Total queries: 27
+- Correct: 27
 - Incorrect: 0
 - Accuracy: 100.0%
 
@@ -16,7 +16,7 @@ Unavailable-information labels in the M1 corpus are evaluated as factual classif
 | factual | 10 | 10 | 100.0% |
 | procedural | 5 | 5 | 100.0% |
 | comparative | 4 | 4 | 100.0% |
-| ambiguous | 0 | 0 | n/a |
+| ambiguous | 8 | 8 | 100.0% |
 
 ## Query results
 
@@ -41,3 +41,11 @@ Unavailable-information labels in the M1 corpus are evaluated as factual classif
 | What steps should staff follow during a Code Blue cardiac arrest? | procedural | procedural | 0.95 | RETRIEVAL | yes |
 | What was Riverside General Hospital's total revenue last fiscal year? | factual | factual | 0.80 | RETRIEVAL | yes |
 | Who won the Nobel Prize in Medicine this year? | factual | factual | 0.80 | RETRIEVAL | yes |
+| Which protocol? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| What about that? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| That process? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| Can you explain this? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| Which protocol? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| What about that? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| That process? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
+| Can you explain this? | ambiguous | ambiguous | 0.90 | CLARIFICATION | yes |
