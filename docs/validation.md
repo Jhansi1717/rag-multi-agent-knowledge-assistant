@@ -74,7 +74,9 @@ FAISS `IndexFlatL2` always returns the closest vector — it cannot express "not
 | ha_q09 | Hospital fiscal revenue | patient_admission_policy.pdf | 0.87 | Hospital keyword overlap — highest false confidence |
 | ha_q10 | Nobel Prize in Medicine | nursing_procedures.docx | 1.90 | Medicine keyword pulled nursing doc |
 
-**Fix planned for M2:** Add an L2 distance threshold (≈1.35) so queries with no close match return `status="unavailable"` before entering response generation.
+**M2 behavior:** Retrieval preserves L2 distance, derives relevance as
+`1/(1+distance)`, applies configurable filtering, and returns structured
+no-evidence state when evidence is insufficient.
 
 ---
 
@@ -121,7 +123,30 @@ python evaluation/evaluate_retrieval.py
 
 | Limitation | Impact | Planned Fix |
 |---|---|---|
-| No similarity threshold | Unavailable queries return a wrong document | L2 distance gate in M2 |
-| 1 chunk per document | Hit@k artificially easy on small corpus | Full multi-chunk eval in M2 |
-| Extractive answers only | No LLM — answers are copied spans | OpenAI/local LLM in M2 |
-| `POST /upload` uses `simple_chunk()` | API path not evaluated | Wire to full pipeline in M2 |
+| Short evaluation documents | Hit@k can be easier than production corpora | Evaluate larger multi-chunk corpora in future |
+| No calibrated confidence | Application confidence is heuristic | Calibration study is future work |
+| No cross-encoder reranking | Dense ranking only | Reranking is future work |
+
+## M2 Evaluation
+
+The final M2 end-to-end run used the 19 corpus queries plus two explicit
+ambiguous routing cases. The source corpus contains Software Engineering and
+Hospital Administration queries. Unavailable-information labels remain factual
+for classification; evidence availability is measured at retrieval and response
+stages.
+
+| Metric | Actual result |
+|---|---:|
+| Classification accuracy | 100.0% |
+| Retrieval success | 5.9% |
+| Grounded-response rate | 0.0% |
+| Citation coverage | 0.0% |
+| Ambiguous detection rate | 100.0% |
+| No-evidence handling rate | 100.0% |
+| End-to-end completion rate | 100.0% |
+
+The run used `mock_context_echo` because no OpenAI API key was configured.
+Therefore these results do not measure real LLM factual accuracy or readability.
+The query-level records, request IDs, agent sequence, ranked/filtered evidence,
+confidence values, and response fields are in
+[`../evaluation/m2_end_to_end_results.json`](../evaluation/m2_end_to_end_results.json).

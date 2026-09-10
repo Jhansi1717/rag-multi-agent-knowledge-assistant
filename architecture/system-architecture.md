@@ -1,152 +1,78 @@
-# System Architecture — RAG Multi-Agent Knowledge Assistant
+# System Architecture — M1 + M2
 
-> **Milestone 1 complete.** This document describes what is **live today** versus what is planned for future milestones.
-> 🟢 Green = Implemented in M1 · 🟡 Yellow = Planned (Future Milestone)
+This document describes the implemented system. M1 provides ingestion, embeddings,
+FAISS storage, and retrieval. M2 adds deterministic query understanding, retrieval
+normalization, grounded response generation, and fixed-sequence orchestration.
 
----
-
-## 1. End-to-End System Overview
+## Implemented: M1 + M2
 
 ```mermaid
 flowchart TB
-    subgraph CLIENT["🟡 Client Layer  (Future Milestone)"]
-        UI["Web UI / Chat Interface"]
-        STT["Web Speech API — STT\n(browser SpeechRecognition)"]
-        TTS["Web Speech API — TTS\n(browser SpeechSynthesis)"]
-    end
+    UPLOAD["POST /upload"]
+    PIPE["ingestion/pipeline.py\nvalidate → extract → clean → chunk"]
+    EMBED["EmbeddingProvider\nall-MiniLM-L6-v2"]
+    STORE["VectorStore\nFAISS IndexFlatL2 + metadata"]
+    QUERY["User Query"]
+    QU["QueryUnderstandingAgent\n4 categories + routing"]
+    RET["RetrievalAgent\nTop-K, ranking, filtering"]
+    SR["SemanticRetriever"]
+    RG["ResponseGenerationAgent\ncontext-only LLM prompt"]
+    FINAL["Final Response\nanswer, citations, confidence, request_id"]
+    CLAR["Clarification-needed response"]
 
-    subgraph API_LAYER["🟢 API Layer  (Implemented — M1)"]
-        API["FastAPI\nGET /health  ·  POST /upload  ·  POST /retrieve"]
-    end
-
-    subgraph AGENT_LAYER["🟢 Agent + Orchestration Layer  (Implemented — M1.4)"]
-        ORCH["Orchestrator\norchestrator.py"]
-        MEM["Conversation Memory Agent\nmemory.py  ·  last-N-turn context"]
-        QU["Query Understanding Agent\nquery_understanding.py\nClassifies: factual · procedural · comparative · unavailable"]
-        CLAR["Clarification Agent\nclarification.py\nTriggered when query is vague or confidence is low"]
-        RA["Retrieval Agent\nretrieval_agent.py\nWraps SemanticRetriever · normalises hits"]
-        RG["Response Generation Agent\nresponse_generation.py\nExtractive answer + [source: …] citations"]
-    end
-
-    subgraph RETRIEVAL["🟢 Retrieval Core  (Implemented — M1)"]
-        SR["SemanticRetriever\nretrieval/retriever.py"]
-        VS["VectorStore\nvector_store/store.py"]
-        VDB[("FAISS IndexFlatL2\n+ metadata.json")]
-    end
-
-    UI --> STT
-    STT -->|"text query"| API
-    API --> ORCH
-    ORCH <--> MEM
-    ORCH --> QU
-    QU -->|"ParsedQuery"| ORCH
-    ORCH -->|"ambiguous or low-confidence"| CLAR
-    CLAR -->|"clarifying question"| API
-    ORCH -->|"normalized query"| RA
-    RA --> SR
-    SR --> VS
-    VS --> VDB
-    VDB --> VS
-    VS --> RA
-    RA -->|"RetrievalHit[]"| ORCH
-    ORCH --> RG
-    RG -->|"AgentResponse\nanswer + citations + status"| API
-    API --> TTS
-    TTS --> UI
-
-    style CLIENT fill:#fff3cd,stroke:#856404,color:#000
-    style API_LAYER fill:#d4edda,stroke:#155724,color:#000
-    style AGENT_LAYER fill:#d4edda,stroke:#155724,color:#000
-    style RETRIEVAL fill:#d4edda,stroke:#155724,color:#000
+    UPLOAD --> PIPE --> EMBED --> STORE
+    QUERY --> QU
+    QU -->|"RETRIEVAL"| RET
+    RET --> SR --> STORE
+    STORE --> SR --> RET
+    RET --> RG --> FINAL
+    QU -->|"CLARIFICATION"| CLAR
 ```
 
-> **Note on the API path today:** `POST /retrieve` calls `SemanticRetriever` directly (no agents).
-> `POST /upload` uses character-based simple chunking.
-> The full agent pipeline is invoked via the Python `Orchestrator` class in the test and evaluation scripts.
+### Query path
 
----
-
-## 2. Layer Responsibilities
-
-| Layer | Key Components | M1 Status |
-|---|---|---|
-| **Client** | Web UI, Web Speech API STT/TTS | 🟡 Future Milestone |
-| **API** | FastAPI, Pydantic, `/health` `/upload` `/retrieve` | 🟢 Implemented |
-| **Orchestrator** | `Orchestrator` class, intent routing, confidence gating | 🟢 Implemented (M1.4) |
-| **Agents** | QueryUnderstanding, Clarification, Retrieval, ResponseGeneration, Memory | 🟢 Implemented (M1.4) |
-| **Retrieval Core** | `SemanticRetriever`, `VectorStore`, FAISS L2 search | 🟢 Implemented |
-| **Persistence** | `data/evaluation/index.faiss`, `data/evaluation/metadata.json` | 🟢 Implemented |
-| **LLM Generation** | OpenAI / local model grounded answers | 🟡 Future Milestone |
-| **Managed Vector DB** | Qdrant / Pinecone | 🟡 Future Milestone |
-
----
-
-## 3. What Is Implemented in M1
-
-| Capability | Module | Notes |
-|---|---|---|
-| PDF extraction | `ingestion/pdf_extractor.py` | Page text + page metadata, no OCR |
-| DOCX extraction | `ingestion/docx_extractor.py` | Paragraphs + tables |
-| TXT extraction | `ingestion/txt_extractor.py` | UTF-8, line count metadata |
-| CSV extraction | `ingestion/csv_extractor.py` | Semantic row-text formatting |
-| Text cleaning | `ingestion/cleaner.py` | Whitespace normalisation |
-| Token-aware chunking | `ingestion/chunker.py` | tiktoken, 650 tokens, 75 overlap |
-| Provenance validation | `ingestion/validator.py` | Chunk ↔ Document linkage check |
-| Embeddings | `vector_store/embeddings.py` | all-MiniLM-L6-v2 · 384-d · CPU |
-| Vector indexing | `vector_store/store.py` | FAISS IndexFlatL2 · duplicate-source guard |
-| Semantic retrieval | `retrieval/retriever.py` | Top-K L2 search |
-| Query Understanding | `agents/query_understanding.py` | Rule-based, no LLM |
-| Retrieval Agent | `agents/retrieval_agent.py` | Normalises FAISS hits to `RetrievalHit` |
-| Response Generation | `agents/response_generation.py` | Extractive excerpts + citations |
-| Clarification Agent | `agents/clarification.py` | Question when vague/low-confidence |
-| Conversation Memory | `agents/memory.py` | Last-N turns per session |
-| Orchestrator | `agents/orchestrator.py` | Coordinates full pipeline |
-| REST API | `app.py` | FastAPI, 3 endpoints |
-| Evaluation harness | `evaluation/evaluate_retrieval.py` | Hit@1/3/5, failure analysis |
-
----
-
-## 4. Storage
-
-| Artifact | Path | Built by |
-|---|---|---|
-| Evaluation FAISS index | `data/evaluation/index.faiss` | `index_evaluation_corpus.py` |
-| Evaluation metadata | `data/evaluation/metadata.json` | `index_evaluation_corpus.py` |
-| Evaluation queries | `data/evaluation/queries.json` | `generate_evaluation_corpus.py` |
-| Upload FAISS index | `data/index.faiss` | `POST /upload` or `index_samples.py` |
-| Upload metadata | `data/metadata.json` | `POST /upload` or `index_samples.py` |
-| Uploaded originals | `data/uploads/{uuid}.ext` | `POST /upload` |
-
----
-
-## 5. Voice Boundary (Future)
-
-The backend is **text-only**. Speech conversion lives entirely in the browser.
-
-```mermaid
-flowchart LR
-    MIC["🎤 User Speech"]
-    STT["Web Speech API\nSpeechRecognition\n(browser only)"]
-    API["FastAPI Backend\nPOST /retrieve or /chat"]
-    TTS["Web Speech API\nSpeechSynthesis\n(browser only)"]
-    SPEAKER["🔊 Spoken Answer"]
-
-    MIC --> STT --> API --> TTS --> SPEAKER
-
-    style STT fill:#fff3cd,stroke:#856404
-    style TTS fill:#fff3cd,stroke:#856404
-    style API fill:#d4edda,stroke:#155724
+```text
+User Query
+    ↓
+Query Understanding
+    ↓
+Retrieval
+    ↓
+Response Generation
+    ↓
+Final Response
 ```
 
----
+Ambiguous queries take the implemented clarification route:
 
-## 6. Related Documents
+```text
+Ambiguous
+    ↓
+Clarification route
+    ↓
+M3 and later: richer multi-turn clarification
+```
 
-| Document | Purpose |
+The current route returns a structured clarification-needed response. It does not
+perform autonomous planning, tool selection, multi-agent negotiation, or M3
+multi-turn clarification.
+
+## API
+
+| Endpoint | Implemented behavior |
 |---|---|
-| [`ingestion-flow.md`](ingestion-flow.md) | Step-by-step ingestion pipeline |
-| [`rag-query-flow.md`](rag-query-flow.md) | Query → evidence → answer pipeline |
-| [`multi-agent-orchestration.md`](multi-agent-orchestration.md) | Agent routing logic |
-| [`../docs/data-models.md`](../docs/data-models.md) | Schema field definitions |
-| [`../docs/tech-stack.md`](../docs/tech-stack.md) | Technology choices and rationale |
-| [`../docs/architecture-decisions.md`](../docs/architecture-decisions.md) | Decision log |
+| `GET /health` | Liveness response |
+| `POST /upload` | Full ingestion pipeline and FAISS/metadata persistence |
+| `POST /retrieve` | Full M2 orchestrator |
+| `POST /chat` | Compatibility alias for the M2 orchestrator |
+
+`POST /retrieve` returns query type, classification confidence, answer, confidence
+level, citations, retrieval summary/results, no-information state, clarification
+state, and request ID. Internal API keys and provider objects are not exposed.
+
+## Future: M3 and later
+
+- Multi-turn clarification and conversational disambiguation
+- Hybrid sparse+dense retrieval and cross-encoder reranking
+- Web UI and browser voice features
+- Managed vector databases and deployment infrastructure

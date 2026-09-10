@@ -1,176 +1,110 @@
-# RAG Query Flow — From User Question to Answer
+# RAG Query Flow — M1 + M2
 
-A query enters as plain text, passes through the agent pipeline, and returns
-a sourced, ranked answer. The whole pipeline runs **without an LLM** in M1 —
-answers are extractive (copied from retrieved chunks).
+## Implemented flow
 
-> 🟢 All steps below are **implemented in M1.4** unless marked otherwise.
-
----
-
-## 1. High-Level Flow
-
-```
-User query (text)
-  │
-  ▼
-① API Layer             — FastAPI POST /retrieve or Python Orchestrator.handle()
-  │
-  ▼
-② Conversation Memory   — load last-N turns for this session_id (context enrichment)
-  │
-  ▼
-③ Query Understanding   — classify intent, detect domain, flag ambiguity
-  │
-  ├─── ambiguous? ──────► Clarification Agent → return clarifying question
-  │
-  ├─── intent = unavailable? ──► return "not available in knowledge base"
-  │
-  ▼
-④ Retrieval Agent       — embed query, search FAISS, return ranked hits
-  │
-  ├─── no hits or low confidence? ──► Clarification Agent → return clarifying question
-  │
-  ▼
-⑤ Response Generation   — select best excerpt per hit, build answer + citations
-  │
-  ▼
-⑥ Memory               — store this turn (query + answer) for session continuity
-  │
-  ▼
-AgentResponse           — {answer, citations, status, intent, confidence, hits}
+```text
+User Query
+  ↓
+FastAPI POST /retrieve or POST /chat
+  ↓
+QueryUnderstandingAgent
+  ↓
+RetrievalAgent → SemanticRetriever → VectorStore → FAISS
+  ↓
+ResponseGenerationAgent
+  ↓
+Final ResponseResult
 ```
 
----
+For an ambiguous query:
 
-## 2. Detailed Sequence Diagram
-
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API as FastAPI<br/>(app.py)
-    participant ORCH as Orchestrator<br/>(orchestrator.py)
-    participant MEM as ConversationMemory<br/>(memory.py)
-    participant QU as QueryUnderstanding<br/>(query_understanding.py)
-    participant RA as RetrievalAgent<br/>(retrieval_agent.py)
-    participant SR as SemanticRetriever<br/>(retriever.py)
-    participant VS as VectorStore<br/>(store.py)
-    participant RG as ResponseGeneration<br/>(response_generation.py)
-    participant CLAR as ClarificationAgent<br/>(clarification.py)
-
-    Client->>API: POST /retrieve {query, top_k}
-    API->>ORCH: Orchestrator.handle(query, session_id)
-    ORCH->>MEM: get_recent_context(session_id)
-    MEM-->>ORCH: context string (last turn)
-    ORCH->>QU: analyze(query)
-    QU-->>ORCH: ParsedQuery {intent, domain, is_ambiguous}
-
-    alt intent == "unavailable"
-        ORCH-->>API: AgentResponse {status="unavailable"}
-    else is_ambiguous
-        ORCH->>CLAR: generate_question(parsed)
-        CLAR-->>API: AgentResponse {status="clarification_needed"}
-    else normal path
-        ORCH->>RA: retrieve(normalized_query, top_k, domain)
-        RA->>SR: retrieve(query, top_k)
-        SR->>VS: search(query, top_k)
-        VS->>VS: encode_query() → 384-d vector
-        VS-->>SR: [{text, filename, score, chunk_id, …}]
-        SR-->>RA: raw results list
-        RA-->>ORCH: RetrievalHit[] {rank, score, text, filename, chunk_id}
-
-        alt low confidence or no hits
-            ORCH->>CLAR: generate_question(parsed, hits)
-            CLAR-->>API: AgentResponse {status="clarification_needed"}
-        else sufficient evidence
-            ORCH->>RG: generate(query, hits, intent, confidence)
-            RG-->>ORCH: AgentResponse {answer, citations[], status="answered"}
-            ORCH->>MEM: add_turn(session_id, query, answer)
-            ORCH-->>API: AgentResponse
-        end
-    end
-
-    API-->>Client: {answer, citations, status, confidence, hits}
+```text
+QueryUnderstandingAgent
+  ↓ routing = CLARIFICATION
+Structured clarification-needed response
+  ↓
+M3 and later: multi-turn clarification
 ```
 
----
+## Query understanding
 
-## 3. Intent Classification
+Classification is deterministic and rule-based:
 
-The `QueryUnderstandingAgent` classifies every query into one of four intents using rule-based pattern matching (no LLM).
-
-| Intent | Pattern Examples | Orchestrator Action |
+| Category | Classification cues | Routing |
 |---|---|---|
-| **factual** | "How many…", "What is…", "When does…" | Retrieve → Generate answer |
-| **procedural** | "How do I…", "What are the steps to…", "How to…" | Retrieve → Generate procedure |
-| **comparative** | "Difference between…", "Compare…", "vs", "contrast" | Retrieve ≥2 docs → Compare |
-| **unavailable** | "revenue", "CEO", "fiscal year", "Nobel Prize" | Short-circuit → "not available" |
+| `factual` | definitions, facts, properties, values | `RETRIEVAL` |
+| `procedural` | how, steps, workflow, protocol, process | `RETRIEVAL` |
+| `comparative` | compare, versus, difference, contrast | `RETRIEVAL` |
+| `ambiguous` | too short, vague, unresolved referent | `CLARIFICATION` |
 
----
+`unavailable-information` is a factual query condition, not a fifth category.
+Classification confidence is deterministic application-level evidence, not a
+calibrated probability.
 
-## 4. Confidence Gating
+## Retrieval
 
-The orchestrator uses a normalised confidence score to decide whether evidence is good enough to answer.
+The retrieval agent requests configurable Top-K results from the existing FAISS
+retriever, ranks by L2 distance, and applies optional relevance filtering.
+FAISS distance is preserved as `distance_score`; relevance is derived as
+`1 / (1 + distance_score)`. Metadata is preserved in every hit. Empty stores,
+empty results, and all-filtered results produce `sufficient_evidence=false` and
+`no_relevant_information=true`.
 
+## Response generation
+
+When configured, the response agent calls the OpenAI chat-completions client with
+a prompt that requires:
+
+1. only supplied context;
+2. no outside knowledge or invented facts;
+3. explicit insufficient-evidence handling;
+4. factual, procedural, or comparative style appropriate to the query;
+5. citations derived only from retrieved metadata.
+
+Confidence levels are `HIGH`, `MEDIUM`, or `LOW` according to the documented
+application policy. They are not calibrated probabilities. No-information
+responses are returned when evidence is absent or below the configured policy.
+
+## API contract
+
+### `POST /upload`
+
+Accepts PDF, DOCX, TXT, and CSV multipart files. The route uses:
+
+```text
+validate → extract → clean → chunk → embed → FAISS + metadata
 ```
-confidence = 1 / (1 + top1_L2_distance)
 
-if confidence < 0.45  →  trigger ClarificationAgent
-if top1_L2_distance > 1.35  →  treat as insufficient evidence
+### `POST /retrieve`
+
+Request:
+
+```json
+{
+  "query": "What are the steps to create a feature branch?",
+  "top_k": 3,
+  "session_id": "optional"
+}
 ```
 
-> This is a heuristic — no calibrated threshold exists yet. M2 will add a tuned similarity gate.
+Response includes `request_id`, `query`, `query_type`,
+`classification_confidence`, `status`, `answer`, `confidence`,
+`confidence_level`, `citations`, retrieval summary/results,
+`no_information_found`, and `clarification_needed`.
 
----
+### `GET /health`
 
-## 5. Agent Outputs
+Returns `{"status": "ok"}`.
 
-| Agent | Output type | Key fields |
-|---|---|---|
-| `QueryUnderstandingAgent` | `ParsedQuery` | `intent`, `domain`, `normalized_query`, `is_ambiguous` |
-| `RetrievalAgent` | `RetrievalHit[]` | `rank`, `score`, `text`, `filename`, `chunk_id`, `document_id` |
-| `ResponseGenerationAgent` | `AgentResponse` | `answer`, `citations[]`, `status="answered"` |
-| `ClarificationAgent` | `AgentResponse` | `answer` = clarifying question, `status="clarification_needed"` |
-| `Orchestrator` | `AgentResponse` | Fully populated response with all fields |
+## Evaluation
 
----
+The final M2 evaluation uses the two existing domains and records stage-level
+outputs in [`../evaluation/m2_end_to_end_results.json`](../evaluation/m2_end_to_end_results.json).
+The report is in [`../evaluation/m2_end_to_end_results.md`](../evaluation/m2_end_to_end_results.md).
+When no OpenAI key is configured, the evaluator uses a labeled deterministic
+mock; no automated LLM factual-accuracy claim is made.
 
-## 6. API Endpoints
+## Future: M3 and later
 
-| Endpoint | Method | Input | Output | Notes |
-|---|---|---|---|---|
-| `/health` | GET | — | `{"status": "ok"}` | Liveness check |
-| `/upload` | POST | multipart file | `{document_id, chunk_count, metadata}` | Simple-chunk path (demo) |
-| `/retrieve` | POST | `{query, top_k}` | `{query, results[]}` | Direct retrieval, no agents |
-| `/chat` | POST | `{query, session_id}` | `AgentResponse` | 🟡 Future Milestone |
-
-> **Important:** `POST /retrieve` bypasses the agent pipeline — it calls `SemanticRetriever` directly.
-> The full agent pipeline (`Orchestrator`) is used in `evaluation/` scripts and `test_m14_retrieval.py`.
-
----
-
-## 7. Evaluation Results (M1)
-
-Tested against `data/evaluation/queries.json` — 19 queries across 2 domains.
-
-| Metric | Excl. unavailable (15 queries) | Incl. unavailable (19 queries) |
-|---|---|---|
-| **Hit@1** | **100.0%** | 78.95% |
-| **Hit@3** | **100.0%** | 78.95% |
-| **Hit@5** | **100.0%** | 78.95% |
-
-The 4 unavailable-information queries correctly return `status="unavailable"` and are excluded from Hit@ scores (FAISS always returns a nearest neighbour — there is no relevant document to rank).
-
-Run: `python evaluation/evaluate_retrieval.py`
-
----
-
-## 8. Future Improvements (M2+)
-
-| Limitation | Planned Fix |
-|---|---|
-| No similarity threshold — unavailable queries still get a nearest neighbour | Tuned L2 threshold → explicit "not found" |
-| Extractive answers, not LLM-grounded | OpenAI / local LLM in `ResponseGenerationAgent` |
-| `POST /retrieve` bypasses agents | Wire to `Orchestrator` |
-| No hybrid retrieval | BM25 + dense retrieval |
-| No cross-encoder re-ranking | Re-rank Top-10 candidates |
+Multi-turn clarification, hybrid retrieval, reranking, UI, voice, and managed
+vector services are not part of the implemented M1+M2 backend.

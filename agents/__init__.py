@@ -6,9 +6,19 @@ from agents.retrieval_agent import RetrievalAgent
 from agents.response_generation import ResponseGenerationAgent
 from agents.clarification import ClarificationAgent
 from agents.memory import ConversationMemoryAgent
-from agents.models import AgentResponse, Citation, ParsedQuery, RetrievalHit
+from agents.models import (
+    AgentError,
+    AgentResponse,
+    Citation,
+    ParsedQuery,
+    QueryUnderstandingResult,
+    ResponseResult,
+    RetrievalHit,
+    RetrievalResult,
+)
 
 __all__ = [
+    "AgentError",
     "AgentResponse",
     "Citation",
     "ClarificationAgent",
@@ -16,7 +26,10 @@ __all__ = [
     "Orchestrator",
     "ParsedQuery",
     "QueryUnderstandingAgent",
+    "QueryUnderstandingResult",
     "RetrievalAgent",
     "ResponseGenerationAgent",
     "RetrievalHit",
+    "RetrievalResult",
+    "ResponseResult",
 ]

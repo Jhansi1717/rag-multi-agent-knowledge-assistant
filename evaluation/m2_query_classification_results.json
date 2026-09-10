@@ -1,0 +1,184 @@
+{
+  "summary": {
+    "total_queries": 19,
+    "correct": 19,
+    "incorrect": 0,
+    "accuracy": 1.0,
+    "per_class_accuracy": {
+      "factual": {
+        "total": 10,
+        "correct": 10,
+        "accuracy": 1.0
+      },
+      "procedural": {
+        "total": 5,
+        "correct": 5,
+        "accuracy": 1.0
+      },
+      "comparative": {
+        "total": 4,
+        "correct": 4,
+        "accuracy": 1.0
+      },
+      "ambiguous": {
+        "total": 0,
+        "correct": 0,
+        "accuracy": null
+      }
+    }
+  },
+  "queries": [
+    {
+      "query": "How long is a typical agile sprint in the engineering guide?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What are the steps to create a feature branch in git?",
+      "expected_type": "procedural",
+      "predicted_type": "procedural",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "How do microservices differ from a monolithic architecture?",
+      "expected_type": "comparative",
+      "predicted_type": "comparative",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What naming convention should classes use in the coding standards?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "How should production errors be logged according to coding standards?",
+      "expected_type": "procedural",
+      "predicted_type": "procedural",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "Compare Rust and Go for systems and cloud infrastructure programming.",
+      "expected_type": "comparative",
+      "predicted_type": "comparative",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "Which programming languages use static typing?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What is the annual revenue of TechCorp International?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "Who invented the Python programming language and in what year?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "How many hours do non-emergency patients have to finalize admission paperwork?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What insurance documents are required at patient registration?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What are the five rights of medication administration?",
+      "expected_type": "procedural",
+      "predicted_type": "procedural",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "How should nurses perform hand hygiene before patient contact?",
+      "expected_type": "procedural",
+      "predicted_type": "procedural",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What is the difference between Code Blue and Code Red emergencies?",
+      "expected_type": "comparative",
+      "predicted_type": "comparative",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "Compare oral versus intravenous Ibuprofen dosing limits.",
+      "expected_type": "comparative",
+      "predicted_type": "comparative",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What is the standard oral dose of Acetaminophen?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What steps should staff follow during a Code Blue cardiac arrest?",
+      "expected_type": "procedural",
+      "predicted_type": "procedural",
+      "confidence": 0.95,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "What was Riverside General Hospital's total revenue last fiscal year?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    },
+    {
+      "query": "Who won the Nobel Prize in Medicine this year?",
+      "expected_type": "factual",
+      "predicted_type": "factual",
+      "confidence": 0.8,
+      "routing": "RETRIEVAL",
+      "correct": true
+    }
+  ]
+}

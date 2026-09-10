@@ -1,0 +1,1092 @@
+{
+  "methodology": {
+    "source_corpus": "data\\evaluation\\queries.json",
+    "corpus_queries": 19,
+    "added_ambiguous_queries": 2,
+    "domains": [
+      "Software Engineering",
+      "Hospital Administration"
+    ],
+    "top_k": 3,
+    "unavailable_labels_are_factual_for_classification": true,
+    "generation_mode": "mock_context_echo",
+    "llm_quality_claim": "No automated factual-accuracy claim; manual review is required.",
+    "manual_review_sample": [
+      {
+        "query_id": "se_q01",
+        "correctness": null,
+        "relevance": null,
+        "groundedness": null,
+        "readability": null,
+        "review_status": "pending_human_review"
+      },
+      {
+        "query_id": "se_q02",
+        "correctness": null,
+        "relevance": null,
+        "groundedness": null,
+        "readability": null,
+        "review_status": "pending_human_review"
+      },
+      {
+        "query_id": "se_q03",
+        "correctness": null,
+        "relevance": null,
+        "groundedness": null,
+        "readability": null,
+        "review_status": "pending_human_review"
+      },
+      {
+        "query_id": "se_q04",
+        "correctness": null,
+        "relevance": null,
+        "groundedness": null,
+        "readability": null,
+        "review_status": "pending_human_review"
+      }
+    ]
+  },
+  "summary": {
+    "total_queries": 21,
+    "classification_accuracy": 1.0,
+    "retrieval_success": 0.058823529411764705,
+    "grounded_response_rate": 0.0,
+    "citation_coverage": 0.0,
+    "ambiguous_detection_rate": 1.0,
+    "no_evidence_handling_rate": 1.0,
+    "end_to_end_success_rate": 1.0
+  },
+  "queries": [
+    {
+      "query_id": "se_q01",
+      "domain": "Software Engineering",
+      "query": "How long is a typical agile sprint in the engineering guide?",
+      "expected_type": "factual",
+      "expected_category": "factual",
+      "expected_document": "microservices_architecture.pdf",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q01-72823f78-78ce-4536-b07a-03784e3db988",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q02",
+      "domain": "Software Engineering",
+      "query": "What are the steps to create a feature branch in git?",
+      "expected_type": "procedural",
+      "expected_category": "procedural",
+      "expected_document": "git_workflow.txt",
+      "query_understanding": {
+        "predicted_type": "procedural",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q02-a2789466-4674-49fb-bd9b-1423fff3cceb",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q03",
+      "domain": "Software Engineering",
+      "query": "How do microservices differ from a monolithic architecture?",
+      "expected_type": "comparative",
+      "expected_category": "comparative",
+      "expected_document": "microservices_architecture.pdf",
+      "query_understanding": {
+        "predicted_type": "comparative",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q03-761f341a-6f62-4b3a-a018-68fdf0e332d1",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q04",
+      "domain": "Software Engineering",
+      "query": "What naming convention should classes use in the coding standards?",
+      "expected_type": "factual",
+      "expected_category": "factual",
+      "expected_document": "coding_standards.docx",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q04-5b19d026-65a7-4873-9e16-6a24a2c8cb88",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q05",
+      "domain": "Software Engineering",
+      "query": "How should production errors be logged according to coding standards?",
+      "expected_type": "procedural",
+      "expected_category": "procedural",
+      "expected_document": "coding_standards.docx",
+      "query_understanding": {
+        "predicted_type": "procedural",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [
+          {
+            "rank": 1,
+            "relevance_score": 0.32895150034618187,
+            "distance_score": 2.039961814880371,
+            "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+            "document_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d",
+            "chunk_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d_0",
+            "text": "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. Machine learning is a subset of artificial intelligence.",
+            "metadata": {
+              "source_location": "data/uploads\\8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "document_name": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_size_bytes": 292,
+              "format": "txt",
+              "line_count": 1,
+              "has_text": true,
+              "cleaned": true,
+              "cleaned_char_count": 292,
+              "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_type": ".txt",
+              "domain": "",
+              "token_start": 0,
+              "token_end": 44,
+              "token_count": 44,
+              "char_count": 292,
+              "chunk_size_target": 650,
+              "chunk_overlap_target": 75
+            }
+          }
+        ],
+        "filtered_evidence": [
+          {
+            "rank": 1,
+            "relevance_score": 0.32895150034618187,
+            "distance_score": 2.039961814880371,
+            "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+            "document_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d",
+            "chunk_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d_0",
+            "text": "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. Machine learning is a subset of artificial intelligence.",
+            "metadata": {
+              "source_location": "data/uploads\\8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "document_name": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_size_bytes": 292,
+              "format": "txt",
+              "line_count": 1,
+              "has_text": true,
+              "cleaned": true,
+              "cleaned_char_count": 292,
+              "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_type": ".txt",
+              "domain": "",
+              "token_start": 0,
+              "token_end": 44,
+              "token_count": 44,
+              "char_count": 292,
+              "chunk_size_target": 650,
+              "chunk_overlap_target": 75
+            }
+          }
+        ],
+        "filtered_count": 0,
+        "retrieval_confidence": 0.32895150034618187,
+        "sufficient_evidence": true,
+        "no_relevant_information": false,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.32895150034618187,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q05-9519c67a-027f-4710-9146-4e88bb355044",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q06",
+      "domain": "Software Engineering",
+      "query": "Compare Rust and Go for systems and cloud infrastructure programming.",
+      "expected_type": "comparative",
+      "expected_category": "comparative",
+      "expected_document": "programming_languages.csv",
+      "query_understanding": {
+        "predicted_type": "comparative",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q06-af21aeca-2f07-4d96-aa00-76e85ccd4769",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q07",
+      "domain": "Software Engineering",
+      "query": "Which programming languages use static typing?",
+      "expected_type": "factual",
+      "expected_category": "factual",
+      "expected_document": "programming_languages.csv",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q07-fa1c2cba-384d-475c-8a52-49732ec46cb5",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q08",
+      "domain": "Software Engineering",
+      "query": "What is the annual revenue of TechCorp International?",
+      "expected_type": "factual",
+      "expected_category": "unavailable-information",
+      "expected_document": "NONE",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [
+          {
+            "rank": 1,
+            "relevance_score": 0.3257741702021036,
+            "distance_score": 2.069611072540283,
+            "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+            "document_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d",
+            "chunk_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d_0",
+            "text": "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. Machine learning is a subset of artificial intelligence.",
+            "metadata": {
+              "source_location": "data/uploads\\8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "document_name": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_size_bytes": 292,
+              "format": "txt",
+              "line_count": 1,
+              "has_text": true,
+              "cleaned": true,
+              "cleaned_char_count": 292,
+              "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_type": ".txt",
+              "domain": "",
+              "token_start": 0,
+              "token_end": 44,
+              "token_count": 44,
+              "char_count": 292,
+              "chunk_size_target": 650,
+              "chunk_overlap_target": 75
+            }
+          }
+        ],
+        "filtered_evidence": [
+          {
+            "rank": 1,
+            "relevance_score": 0.3257741702021036,
+            "distance_score": 2.069611072540283,
+            "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+            "document_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d",
+            "chunk_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d_0",
+            "text": "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. Machine learning is a subset of artificial intelligence.",
+            "metadata": {
+              "source_location": "data/uploads\\8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "document_name": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_size_bytes": 292,
+              "format": "txt",
+              "line_count": 1,
+              "has_text": true,
+              "cleaned": true,
+              "cleaned_char_count": 292,
+              "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_type": ".txt",
+              "domain": "",
+              "token_start": 0,
+              "token_end": 44,
+              "token_count": 44,
+              "char_count": 292,
+              "chunk_size_target": 650,
+              "chunk_overlap_target": 75
+            }
+          }
+        ],
+        "filtered_count": 0,
+        "retrieval_confidence": 0.3257741702021036,
+        "sufficient_evidence": true,
+        "no_relevant_information": false,
+        "expected_information_available": false
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.3257741702021036,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q08-58c16585-4a12-45e2-84c1-c32fe2267e65",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_q09",
+      "domain": "Software Engineering",
+      "query": "Who invented the Python programming language and in what year?",
+      "expected_type": "factual",
+      "expected_category": "unavailable-information",
+      "expected_document": "NONE",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": false
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_q09-bf5f119c-5637-4757-931a-b391d280693b",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q01",
+      "domain": "Hospital Administration",
+      "query": "How many hours do non-emergency patients have to finalize admission paperwork?",
+      "expected_type": "factual",
+      "expected_category": "factual",
+      "expected_document": "patient_admission_policy.pdf",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q01-06f5eace-dba9-48fc-90d7-d557e32c1bb1",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q02",
+      "domain": "Hospital Administration",
+      "query": "What insurance documents are required at patient registration?",
+      "expected_type": "factual",
+      "expected_category": "factual",
+      "expected_document": "patient_admission_policy.pdf",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q02-06f07d3d-743d-44e3-8374-6df274fe2d51",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q03",
+      "domain": "Hospital Administration",
+      "query": "What are the five rights of medication administration?",
+      "expected_type": "procedural",
+      "expected_category": "procedural",
+      "expected_document": "nursing_procedures.docx",
+      "query_understanding": {
+        "predicted_type": "procedural",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q03-f1ba7613-4cbe-47c8-a698-cabeaffc8d32",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q04",
+      "domain": "Hospital Administration",
+      "query": "How should nurses perform hand hygiene before patient contact?",
+      "expected_type": "procedural",
+      "expected_category": "procedural",
+      "expected_document": "nursing_procedures.docx",
+      "query_understanding": {
+        "predicted_type": "procedural",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q04-5b6e4fb1-85c5-4cd1-b017-9c8ecbb15363",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q05",
+      "domain": "Hospital Administration",
+      "query": "What is the difference between Code Blue and Code Red emergencies?",
+      "expected_type": "comparative",
+      "expected_category": "comparative",
+      "expected_document": "emergency_protocols.txt",
+      "query_understanding": {
+        "predicted_type": "comparative",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q05-e55c1f23-1a9b-41ed-882b-330ba4a0b482",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q06",
+      "domain": "Hospital Administration",
+      "query": "Compare oral versus intravenous Ibuprofen dosing limits.",
+      "expected_type": "comparative",
+      "expected_category": "comparative",
+      "expected_document": "medication_dosage_reference.csv",
+      "query_understanding": {
+        "predicted_type": "comparative",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q06-94efb34c-fe10-4317-bdda-909dd4e1f40a",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q07",
+      "domain": "Hospital Administration",
+      "query": "What is the standard oral dose of Acetaminophen?",
+      "expected_type": "factual",
+      "expected_category": "factual",
+      "expected_document": "medication_dosage_reference.csv",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q07-c6c9e54b-e7ba-40cb-8ee9-2f2674067c17",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q08",
+      "domain": "Hospital Administration",
+      "query": "What steps should staff follow during a Code Blue cardiac arrest?",
+      "expected_type": "procedural",
+      "expected_category": "procedural",
+      "expected_document": "emergency_protocols.txt",
+      "query_understanding": {
+        "predicted_type": "procedural",
+        "classification_confidence": 0.95,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q08-a89da8b3-8c05-4a74-906d-7801f64b4436",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q09",
+      "domain": "Hospital Administration",
+      "query": "What was Riverside General Hospital's total revenue last fiscal year?",
+      "expected_type": "factual",
+      "expected_category": "unavailable-information",
+      "expected_document": "NONE",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": 1,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": false
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.0,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q09-98a2ac7c-f263-4776-a16a-efbe08f0ebe3",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "ha_q10",
+      "domain": "Hospital Administration",
+      "query": "Who won the Nobel Prize in Medicine this year?",
+      "expected_type": "factual",
+      "expected_category": "unavailable-information",
+      "expected_document": "NONE",
+      "query_understanding": {
+        "predicted_type": "factual",
+        "classification_confidence": 0.8,
+        "routing": "RETRIEVAL"
+      },
+      "retrieval": {
+        "top_k": 3,
+        "ranked_evidence": [
+          {
+            "rank": 1,
+            "relevance_score": 0.35070894680304804,
+            "distance_score": 1.8513672351837158,
+            "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+            "document_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d",
+            "chunk_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d_0",
+            "text": "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. Machine learning is a subset of artificial intelligence.",
+            "metadata": {
+              "source_location": "data/uploads\\8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "document_name": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_size_bytes": 292,
+              "format": "txt",
+              "line_count": 1,
+              "has_text": true,
+              "cleaned": true,
+              "cleaned_char_count": 292,
+              "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_type": ".txt",
+              "domain": "",
+              "token_start": 0,
+              "token_end": 44,
+              "token_count": 44,
+              "char_count": 292,
+              "chunk_size_target": 650,
+              "chunk_overlap_target": 75
+            }
+          }
+        ],
+        "filtered_evidence": [
+          {
+            "rank": 1,
+            "relevance_score": 0.35070894680304804,
+            "distance_score": 1.8513672351837158,
+            "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+            "document_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d",
+            "chunk_id": "a0fb7292-6569-4a23-9d11-03c18828bb1d_0",
+            "text": "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. Machine learning is a subset of artificial intelligence.",
+            "metadata": {
+              "source_location": "data/uploads\\8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "document_name": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_size_bytes": 292,
+              "format": "txt",
+              "line_count": 1,
+              "has_text": true,
+              "cleaned": true,
+              "cleaned_char_count": 292,
+              "filename": "8176d8ed-4079-4e13-930c-bcf3a36295af.txt",
+              "file_type": ".txt",
+              "domain": "",
+              "token_start": 0,
+              "token_end": 44,
+              "token_count": 44,
+              "char_count": 292,
+              "chunk_size_target": 650,
+              "chunk_overlap_target": 75
+            }
+          }
+        ],
+        "filtered_count": 0,
+        "retrieval_confidence": 0.35070894680304804,
+        "sufficient_evidence": true,
+        "no_relevant_information": false,
+        "expected_information_available": false
+      },
+      "response": {
+        "answer": "The requested information is not available in the provided documents.",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.35070894680304804,
+        "confidence_level": "LOW",
+        "no_information_found": true
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_q10-0675976d-b902-4905-95e6-17e5b9dd28ab",
+        "agent_sequence": [
+          "QueryUnderstandingAgent",
+          "RetrievalAgent",
+          "ResponseGenerationAgent"
+        ],
+        "status": "unavailable"
+      }
+    },
+    {
+      "query_id": "se_ambiguous_01",
+      "domain": "Software Engineering",
+      "query": "That one?",
+      "expected_type": "ambiguous",
+      "expected_category": "ambiguous",
+      "expected_document": "NONE",
+      "query_understanding": {
+        "predicted_type": "ambiguous",
+        "classification_confidence": 0.9,
+        "routing": "CLARIFICATION"
+      },
+      "retrieval": {
+        "top_k": null,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": null,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "Could you provide more detail so the request can be answered?",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.9,
+        "confidence_level": "MEDIUM",
+        "no_information_found": false
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-se_ambiguous_01-5aeeb269-2819-4b61-95e7-93f9f379cea2",
+        "agent_sequence": [
+          "QueryUnderstandingAgent"
+        ],
+        "status": "clarification_needed"
+      }
+    },
+    {
+      "query_id": "ha_ambiguous_01",
+      "domain": "Hospital Administration",
+      "query": "What about it?",
+      "expected_type": "ambiguous",
+      "expected_category": "ambiguous",
+      "expected_document": "NONE",
+      "query_understanding": {
+        "predicted_type": "ambiguous",
+        "classification_confidence": 0.9,
+        "routing": "CLARIFICATION"
+      },
+      "retrieval": {
+        "top_k": null,
+        "ranked_evidence": [],
+        "filtered_evidence": [],
+        "filtered_count": null,
+        "retrieval_confidence": 0.0,
+        "sufficient_evidence": false,
+        "no_relevant_information": true,
+        "expected_information_available": true
+      },
+      "response": {
+        "answer": "Could you provide more detail so the request can be answered?",
+        "grounded": false,
+        "citations": [],
+        "confidence": 0.9,
+        "confidence_level": "MEDIUM",
+        "no_information_found": false
+      },
+      "orchestration": {
+        "completed_successfully": true,
+        "request_id": "m2-eval-ha_ambiguous_01-40746547-2d96-41f8-a480-8ede34ad0695",
+        "agent_sequence": [
+          "QueryUnderstandingAgent"
+        ],
+        "status": "clarification_needed"
+      }
+    }
+  ]
+}

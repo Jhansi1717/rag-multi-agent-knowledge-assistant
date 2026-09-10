@@ -11,10 +11,10 @@ faiss-cpu
 fpdf
 tiktoken
 
+# Milestone 2 additions
+openai
+python-dotenv
+
 # Test dependencies
 httpx
 pytest
-
-# Future — not imported in Milestone 1 code
-# openai
-# python-dotenv

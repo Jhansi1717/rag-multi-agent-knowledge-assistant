@@ -113,10 +113,10 @@ flowchart TD
 | `generate_samples.py` | Generates older HR / technical sample files |
 | `index_samples.py` | Runs full pipeline → writes `data/index.faiss` |
 | `run_pipeline.py` | Smoke-test: extract → clean → chunk → validate (no FAISS write) |
-| `POST /upload` | HTTP upload → simple character chunking → `data/index.faiss` ⚠ |
+| `POST /upload` | HTTP upload → full `ingestion/pipeline.py` → FAISS + metadata |
 
-> ⚠ `POST /upload` uses `simple_chunk()` (500-char, no overlap) — it is a thin demo path.
-> The evaluated and tested pipeline is `index_evaluation_corpus.py`.
+`POST /upload` uses the same production validation, extraction, cleaning,
+token-aware chunking, embedding, and indexing path as the evaluation pipeline.
 
 ---
 

@@ -1,6 +1,6 @@
 # RAG Multi-Agent Knowledge Assistant
 
-Local Retrieval-Augmented Generation (RAG) foundation: ingest documents, embed chunks, retrieve evidence with FAISS, and route queries through a deterministic agent layer. Milestone 1 validates retrieval quality before LLM generation or a UI.
+Local Retrieval-Augmented Generation (RAG) assistant: ingest documents, embed chunks, retrieve evidence with FAISS, and route queries through a fixed sequential M2 pipeline.
 
 ---
 
@@ -41,12 +41,88 @@ Build an end-to-end knowledge retrieval pipeline that returns sourced, ranked ch
 | Embeddings | `vector_store/embeddings.py` (`EmbeddingProvider`) |
 | Vector store + duplicate-source guard | `vector_store/store.py` |
 | Semantic search | `retrieval/retriever.py` |
-| Query understanding, retrieval, extractive response, clarification, recent-turn memory, orchestrator | `agents/` |
-| HTTP retrieve/upload | `app.py` |
+| Query understanding, retrieval, grounded response generation, clarification, recent-turn memory, orchestrator | `agents/` |
+| HTTP retrieve/upload/chat | `app.py` |
 
-**Honest gap:** `POST /upload` still uses character `simple_chunk()` (500 chars) and does not call `ingestion/pipeline.py` or the orchestrator. The validated M1 path is the Python pipeline + evaluation index.
+The M2 API uses the production ingestion pipeline for uploads and the orchestrator for retrieval.
 
 ---
+
+## Milestone 2
+
+### M2.1 Query Understanding Agent
+
+`QueryUnderstandingAgent` is deterministic and rule-based. It returns:
+`query`, `normalized_query`, `query_type`, `classification_confidence`,
+`routing`, `domain`, and `reason`.
+
+The only query categories are:
+
+- `factual`: direct facts, definitions, properties, or values
+- `procedural`: how-to, steps, workflows, protocols, or processes
+- `comparative`: compare, versus, difference, contrast, or similarities
+- `ambiguous`: too short, vague, or containing an unresolved referent
+
+Unavailable information is **not** a query category. Such queries are classified
+as factual and availability is decided from retrieval evidence. Classification
+confidence is a deterministic application-level signal, not a calibrated
+probability. Factual, procedural, and comparative queries route to `RETRIEVAL`;
+ambiguous queries route to `CLARIFICATION`.
+
+### M2.2 Retrieval Agent
+
+`RetrievalAgent` reuses `SemanticRetriever` and FAISS. It requests configurable
+Top-K results, ranks by FAISS L2 distance (lower is better), preserves
+`distance_score`, and derives bounded relevance as `1 / (1 + distance_score)`.
+Configurable `RETRIEVAL_TOP_K` and `RETRIEVAL_MIN_RELEVANCE` control retrieval.
+Hits preserve document, chunk, filename, text, and metadata fields. Empty stores,
+empty results, invalid Top-K, domain filtering, and all-filtered results produce
+structured no-evidence results without unrelated-domain fallback.
+
+### M2.3 Response Generation Agent
+
+`ResponseGenerationAgent` uses the configured OpenAI client when available. Its
+grounding prompt requires context-only answering, no outside knowledge, explicit
+insufficient-evidence handling, query-type-specific style, and citations only
+from retrieved metadata. Confidence levels are application-level:
+`HIGH` (>= 0.75), `MEDIUM` (0.45-<0.75), and `LOW` (<0.45); they are not calibrated
+probabilities. Missing or low evidence returns a controlled no-information
+response rather than an unsupported answer.
+
+### M2.4 Orchestration
+
+```text
+User Query
+    |
+    v
+Query Understanding
+    |
+    v
+Retrieval
+    |
+    v
+Response Generation
+    |
+    v
+Final Response
+```
+
+Ambiguous queries use:
+
+```text
+Ambiguous
+    |
+    v
+Clarification route
+    |
+    v
+Milestone 3 clarification expansion
+```
+
+The current clarification route returns a structured clarification-needed
+response; it does not implement multi-turn M3 clarification behavior. The
+orchestrator uses structured handoffs and a request ID, while memory records
+turns but is not an additional resolution stage.
 
 ## Architecture
 
@@ -54,15 +130,15 @@ Build an end-to-end knowledge retrieval pipeline that returns sourced, ranked ch
 Ingestion (IMPLEMENTED)
   file → validate → extract → clean → chunk → embed → FAISS + metadata.json
 
-Query (IMPLEMENTED, Python)
+Query (IMPLEMENTED, M1 + M2)
   Query → QueryUnderstandingAgent → RetrievalAgent → SemanticRetriever → FAISS
-       → ResponseGenerationAgent (extractive)
-       ↳ ClarificationAgent if vague / low-confidence
-       ↳ unavailable intent → "not available in the knowledge base"
+       → ResponseGenerationAgent (grounded LLM when configured)
+       ↳ ambiguous → structured clarification-needed response
 
-HTTP (IMPLEMENTED, thinner)
-  POST /upload → extract + simple_chunk → VectorStore
-  POST /retrieve → SemanticRetriever (no agents)
+HTTP (IMPLEMENTED)
+  POST /upload → ingestion/pipeline.py → embeddings → FAISS + metadata
+  POST /retrieve → full M2 orchestrator response
+  POST /chat → compatibility alias for the same M2 pipeline
 ```
 
 Voice STT/TTS is a **future client boundary** (Web Speech API). The backend is text-only.
@@ -81,7 +157,15 @@ Voice STT/TTS is a **future client boundary** (Web Speech API). The backend is t
 | Vectors | faiss-cpu `IndexFlatL2` |
 | Metadata | JSON (`data/evaluation/metadata.json` or `data/metadata.json`) |
 
-LLM (`openai`) is listed in `requirements.txt` as commented future only.
+LLM generation uses the optional OpenAI `gpt-4o-mini` model when `OPENAI_API_KEY` is configured; otherwise the response agent returns a controlled no-information response.
+
+### M2 response confidence policy
+
+Response confidence is an application-level value inherited from retrieval, not a
+calibrated probability. `HIGH` is `>= 0.75`, `MEDIUM` is `0.45` to `< 0.75`,
+and `LOW` is `< 0.45`. Low-confidence or missing evidence produces the controlled
+no-information response rather than an unsupported answer. Grounded answers are
+generated only from the retrieved context supplied to the LLM.
 
 ---
 
@@ -126,6 +210,9 @@ uvicorn app:app --reload
 ```
 
 - Health: `GET /health`
+- Upload: `POST /upload` multipart file (`.pdf`, `.docx`, `.txt`, `.csv`)
+- Retrieve: `POST /retrieve` with `{"query": "...", "session_id": "optional", "top_k": 3}`
+- Chat: `POST /chat` is a compatibility alias for `/retrieve`
 - Interactive docs: `http://localhost:8000/docs`
 
 ---
@@ -156,7 +243,7 @@ Writes `data/index.faiss` and `data/metadata.json`.
 python run_pipeline.py
 ```
 
-**HTTP upload** (character chunking, not the evaluation pipeline):
+**HTTP upload** uses the full production pipeline:
 
 `POST /upload` with a multipart file (`.pdf`, `.docx`, `.txt`, `.csv`).
 
@@ -173,7 +260,8 @@ POST /retrieve
 { "query": "How long is a typical agile sprint in the engineering guide?", "top_k": 3 }
 ```
 
-Returns ranked chunks with `similarity_score` (L2 distance; lower is closer).
+Returns the final M2 response with query type, confidence, citations, retrieval
+summary/results, no-information status, clarification status, and request ID.
 
 ---
 
@@ -203,9 +291,10 @@ python test_retrieval.py
 
 ---
 
-## Actual results
+## Actual M2 results
 
-From a live run of `python evaluation/evaluate_retrieval.py` (19 queries; 15 in-KB, 4 unavailable):
+The recorded M1 baseline for `python evaluation/evaluate_retrieval.py`
+(19 queries; 15 in-KB, 4 unavailable) was:
 
 | Metric | Excl. unavailable | Incl. unavailable |
 |---|---|---|
@@ -213,27 +302,42 @@ From a live run of `python evaluation/evaluate_retrieval.py` (19 queries; 15 in-
 | Hit@3 | 100.0% | 78.95% |
 | Hit@5 | 100.0% | 78.95% |
 
-Evaluation index: **8 files, 8 chunks, 8 vectors**. Details: [`docs/m1-validation.md`](docs/m1-validation.md), [`evaluation/results.md`](evaluation/results.md).
+The final M2 evaluation used 21 queries: 19 corpus queries plus two explicit
+ambiguous cases. Results were generated in mock context-echo mode because no
+OpenAI key was configured; no automated LLM factual-accuracy claim is made.
+
+| Metric | Result |
+|---|---:|
+| Classification accuracy | 100.0% |
+| Retrieval success | 5.9% |
+| Grounded-response rate | 0.0% |
+| Citation coverage | 0.0% |
+| Ambiguous detection rate | 100.0% |
+| No-evidence handling rate | 100.0% |
+| End-to-end completion rate | 100.0% |
+
+Details: [`evaluation/m2_end_to_end_results.md`](evaluation/m2_end_to_end_results.md).
 
 ---
 
 ## Limitations
 
-- FAISS always returns a nearest neighbor; unavailable queries still get a Top-1 document.
-- Extractive responses, not LLM answers.
+- FAISS returns nearest neighbors, so the M2 relevance/evidence policy is required
+  to reject weak or unrelated results.
 - One chunk per short eval document can mix sections in a single vector.
-- `app.py` upload/retrieve path is not the validated agent pipeline.
-- No similarity threshold, re-ranking, or UI/voice.
+- Evaluation metadata must contain domain values for domain-filtered retrieval.
+- No UI or voice client is included.
 
 ---
 
-## M2 roadmap
+## Future milestones
 
-- Wire API to `ingestion/pipeline.py` and `Orchestrator`
-- Similarity threshold and explicit unavailable responses
-- LLM grounded generation with citations
-- Section-aware chunking / hybrid BM25 + dense retrieval
-- Web UI and browser Web Speech API STT/TTS (text I/O only on the server)
+### M3 and later
+
+- Multi-turn clarification and conversational disambiguation
+- Hybrid BM25 + dense retrieval and cross-encoder reranking
+- Web UI and browser Web Speech API STT/TTS
+- Managed vector databases and production deployment concerns
 
 ---
 

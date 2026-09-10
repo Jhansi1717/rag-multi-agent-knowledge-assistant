@@ -1,6 +1,6 @@
 # Data Models — RAG Multi-Agent Knowledge Assistant
 
-Canonical schemas for all data structures used in Milestone 1.
+Canonical schemas for all data structures used in Milestones 1 and 2.
 🟢 = Implemented in M1 · 🟡 = Planned for future milestone
 
 ---
@@ -104,28 +104,58 @@ Stored inside `data/evaluation/index.faiss` — not a separate file.
 
 ---
 
-## 4. ParsedQuery 🟢
+## 4. QueryUnderstandingResult 🟢
 
-Output of `QueryUnderstandingAgent.analyze()` in `agents/query_understanding.py`.
+Structured M2 output from query understanding.
+
+| Field | Type | Description |
+|---|---|---|
+| `query` | `str` | Original query |
+| `normalized_query` | `str` | Whitespace-normalised query |
+| `query_type` | `str` | `factual` · `procedural` · `comparative` · `ambiguous` |
+| `classification_confidence` | `float` | Deterministic application-level classification signal; not calibrated probability |
+| `routing` | `str` | `RETRIEVAL` or `CLARIFICATION` |
+| `domain` | `str \| None` | Detected knowledge domain |
+| `reason` | `str` | Explanation for classification and routing |
+
+## 5. ParsedQuery 🟢
+
+Legacy compatibility model. The M2 public output is `QueryUnderstandingResult`.
 
 | Field | Type | Description |
 |---|---|---|
 | `raw_query` | `str` | Original user input |
 | `normalized_query` | `str` | Whitespace-normalised text |
-| `intent` | `str` | `factual` · `procedural` · `comparative` · `unavailable` |
+| `query_type` | `str` | `factual` · `procedural` · `comparative` · `ambiguous` |
 | `domain` | `str \| None` | `"Software Engineering"` · `"Hospital Administration"` · `None` |
 | `is_ambiguous` | `bool` | True if query is too short or uses vague pronouns |
 
 ---
 
-## 5. RetrievalHit 🟢
+## 6. RetrievalResult 🟢
+
+Structured M2 retrieval-stage output containing ranked hits and evidence sufficiency.
+
+| Field | Type | Description |
+|---|---|---|
+| `query` | `str` | Query sent to retrieval |
+| `query_type` | `str` | Query type from understanding |
+| `top_k` | `int` | Requested result count |
+| `results` | `RetrievalHit[]` | Ranked retrieval hits |
+| `filtered_count` | `int` | Hits removed by retrieval filtering |
+| `retrieval_confidence` | `float` | Highest derived relevance among retained hits |
+| `sufficient_evidence` | `bool` | Whether evidence is sufficient to answer |
+| `no_relevant_information` | `bool` | Whether no relevant evidence was found |
+
+## 7. RetrievalHit 🟢
 
 One ranked result from `RetrievalAgent.retrieve()` in `agents/retrieval_agent.py`.
 
 | Field | Type | Description |
 |---|---|---|
 | `rank` | `int` | 1-based position in results |
-| `score` | `float` | L2 distance — **lower = closer match** |
+| `relevance_score` | `float` | Derived relevance `1 / (1 + distance_score)`; higher is better |
+| `distance_score` | `float` | Original FAISS L2 distance; lower is better |
 | `text` | `str` | Chunk body text |
 | `document_id` | `str` | Parent document UUID |
 | `filename` | `str` | Source document filename |
@@ -135,7 +165,8 @@ One ranked result from `RetrievalAgent.retrieve()` in `agents/retrieval_agent.py
 ```json
 {
   "rank": 1,
-  "score": 0.4821,
+  "relevance_score": 0.4821,
+  "distance_score": 1.073,
   "text": "Sprint duration is typically two weeks ...",
   "document_id": "b2c3d4e5-...",
   "filename": "microservices_architecture.pdf",
@@ -146,7 +177,7 @@ One ranked result from `RetrievalAgent.retrieve()` in `agents/retrieval_agent.py
 
 ---
 
-## 6. Citation 🟢
+## 8. Citation 🟢
 
 Inline source reference attached to an `AgentResponse`.
 Produced by `ResponseGenerationAgent`.
@@ -160,17 +191,46 @@ Produced by `ResponseGenerationAgent`.
 
 ---
 
-## 7. AgentResponse 🟢
+## 9. ResponseResult 🟢
 
-The unified return type of every agent code path in `agents/orchestrator.py`.
+Structured M2 response-generation output.
+
+| Field | Type | Description |
+|---|---|---|
+| `answer` | `str` | Grounded generated answer, clarification, or controlled no-information response |
+| `citations` | `Citation[]` | Supporting source references |
+| `confidence` | `float` | Application-level confidence inherited from retrieval |
+| `confidence_level` | `str` | Human-readable confidence level |
+| `grounded` | `bool` | Whether the answer is grounded in retrieved evidence |
+| `no_information_found` | `bool` | Whether no answerable evidence was found |
+| `query_type` | `str` | Query type used for generation |
+| `classification_confidence` | `float` | Classification-stage confidence |
+| `status` | `str` | `answered`, `unavailable`, `clarification_needed`, or `error` |
+| `request_id` | `str` | Correlation identifier for the request |
+| `retrieval` | `RetrievalResult \| None` | Structured retrieval handoff |
+| `error` | `AgentError \| None` | Structured stage error |
+
+## 10. AgentError 🟡
+
+Standardized error returned by an agent stage.
+
+| Field | Type | Description |
+|---|---|---|
+| `agent` | `str` | Agent/stage name |
+| `code` | `str` | Stable error code |
+| `message` | `str` | Human-readable error |
+
+## 11. AgentResponse 🟢
+
+Legacy compatibility model. The M2 orchestrator returns `ResponseResult`.
 
 | Field | Type | Description |
 |---|---|---|
 | `answer` | `str` | Answer text, clarifying question, or unavailability message |
 | `citations` | `Citation[]` | Source references (up to 3) |
 | `status` | `str` | `"answered"` · `"unavailable"` · `"clarification_needed"` |
-| `intent` | `str` | Intent from `QueryUnderstandingAgent` |
-| `confidence` | `float` | `1 / (1 + top1_L2_score)` — higher is better |
+| `intent` | `str` | Compatibility alias for `query_type` |
+| `confidence` | `float` | Application-level retrieval confidence; not calibrated |
 | `retrieval_hits` | `RetrievalHit[]` | Full ranked hit list |
 | `domain` | `str \| None` | Detected domain |
 | `clarification_question` | `str \| None` | Set when `status="clarification_needed"` |
@@ -188,7 +248,7 @@ The unified return type of every agent code path in `agents/orchestrator.py`.
 
 ---
 
-## 8. ConversationTurn 🟢
+## 12. ConversationTurn 🟢
 
 One user–assistant exchange, stored in `ConversationMemoryAgent`.
 In-memory only — not persisted to disk in M1.
@@ -202,7 +262,7 @@ In-memory only — not persisted to disk in M1.
 
 ---
 
-## 9. API Schemas
+## 13. API Schemas
 
 ### POST /upload response
 
@@ -230,7 +290,7 @@ In-memory only — not persisted to disk in M1.
 
 ---
 
-## 10. Status Summary
+## 14. Status Summary
 
 | Model | M1 Status | Module |
 |---|---|---|
@@ -238,8 +298,12 @@ In-memory only — not persisted to disk in M1.
 | `Chunk` | 🟢 Implemented | `ingestion/models.py` |
 | `Embedding` | 🟢 Implemented (in FAISS) | `vector_store/embeddings.py` |
 | `ParsedQuery` | 🟢 Implemented | `agents/models.py` |
+| `QueryUnderstandingResult` | 🟡 Contract added | `agents/models.py` |
 | `RetrievalHit` | 🟢 Implemented | `agents/models.py` |
+| `RetrievalResult` | 🟡 Contract added | `agents/models.py` |
 | `Citation` | 🟢 Implemented | `agents/models.py` |
+| `ResponseResult` | 🟡 Contract added | `agents/models.py` |
+| `AgentError` | 🟡 Contract added | `agents/models.py` |
 | `AgentResponse` | 🟢 Implemented | `agents/models.py` |
 | `ConversationTurn` | 🟢 Implemented (in-memory) | `agents/models.py` |
 | Persistent session store | 🟡 Future | Redis / SQLite (M2+) |

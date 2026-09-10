@@ -46,7 +46,8 @@ Defaults in `ingestion/chunker.py`: **650** tokens, **75** overlap, cap **800**,
 
 Eval corpus documents are short, so **each file produced 1 chunk**. Tests in `test_m13_ingestion.py` cover multi-chunk paragraph splits on longer synthetic text.
 
-`app.py` `simple_chunk(size=500)` is character-based and is **not** what the eval index uses.
+`POST /upload` now uses `ingestion.pipeline.index_file`; it does not use a
+Uploads use the full production pipeline with token-aware chunking.
 
 ---
 
@@ -70,7 +71,7 @@ Eval artefacts: `data/evaluation/index.faiss`, `data/evaluation/metadata.json`.
 
 Agent path: `RetrievalAgent` adds `rank`, `score`, `text`, `document_id`, `filename`, `metadata`. Orchestrator tests: `python -m pytest test_m14_retrieval.py -v`.
 
-HTTP: `POST /retrieve` with `{ "query", "top_k" }` — **no agents**.
+HTTP: `POST /retrieve` runs the M2 orchestrator and returns a structured response.
 
 ---
 

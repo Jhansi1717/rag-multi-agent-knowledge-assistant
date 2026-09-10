@@ -1,12 +1,18 @@
-"""Orchestrator — deterministic multi-agent retrieval pipeline."""
+"""M2.4 sequential orchestration with structured stage handoffs."""
 
 from __future__ import annotations
 
+import uuid
+from dataclasses import replace
 from typing import Optional
 
-from agents.clarification import ClarificationAgent
 from agents.memory import ConversationMemoryAgent
-from agents.models import AgentResponse, Citation
+from agents.models import (
+    AgentError,
+    QueryUnderstandingResult,
+    ResponseResult,
+    RetrievalResult,
+)
 from agents.query_understanding import QueryUnderstandingAgent
 from agents.response_generation import ResponseGenerationAgent
 from agents.retrieval_agent import RetrievalAgent
@@ -15,123 +21,144 @@ from vector_store.store import VectorStore
 
 
 class Orchestrator:
-    """Coordinate Understanding → Retrieval → Response with clarification fallback."""
+    """Run Understanding → Retrieval → Response for every answerable query."""
 
     DEFAULT_TOP_K = 3
-    CONFIDENCE_THRESHOLD = 1.35
 
     def __init__(
         self,
         vector_store: VectorStore,
         top_k: int = DEFAULT_TOP_K,
-        confidence_threshold: float = CONFIDENCE_THRESHOLD,
+        confidence_threshold: Optional[float] = None,
+        understanding: Optional[QueryUnderstandingAgent] = None,
+        retrieval: Optional[RetrievalAgent] = None,
+        response_gen: Optional[ResponseGenerationAgent] = None,
     ):
-        retriever = SemanticRetriever(vector_store)
-        self.understanding = QueryUnderstandingAgent()
-        self.retrieval = RetrievalAgent(retriever)
-        self.response_gen = ResponseGenerationAgent()
-        self.clarification = ClarificationAgent()
+        self.understanding = understanding or QueryUnderstandingAgent()
+        self.retrieval = retrieval or RetrievalAgent(
+            SemanticRetriever(vector_store),
+            top_k=top_k,
+            min_relevance=confidence_threshold,
+        )
+        self.response_gen = response_gen or ResponseGenerationAgent()
         self.memory = ConversationMemoryAgent()
         self.top_k = top_k
-        self.confidence_threshold = confidence_threshold
 
-    def _confidence(self, hits) -> float:
-        if not hits:
-            return 0.0
-        score = hits[0].score
-        return max(0.0, 1.0 / (1.0 + score))
+    @staticmethod
+    def _request_id(request_id: Optional[str]) -> str:
+        return request_id or str(uuid.uuid4())
 
-    def _is_retrieval_inadequate(self, parsed, hits, confidence: float) -> bool:
-        if not hits:
-            return True
-        if parsed.intent == "unavailable":
-            return hits[0].score > self.confidence_threshold or confidence < 0.45
-        return hits[0].score > self.confidence_threshold
+    @staticmethod
+    def _error_response(
+        request_id: str,
+        query_type: str,
+        agent: str,
+        code: str,
+        message: str,
+    ) -> ResponseResult:
+        return ResponseResult(
+            answer="The request could not be completed.",
+            confidence=0.0,
+            grounded=False,
+            no_information_found=True,
+            query_type=query_type,
+            status="error",
+            request_id=request_id,
+            error=AgentError(agent=agent, code=code, message=message),
+        )
+
+    @staticmethod
+    def _clarification_response(
+        request_id: str,
+        parsed: QueryUnderstandingResult,
+    ) -> ResponseResult:
+        answer = (
+            "Could you provide more detail so the request can be answered?"
+        )
+        return ResponseResult(
+            answer=answer,
+            confidence=parsed.classification_confidence,
+            classification_confidence=parsed.classification_confidence,
+            confidence_level="MEDIUM",
+            grounded=False,
+            no_information_found=False,
+            query_type=parsed.query_type,
+            status="clarification_needed",
+            request_id=request_id,
+            domain=parsed.domain,
+        )
 
     def handle(
         self,
         query: str,
         session_id: str = "default",
         top_k: Optional[int] = None,
-    ) -> AgentResponse:
-        k = top_k or self.top_k
-        context = self.memory.get_recent_context(session_id)
-        enriched_query = f"{context} {query}".strip() if context else query
-
-        parsed = self.understanding.analyze(query)
-        if parsed.is_ambiguous and context:
-            parsed = self.understanding.analyze(enriched_query)
-
-        hits = self.retrieval.retrieve(
-            parsed.normalized_query,
-            top_k=k,
-            domain=parsed.domain,
-        )
-        confidence = self._confidence(hits)
-
-        if parsed.intent == "unavailable":
-            response = AgentResponse(
-                answer="The requested information is not available in the knowledge base.",
-                citations=[],
-                status="unavailable",
-                intent=parsed.intent,
-                confidence=confidence,
-                retrieval_hits=hits,
-                domain=parsed.domain,
+        request_id: Optional[str] = None,
+    ) -> ResponseResult:
+        correlation_id = self._request_id(request_id)
+        try:
+            parsed = self.understanding.analyze(query)
+            if not isinstance(parsed, QueryUnderstandingResult):
+                raise TypeError("QueryUnderstandingAgent returned malformed output")
+        except Exception as exc:
+            return self._error_response(
+                correlation_id,
+                "ambiguous",
+                "query_understanding",
+                "CLASSIFICATION_ERROR",
+                str(exc),
             )
+
+        if parsed.routing == "CLARIFICATION":
+            response = self._clarification_response(correlation_id, parsed)
             self.memory.add_turn(session_id, query, response.answer)
             return response
 
-        if self.clarification.should_clarify(parsed, hits, confidence, 0.45):
-            question = self.clarification.generate_question(parsed, hits)
-            return AgentResponse(
-                answer=question,
-                citations=[],
-                status="clarification_needed",
-                intent=parsed.intent,
-                confidence=confidence,
-                retrieval_hits=hits,
-                clarification_question=question,
+        try:
+            retrieval = self.retrieval.retrieve(
+                parsed.normalized_query,
+                query_type=parsed.query_type,
                 domain=parsed.domain,
+                top_k=top_k or self.top_k,
+            )
+            if not isinstance(retrieval, RetrievalResult):
+                raise TypeError("RetrievalAgent returned malformed output")
+        except Exception as exc:
+            return self._error_response(
+                correlation_id,
+                parsed.query_type,
+                "retrieval",
+                "RETRIEVAL_ERROR",
+                str(exc),
             )
 
-        if self._is_retrieval_inadequate(parsed, hits, confidence):
-            if parsed.intent == "unavailable":
-                return AgentResponse(
-                    answer="The requested information is not available in the knowledge base.",
-                    citations=[
-                        Citation(
-                            chunk_id=h.chunk_id,
-                            filename=h.filename,
-                            excerpt=h.text[:120],
-                            document_id=h.document_id,
-                        )
-                        for h in hits[:1]
-                    ] if hits else [],
-                    status="unavailable",
-                    intent=parsed.intent,
-                    confidence=confidence,
-                    retrieval_hits=hits,
-                    domain=parsed.domain,
-                )
-            question = self.clarification.generate_question(parsed, hits)
-            return AgentResponse(
-                answer=question,
-                citations=[],
-                status="clarification_needed",
-                intent=parsed.intent,
-                confidence=confidence,
-                retrieval_hits=hits,
-                clarification_question=question,
+        try:
+            response = self.response_gen.generate(
+                parsed.normalized_query,
+                retrieval.results,
+                intent=parsed.query_type,
+                query_type=parsed.query_type,
+                confidence=retrieval.retrieval_confidence,
                 domain=parsed.domain,
             )
+            if not isinstance(response, ResponseResult):
+                raise TypeError("ResponseGenerationAgent returned malformed output")
+        except Exception as exc:
+            return self._error_response(
+                correlation_id,
+                parsed.query_type,
+                "response_generation",
+                "RESPONSE_GENERATION_ERROR",
+                str(exc),
+            )
 
-        response = self.response_gen.generate(
-            parsed.normalized_query,
-            hits,
-            intent=parsed.intent,
-            confidence=confidence,
-            domain=parsed.domain,
+        response = replace(
+            response,
+            query_type=parsed.query_type,
+            classification_confidence=parsed.classification_confidence,
+            request_id=correlation_id,
+            retrieval=retrieval,
+            retrieval_hits=retrieval.results,
         )
         self.memory.add_turn(session_id, query, response.answer)
         return response

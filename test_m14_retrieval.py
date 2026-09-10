@@ -5,7 +5,9 @@ import os
 import pytest
 
 from agents import Orchestrator
+from agents.models import RetrievalResult
 from agents.query_understanding import QueryUnderstandingAgent
+from agents.retrieval_agent import RetrievalAgent
 from ingestion import index_file
 from ingestion.models import make_chunk
 from vector_store.embeddings import EmbeddingProvider
@@ -52,6 +54,62 @@ def mini_orchestrator(tmp_path, embedder):
 
 
 class TestQueryUnderstanding:
+    @pytest.mark.parametrize(
+        "query,domain",
+        [
+            ("What is a Git branch?", "Software Engineering"),
+            ("What is the standard oral dose of acetaminophen?", "Hospital Administration"),
+            ("How long is a typical agile sprint?", "Software Engineering"),
+            ("What is the purpose of hand hygiene?", "Hospital Administration"),
+        ],
+    )
+    def test_factual_categories(self, query, domain):
+        result = QueryUnderstandingAgent().analyze(query)
+        assert result.query_type == "factual"
+        assert result.routing == "RETRIEVAL"
+        assert result.classification_confidence > 0
+        assert result.domain == domain
+
+    @pytest.mark.parametrize(
+        "query,domain",
+        [
+            ("How do I create a feature branch?", "Software Engineering"),
+            ("What are the steps for a pull request?", "Software Engineering"),
+            ("What is the procedure for patient admission?", "Hospital Administration"),
+            ("What protocol should nurses follow for hand hygiene?", "Hospital Administration"),
+        ],
+    )
+    def test_procedural_categories(self, query, domain):
+        result = QueryUnderstandingAgent().analyze(query)
+        assert result.query_type == "procedural"
+        assert result.routing == "RETRIEVAL"
+        assert result.domain == domain
+
+    @pytest.mark.parametrize(
+        "query,domain",
+        [
+            ("How do Git merge and rebase differ?", "Software Engineering"),
+            ("Compare REST versus SOAP APIs.", "Software Engineering"),
+            ("What is the difference between ICU and emergency care?", "Hospital Administration"),
+            ("Contrast oral and intravenous medication administration.", "Hospital Administration"),
+        ],
+    )
+    def test_comparative_categories(self, query, domain):
+        result = QueryUnderstandingAgent().analyze(query)
+        assert result.query_type == "comparative"
+        assert result.routing == "RETRIEVAL"
+        assert result.domain == domain
+
+    @pytest.mark.parametrize(
+        "query",
+        ["Git", "What about it?", "This?", "Can you explain that?"],
+    )
+    def test_ambiguous_categories(self, query):
+        result = QueryUnderstandingAgent().analyze(query)
+        assert result.query_type == "ambiguous"
+        assert result.routing == "CLARIFICATION"
+        assert result.classification_confidence > 0
+
     def test_factual_intent(self):
         parsed = QueryUnderstandingAgent().analyze(
             "How long is a typical agile sprint?"
@@ -70,11 +128,12 @@ class TestQueryUnderstanding:
         )
         assert parsed.intent == "comparative"
 
-    def test_unavailable_intent(self):
+    def test_unknown_fact_remains_factual(self):
         parsed = QueryUnderstandingAgent().analyze(
             "What is the annual revenue of TechCorp International?"
         )
-        assert parsed.intent == "unavailable"
+        assert parsed.query_type == "factual"
+        assert parsed.routing == "RETRIEVAL"
 
 
 class TestOrchestrator:
@@ -104,13 +163,12 @@ class TestOrchestrator:
         assert resp.intent == "comparative"
         assert resp.retrieval_hits
 
-    def test_unavailable_query(self, eval_orchestrator):
+    def test_unknown_fact_is_evaluated_after_retrieval(self, eval_orchestrator):
         resp = eval_orchestrator.handle(
             "What is the annual revenue of TechCorp International?"
         )
-        assert resp.status == "unavailable"
-        assert resp.intent == "unavailable"
-        assert "not available" in resp.answer.lower()
+        assert resp.intent == "factual"
+        assert resp.status in ("answered", "clarification_needed")
 
     def test_low_relevance(self, mini_orchestrator):
         resp = mini_orchestrator.handle(
@@ -142,3 +200,107 @@ class TestOrchestrator:
         assert hit.document_id
         assert hit.filename
         assert hit.chunk_id
+
+
+class FakeRetriever:
+    def __init__(self, results):
+        self.results = results
+        self.requested_top_k = None
+
+    def retrieve(self, query, top_k=3):
+        self.requested_top_k = top_k
+        return self.results
+
+
+class TestRetrievalAgent:
+    def test_ranks_by_l2_distance_and_exposes_relevance(self):
+        agent = RetrievalAgent(
+            FakeRetriever(
+                [
+                    {
+                        "similarity_score": 3.0,
+                        "text": "far",
+                        "document_id": "d2",
+                        "filename": "far.txt",
+                        "chunk_id": "c2",
+                    },
+                    {
+                        "similarity_score": 1.0,
+                        "text": "near",
+                        "document_id": "d1",
+                        "filename": "near.txt",
+                        "chunk_id": "c1",
+                    },
+                ]
+            ),
+            min_relevance=0.0,
+        )
+        result = agent.retrieve("query", query_type="factual", top_k=2)
+        assert isinstance(result, RetrievalResult)
+        assert [hit.filename for hit in result.results] == ["near.txt", "far.txt"]
+        assert result.results[0].distance_score == 1.0
+        assert result.results[0].relevance_score == 0.5
+        assert result.results[0].relevance_score > result.results[1].relevance_score
+
+    def test_filters_below_threshold_and_preserves_metadata(self):
+        result = RetrievalAgent(
+            FakeRetriever(
+                [
+                    {
+                        "similarity_score": 1.0,
+                        "text": "supported",
+                        "document_id": "d1",
+                        "filename": "guide.txt",
+                        "chunk_id": "c1",
+                        "metadata": {"page": 2, "domain": "Software Engineering"},
+                    },
+                    {
+                        "similarity_score": 9.0,
+                        "text": "weak",
+                        "document_id": "d2",
+                        "filename": "weak.txt",
+                        "chunk_id": "c2",
+                    },
+                ]
+            ),
+            min_relevance=0.4,
+        ).retrieve("query", query_type="factual", domain="Software Engineering")
+        assert len(result.results) == 1
+        assert result.filtered_count == 1
+        assert result.results[0].metadata["page"] == 2
+        assert result.sufficient_evidence is True
+
+    @pytest.mark.parametrize(
+        "domain,query",
+        [
+            ("Software Engineering", "What is a Git branch?"),
+            ("Hospital Administration", "What is patient admission?"),
+        ],
+    )
+    def test_domain_filtering_does_not_fallback(self, domain, query):
+        result = RetrievalAgent(
+            FakeRetriever(
+                [
+                    {
+                        "similarity_score": 0.1,
+                        "text": "other domain",
+                        "document_id": "d1",
+                        "filename": "other.txt",
+                        "chunk_id": "c1",
+                        "metadata": {"domain": "Other"},
+                    }
+                ]
+            )
+        ).retrieve(query, query_type="factual", domain=domain)
+        assert result.results == []
+        assert result.no_relevant_information is True
+        assert result.filtered_count == 1
+
+    def test_empty_results_and_invalid_top_k(self):
+        agent = RetrievalAgent(FakeRetriever([]))
+        result = agent.retrieve("annual revenue", query_type="factual", top_k=3)
+        assert result.results == []
+        assert result.sufficient_evidence is False
+        assert result.no_relevant_information is True
+        with pytest.raises(ValueError):
+            agent.retrieve("query", top_k=0)

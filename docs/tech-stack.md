@@ -1,6 +1,7 @@
 # Technology Stack — RAG Multi-Agent Knowledge Assistant
 
-All components used in Milestone 1 run **fully locally** — no cloud API, no API key required.
+M1 retrieval and M2 deterministic stages run locally. M2 response generation can
+use the OpenAI API when `OPENAI_API_KEY` is configured; tests use injected mocks.
 
 > 🟢 = Implemented and in use · 🟡 = Planned for future milestone
 
@@ -180,7 +181,7 @@ pytest
 
 ---
 
-## Future Stack Additions (M2+)
+## Future Stack Additions (M3+)
 
 | Layer | Technology | Reason |
 |---|---|---|

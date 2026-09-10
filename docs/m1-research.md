@@ -8,13 +8,14 @@ This note records the concepts and technology choices used in the **implemented*
 
 Retrieval-Augmented Generation separates **knowledge storage** from **language generation**. Documents are ingested offline; at query time the system retrieves supporting chunks and (later) conditions an LLM on that evidence.
 
-M1 implements ingestion and retrieval only. Generation is extractive (`ResponseGenerationAgent` copies spans from retrieved text). OpenAI / LLM calls are not used.
+M1 implements ingestion and retrieval. M2 adds optional OpenAI-backed grounded
+response generation; tests inject a mock client and do not require an API key.
 
 Pipeline:
 
 ```text
 Document → extract → clean → chunk → embed → FAISS
-Query → embed → L2 search → ranked chunks → extractive answer / clarification
+Query → understanding → embed → L2 search → ranked chunks → grounded response / clarification
 ```
 
 ---
@@ -45,7 +46,8 @@ Embeddings work on passages, not whole books. Chunk size trades context against 
 
 **Implemented:** `ingestion/chunker.py` — tiktoken `cl100k_base`, default **650 tokens**, overlap **75**, max **800**. Prefers paragraph / PDF page / CSV row boundaries; oversized segments fall back to a token window.
 
-`app.py` `simple_chunk()` (500 characters, no overlap) is a separate, thinner upload path and is **not** the evaluation baseline.
+`POST /upload` uses `ingestion.pipeline.index_file`, including token-aware
+chunking, embeddings, and FAISS persistence.
 
 ---
 
@@ -68,23 +70,24 @@ M1 uses a **fixed sequence**, not autonomous planning and not LangGraph.
 ```text
 Query → QueryUnderstandingAgent
      → RetrievalAgent (SemanticRetriever)
-     → ClarificationAgent if ambiguous / weak
-     → ResponseGenerationAgent if evidence is used
+     → ResponseGenerationAgent
+     ↳ ambiguous → structured clarification-needed response
 ```
 
-Unavailable **intent** (rule-based) short-circuits to “not available in the knowledge base.” `POST /retrieve` does **not** use this orchestrator.
+Unavailable information is not a query-understanding category. It is determined
+from retrieval evidence, and `POST /retrieve` uses the M2 orchestrator.
 
 ---
 
-## Five agents (implemented, no LLM)
+## Agent modules
 
 | Agent | Module | Behaviour |
 |---|---|---|
-| Query Understanding | `query_understanding.py` | Normalize text; classify factual / procedural / comparative / unavailable; optional domain keywords |
-| Retrieval | `retrieval_agent.py` | Query embedding via store; Top-k hits with rank, score, text, ids, filename, metadata |
-| Response Generation | `response_generation.py` | Extractive excerpts + `[source: …]` citations |
-| Clarification | `clarification.py` | Question when query is vague or retrieval is weak |
-| Conversation Memory | `memory.py` | Last N turns per `session_id` only |
+| Query Understanding | `query_understanding.py` | Normalize text; classify factual / procedural / comparative / ambiguous; deterministic confidence and routing |
+| Retrieval | `retrieval_agent.py` | Semantic Top-K hits with L2 distance, derived relevance, threshold filtering, and metadata |
+| Response Generation | `response_generation.py` | Optional grounded LLM response using retrieved context and metadata citations |
+| Clarification | `clarification.py` | Legacy helper module; the M2 orchestrator returns its own structured clarification response |
+| Conversation Memory | `memory.py` | Records turns per `session_id`; not a required resolution stage |
 
 ---
 
