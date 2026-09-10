@@ -1,151 +1,215 @@
-# Multi-Agent Orchestration
+# Multi-Agent Orchestration — Agent Design and Routing Logic
 
-The orchestrator coordinates specialised agents between the API and the retrieval core.
-**No agent runtime code exists in M1** — this document defines the target architecture
-that wraps **IMPLEMENTED IN M1** retrieval components.
+All five agents and the orchestrator are **implemented in M1.4** as plain Python classes
+(no LangGraph, no external agent framework). Each agent has a single, focused responsibility.
+
+> 🟢 = Implemented in M1.4 · 🟡 = Planned for future milestone
 
 ---
 
-## 1. Orchestrator Pipeline
+## 1. Agent Roster
+
+| Agent | Module | Role | LLM? |
+|---|---|---|---|
+| **Orchestrator** | `agents/orchestrator.py` | Coordinates the full pipeline; routes by intent and confidence | No |
+| **QueryUnderstandingAgent** | `agents/query_understanding.py` | Normalises text, classifies intent, detects domain, flags ambiguity | No |
+| **RetrievalAgent** | `agents/retrieval_agent.py` | Calls `SemanticRetriever`, normalises raw results to `RetrievalHit[]` | No |
+| **ResponseGenerationAgent** | `agents/response_generation.py` | Extracts best spans from hits, builds answer + `[source: …]` citations | No |
+| **ClarificationAgent** | `agents/clarification.py` | Generates a clarifying question when query is vague or evidence is weak | No |
+| **ConversationMemoryAgent** | `agents/memory.py` | Stores and retrieves last-N turns per `session_id` | No |
+
+---
+
+## 2. Orchestrator Routing Diagram
 
 ```mermaid
 flowchart TD
-    IN["AgentMessage<br/>(user query + session_id)"] --> API["API Layer<br/>IMPLEMENTED IN M1"]
-    API --> ORCH["Multi-Agent Orchestrator<br/>FUTURE MILESTONES"]
+    IN["User query + session_id"]
 
-    ORCH --> MEM["Conversation Memory Agent<br/>FUTURE MILESTONES"]
-    MEM -->|"ConversationTurn history"| ORCH
+    IN --> MEM["① ConversationMemoryAgent\nget_recent_context(session_id)\nReturns last-turn context string"]
+    MEM --> QU["② QueryUnderstandingAgent\nanalyze(query)\nOutputs ParsedQuery"]
 
-    ORCH --> QU["Query Understanding Agent<br/>FUTURE MILESTONES"]
-    QU -->|"ParsedQuery<br/>intent · domain · entities"| BR{"Route"}
+    QU --> INTENT{"③ Intent\ncheck"}
 
-    BR -->|"is_ambiguous = true"| CLAR["Clarification Agent<br/>FUTURE MILESTONES"]
-    CLAR -->|"clarifying question"| OUT1["AgentMessage → UI"]
+    INTENT -->|"intent == unavailable"| UNAV["Return AgentResponse\nstatus = 'unavailable'\nanswer = 'not available in knowledge base'"]
 
-    BR -->|"is_ambiguous = false"| RA["Retrieval Agent<br/>FUTURE MILESTONES"]
-    RA --> SR["SemanticRetriever<br/>IMPLEMENTED IN M1"]
-    SR --> VDB[("Vector DB<br/>IMPLEMENTED IN M1")]
-    VDB --> RA
-    RA -->|"RetrievalResult[]"| SUFF{"Evidence<br/>sufficient?"}
+    INTENT -->|"is_ambiguous == True"| CLAR["④ ClarificationAgent\ngenerate_question(parsed)\nReturn clarifying question"]
+    CLAR --> RESP_CLAR["AgentResponse\nstatus = 'clarification_needed'"]
 
-    SUFF -->|"no"| UNAV["Response<br/>information unavailable"]
-    SUFF -->|"yes"| RG["Response Generation Agent<br/>FUTURE MILESTONES"]
-    RG --> CIT["Attach Citations<br/>FUTURE MILESTONES"]
-    RG --> CONF["Attach Confidence<br/>FUTURE MILESTONES"]
-    CIT --> RESP["Response"]
-    CONF --> RESP
-    UNAV --> RESP
-    RESP --> MEM2["Memory: store ConversationTurn<br/>FUTURE MILESTONES"]
-    MEM2 --> OUT2["AgentMessage → UI"]
+    INTENT -->|"clear intent"| RA["⑤ RetrievalAgent\nretrieve(normalized_query, top_k, domain)\nCalls SemanticRetriever → FAISS"]
 
-    style API fill:#d4edda,stroke:#155724
-    style SR fill:#d4edda,stroke:#155724
-    style VDB fill:#d4edda,stroke:#155724
-    style ORCH fill:#fff3cd,stroke:#856404
-    style MEM fill:#fff3cd,stroke:#856404
-    style MEM2 fill:#fff3cd,stroke:#856404
-    style QU fill:#fff3cd,stroke:#856404
-    style CLAR fill:#fff3cd,stroke:#856404
-    style RA fill:#fff3cd,stroke:#856404
-    style RG fill:#fff3cd,stroke:#856404
-    style CIT fill:#fff3cd,stroke:#856404
-    style CONF fill:#fff3cd,stroke:#856404
-    style UNAV fill:#fff3cd,stroke:#856404
-    style RESP fill:#fff3cd,stroke:#856404
+    RA --> CONF{"⑥ Confidence\ncheck\n1 / (1 + L2_score)"}
+
+    CONF -->|"confidence < 0.45\nor top1 L2 > 1.35"| CLAR2["④ ClarificationAgent\ngenerate_question(parsed, hits)"]
+    CLAR2 --> RESP_CLAR2["AgentResponse\nstatus = 'clarification_needed'"]
+
+    CONF -->|"sufficient evidence"| RG["⑦ ResponseGenerationAgent\ngenerate(query, hits, intent, confidence)\nExtracts best spans + builds citations"]
+
+    RG --> SAVE["⑧ ConversationMemoryAgent\nadd_turn(session_id, query, answer)"]
+    SAVE --> RESP_ANSWERED["AgentResponse\nstatus = 'answered'\nanswer + citations[] + retrieval_hits[]"]
+
+    UNAV --> END["Return to caller"]
+    RESP_CLAR --> END
+    RESP_CLAR2 --> END
+    RESP_ANSWERED --> END
+
+    style IN fill:#cce5ff,stroke:#004085,color:#000
+    style UNAV fill:#f8d7da,stroke:#721c24,color:#000
+    style RESP_CLAR fill:#fff3cd,stroke:#856404,color:#000
+    style RESP_CLAR2 fill:#fff3cd,stroke:#856404,color:#000
+    style RESP_ANSWERED fill:#d4edda,stroke:#155724,color:#000
+    style END fill:#d4edda,stroke:#155724,color:#000
 ```
 
 ---
 
-## 2. Agent Responsibilities
+## 3. Agent Contracts
 
-| Agent | Input | Output | Status |
-|---|---|---|---|
-| **Multi-Agent Orchestrator** | `AgentMessage` | `Response` or clarification `AgentMessage` | **FUTURE MILESTONES** |
-| **Conversation Memory Agent** | session history | enriched context, stored `ConversationTurn` | **FUTURE MILESTONES** |
-| **Query Understanding Agent** | raw query + context | intent, domain, entities, `is_ambiguous` | **FUTURE MILESTONES** |
-| **Clarification Agent** | ambiguity signal | clarifying question string | **FUTURE MILESTONES** |
-| **Retrieval Agent** | parsed query, `top_k` | `RetrievalResult[]` | **FUTURE MILESTONES** (wraps **IMPLEMENTED IN M1** `SemanticRetriever`) |
-| **Response Generation Agent** | query + evidence | `Response` with answer | **FUTURE MILESTONES** |
+### QueryUnderstandingAgent
+
+**Input:** raw query string
+**Output:** `ParsedQuery`
+
+| Field | Type | Description |
+|---|---|---|
+| `raw_query` | `str` | Original user text |
+| `normalized_query` | `str` | Whitespace-normalised text |
+| `intent` | `str` | `factual` · `procedural` · `comparative` · `unavailable` |
+| `domain` | `str \| None` | `"Software Engineering"` · `"Hospital Administration"` · `None` |
+| `is_ambiguous` | `bool` | True if query is ≤2 words or uses vague pronouns |
+
+**Classification rules (no LLM):**
+```
+unavailable  ← matches: "revenue", "CEO", "fiscal year", "Nobel Prize", "invented … year"
+comparative  ← matches: "differ", "difference", "compare", "versus", "vs", "contrast"
+procedural   ← matches: "how do/to/should/can", "steps to", "procedure", "protocol"
+factual      ← default (everything else)
+```
 
 ---
 
-## 3. Routing Rules (Planned)
+### RetrievalAgent
+
+**Input:** `normalized_query`, `top_k`, optional `domain` filter
+**Output:** `RetrievalHit[]`
+
+| Field | Type | Description |
+|---|---|---|
+| `rank` | `int` | 1-based position in results |
+| `score` | `float` | L2 distance (lower = closer match) |
+| `text` | `str` | Chunk body text |
+| `filename` | `str` | Source document filename |
+| `document_id` | `str` | UUID of parent document |
+| `chunk_id` | `str` | `{document_id}_{chunk_index}` |
+| `metadata` | `dict` | Domain, file_type, token counts |
+
+**Domain filtering:** if `domain` is set, hits from other domains are filtered out.
+If filtering yields zero hits, all hits are returned (fallback).
+
+---
+
+### ResponseGenerationAgent
+
+**Input:** query, `RetrievalHit[]`, intent, confidence, domain
+**Output:** `AgentResponse`
+
+**Answer construction by intent:**
+
+| Intent | Answer format |
+|---|---|
+| `factual` | Best-matching excerpt from top hit |
+| `procedural` | `"Procedure from {filename}: {excerpt}"` |
+| `comparative` | `"Based on the knowledge base: {excerpt1} Additionally: {excerpt2}"` |
+
+All answers append `[source: {filenames}]` citation markers.
+Up to 3 citations (one per top-3 hits) are attached.
+
+---
+
+### ClarificationAgent
+
+**Input:** `ParsedQuery`, `RetrievalHit[]`, confidence
+**Output:** Clarifying question string
+
+| Condition | Generated question |
+|---|---|
+| No domain detected | "Could you specify whether your question relates to Software Engineering or Hospital Administration?" |
+| Query is ambiguous | "Your question seems broad. Could you provide more detail about what you need regarding {domain}?" |
+| No hits found | "I could not find relevant documents. Could you rephrase or add more context?" |
+| Low confidence | "I found only weakly related information. Could you clarify the specific topic?" |
+
+---
+
+### ConversationMemoryAgent
+
+**Input / Output:** per-session turn history (in-memory, not persisted to disk)
+
+- Stores up to `max_turns=5` turns per `session_id`
+- `get_recent_context()` returns a string: `"Previous question: … Previous answer: …"`
+- Used by the Orchestrator to enrich ambiguous follow-up queries
+
+---
+
+## 4. State Machine (Routing Logic)
 
 ```mermaid
 stateDiagram-v2
-    [*] --> LoadMemory: session_id present
-    LoadMemory --> UnderstandQuery
-    UnderstandQuery --> Clarify: is_ambiguous
-    UnderstandQuery --> Retrieve: not ambiguous
-    Clarify --> [*]: return question
-    Retrieve --> CheckEvidence
-    CheckEvidence --> Unavailable: insufficient evidence
-    CheckEvidence --> Generate: sufficient evidence
-    Unavailable --> [*]: return unavailable Response
-    Generate --> AttachMeta: citations + confidence
-    AttachMeta --> SaveTurn
-    SaveTurn --> [*]: return Response
+    [*] --> LoadMemory : Orchestrator.handle() called
+    LoadMemory --> UnderstandQuery : context loaded
+    UnderstandQuery --> ReturnUnavailable : intent == unavailable
+    UnderstandQuery --> Clarify : is_ambiguous == True
+    UnderstandQuery --> Retrieve : clear, non-unavailable intent
+    Retrieve --> Clarify : no hits OR low confidence
+    Retrieve --> Generate : sufficient evidence
+    Clarify --> [*] : return clarification_needed response
+    ReturnUnavailable --> [*] : return unavailable response
+    Generate --> SaveTurn : AgentResponse built
+    SaveTurn --> [*] : return answered response
 ```
 
-**Status:** **FUTURE MILESTONES**
-
 ---
 
-## 4. Query Understanding — Intent Taxonomy
+## 5. Response Schema
 
-| Intent | Example | Used in M1 eval |
+Every code path returns an `AgentResponse`:
+
+| Field | Type | Description |
 |---|---|---|
-| Factual | "How many leave days?" | Yes |
-| Procedural | "How do I apply for leave?" | Yes |
-| Comparative | "Difference between Annual and Sick carry-forward?" | Yes |
-| Unavailable | "What was revenue in 2025?" | Yes (negative test) |
-
-Intent classification logic — **FUTURE MILESTONES**; eval harness labels — **IMPLEMENTED IN M1**.
-
----
-
-## 5. Evidence Sufficiency (Future)
-
-The orchestrator will reject weak matches before generation:
-
-| Signal | Mechanism | Status |
-|---|---|---|
-| Top-1 L2 distance | Threshold gate | **FUTURE MILESTONES** |
-| Domain mismatch | Query Understanding output vs chunk metadata | **FUTURE MILESTONES** |
-| Empty index | Zero vectors | **IMPLEMENTED IN M1** (returns `[]`) |
+| `answer` | `str` | Answer text, clarifying question, or unavailability message |
+| `citations` | `Citation[]` | Source references (chunk_id, filename, excerpt) |
+| `status` | `str` | `"answered"` · `"unavailable"` · `"clarification_needed"` |
+| `intent` | `str` | Intent from `QueryUnderstandingAgent` |
+| `confidence` | `float` | Normalised `1 / (1 + L2_score)` from top-1 hit |
+| `retrieval_hits` | `RetrievalHit[]` | Full ranked hit list for transparency |
+| `domain` | `str \| None` | Detected or inferred domain |
+| `clarification_question` | `str \| None` | Set when `status="clarification_needed"` |
 
 ---
 
-## 6. Citations and Confidence
+## 6. Module Layout
 
-```mermaid
-flowchart LR
-    RR["RetrievalResult[]"] --> RG["Response Generation Agent"]
-    RG --> ANS["answer text"]
-    RR --> CIT["citations[]<br/>chunk_id · document_name"]
-    RR --> CONF["confidence<br/>derived from similarity_score"]
-    ANS --> RESP["Response"]
-    CIT --> RESP
-    CONF --> RESP
+```
+agents/
+├── __init__.py              # Public exports for all agents
+├── orchestrator.py          # Orchestrator — coordinates full pipeline
+├── query_understanding.py   # QueryUnderstandingAgent — intent + domain
+├── retrieval_agent.py       # RetrievalAgent — wraps SemanticRetriever
+├── response_generation.py   # ResponseGenerationAgent — extractive answers
+├── clarification.py         # ClarificationAgent — clarifying questions
+├── memory.py                # ConversationMemoryAgent — session history
+└── models.py                # Shared dataclasses: ParsedQuery, RetrievalHit,
+                             #   Citation, AgentResponse, ConversationTurn
 ```
 
-| Field | Producer | Status |
-|---|---|---|
-| `citations[]` | Response Generation Agent | **FUTURE MILESTONES** |
-| `confidence` | Orchestrator / RG from retrieval scores | **FUTURE MILESTONES** |
-| `similarity_score` (raw L2) | `VectorStore.search()` | **IMPLEMENTED IN M1** |
-
 ---
 
-## 7. Planned Module Layout
+## 7. What Is NOT in M1 (Future Milestones)
 
-| File (planned) | Role | Status |
-|---|---|---|
-| `agents/orchestrator.py` | State machine / LangGraph router | **FUTURE MILESTONES** |
-| `agents/query_understanding.py` | Intent + domain + ambiguity | **FUTURE MILESTONES** |
-| `agents/retrieval_agent.py` | Wraps `SemanticRetriever` | **FUTURE MILESTONES** |
-| `agents/response_generation.py` | LLM grounded answer | **FUTURE MILESTONES** |
-| `agents/clarification.py` | Clarifying questions | **FUTURE MILESTONES** |
-| `agents/memory.py` | Session history | **FUTURE MILESTONES** |
-
-Design reference: [`../agents/README.md`](../agents/README.md)
+| Feature | Why deferred |
+|---|---|
+| LLM-grounded answers | OpenAI / local model adds cost and latency; retrieval validated first |
+| `POST /chat` endpoint | Will wire Orchestrator to the API in M2 |
+| Similarity threshold tuning | Needs calibration data from real user queries |
+| Cross-encoder re-ranking | Improves precision but requires a second model |
+| Persistent session store | Redis / SQLite for multi-user, multi-process memory |
+| Autonomous agent planning | LangGraph or custom FSM for multi-hop queries |

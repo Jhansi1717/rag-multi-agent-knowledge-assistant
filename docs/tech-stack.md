@@ -1,123 +1,194 @@
 # Technology Stack — RAG Multi-Agent Knowledge Assistant
 
-Reuses existing M1 technology choices. Status labels: **IMPLEMENTED IN M1** or
-**FUTURE MILESTONES**.
+All components used in Milestone 1 run **fully locally** — no cloud API, no API key required.
+
+> 🟢 = Implemented and in use · 🟡 = Planned for future milestone
 
 ---
 
-## Stack Diagram
+## Stack at a Glance
 
 ```mermaid
 flowchart TB
-    subgraph CLIENT["Client — FUTURE MILESTONES"]
+    subgraph CLIENT["🟡 Client Layer  (Future Milestone)"]
         UI["Web UI"]
-        VOICE["Web Speech API<br/>STT / TTS"]
+        VOICE["Web Speech API  STT / TTS\n(browser)"]
     end
 
-    subgraph SERVER["Server — IMPLEMENTED IN M1"]
-        PY["Python 3.11+"]
-        FA["FastAPI + Uvicorn"]
-        PM["Pydantic validation"]
+    subgraph SERVER["🟢 Server  (Python 3.11)"]
+        FA["FastAPI + Uvicorn\nHTTP API"]
+        PM["Pydantic\nRequest validation"]
     end
 
-    subgraph INGEST["Ingestion — IMPLEMENTED IN M1"]
-        PYMUPDF["PyMuPDF"]
-        DOCX["python-docx"]
-        PD["pandas"]
-        TT["tiktoken"]
+    subgraph AGENTS_BOX["🟢 Agent Layer  (Python classes, no framework)"]
+        ORCH2["Orchestrator"]
+        QU2["QueryUnderstanding"]
+        RA2["RetrievalAgent"]
+        RG2["ResponseGeneration"]
+        CLAR2["Clarification"]
+        MEM2["Memory"]
     end
 
-    subgraph ML["ML / Search — IMPLEMENTED IN M1"]
+    subgraph INGEST["🟢 Ingestion"]
+        PYMUPDF["PyMuPDF — PDF"]
+        DOCX["python-docx — DOCX"]
+        PD["pandas — CSV"]
+        STDLIB["stdlib — TXT"]
+        TT["tiktoken — chunking"]
+    end
+
+    subgraph ML["🟢 Embeddings + Search"]
         ST["sentence-transformers"]
-        MODEL["all-MiniLM-L6-v2"]
-        FAISS["faiss-cpu"]
-        NP["numpy"]
+        MODEL["all-MiniLM-L6-v2\n384-d · CPU"]
+        FAISS["faiss-cpu\nIndexFlatL2"]
+        NP["numpy  float32"]
     end
 
-    subgraph STORE["Persistence — IMPLEMENTED IN M1"]
-        FIDX["data/index.faiss"]
-        JSON["data/metadata.json"]
-        UP["data/uploads/"]
+    subgraph STORE["🟢 Persistence"]
+        FIDX["index.faiss"]
+        JSON2["metadata.json"]
     end
 
-    subgraph FUTURE["Future Layers — FUTURE MILESTONES"]
-        LLM["OpenAI API / equivalent LLM"]
-        ORCH["LangGraph or state machine"]
-        VDB["Managed vector DB"]
-        SESS["Session store"]
+    subgraph FUTURE_BOX["🟡 Future Layers"]
+        LLM["OpenAI / Local LLM\nGrounded generation"]
+        VDB["Qdrant / Pinecone\nManaged vector DB"]
+        SESS["Redis / SQLite\nSession store"]
     end
 
     UI --> FA
     VOICE --> FA
-    FA --> INGEST
-    INGEST --> ML
+    FA --> AGENTS_BOX
+    AGENTS_BOX --> INGEST
+    AGENTS_BOX --> ML
     ML --> STORE
-    FA --> ORCH
-    ORCH --> LLM
-    ORCH --> ML
-    ML --> VDB
-    ORCH --> SESS
+    AGENTS_BOX --> FUTURE_BOX
 ```
 
 ---
 
-## Component Table
+## Component Reference
 
-| Layer | Technology | Version / Notes | Status |
-|---|---|---|---|
-| Language | Python | 3.11+ | **IMPLEMENTED IN M1** |
-| HTTP server | Uvicorn | ASGI | **IMPLEMENTED IN M1** |
-| API framework | FastAPI | `/health`, `/upload`, `/retrieve` | **IMPLEMENTED IN M1** |
-| Request validation | Pydantic | `RetrieveRequest` | **IMPLEMENTED IN M1** |
-| Multipart uploads | python-multipart | File upload | **IMPLEMENTED IN M1** |
-| PDF extraction | PyMuPDF (`fitz`) | Local, no OCR | **IMPLEMENTED IN M1** |
-| DOCX extraction | python-docx | Paragraph + table text | **IMPLEMENTED IN M1** |
-| CSV processing | pandas | Semantic row formatting | **IMPLEMENTED IN M1** |
-| TXT processing | Python stdlib | UTF-8 read | **IMPLEMENTED IN M1** |
-| Token counting | tiktoken | `cl100k_base` for chunking | **IMPLEMENTED IN M1** |
-| Embeddings | sentence-transformers | CPU inference | **IMPLEMENTED IN M1** |
-| Embedding model | all-MiniLM-L6-v2 | 384-d, 22M params | **IMPLEMENTED IN M1** |
-| Vector search | faiss-cpu | `IndexFlatL2` | **IMPLEMENTED IN M1** |
-| Numerics | numpy | float32 vectors | **IMPLEMENTED IN M1** |
-| Metadata store | JSON file | `data/metadata.json` | **IMPLEMENTED IN M1** |
-| Sample generation | fpdf | Synthetic PDF corpus | **IMPLEMENTED IN M1** |
-| API testing | httpx | `test_app.py` | **IMPLEMENTED IN M1** |
-| LLM generation | OpenAI API | Grounded answers | **FUTURE MILESTONES** |
-| Env config | python-dotenv | API keys | **FUTURE MILESTONES** |
-| Orchestration | LangGraph / custom FSM | Agent routing | **FUTURE MILESTONES** |
-| Frontend UI | React or static HTML | Chat interface | **FUTURE MILESTONES** |
-| Voice | Web Speech API | Browser STT/TTS | **FUTURE MILESTONES** |
-| Vector DB | Qdrant / Pinecone | Production scale | **FUTURE MILESTONES** |
-| Session store | Redis / SQLite | Conversation memory | **FUTURE MILESTONES** |
-| Auth | OAuth / API keys | Multi-user | **FUTURE MILESTONES** |
-| Deployment | Docker / cloud | Production hosting | **FUTURE MILESTONES** |
+### Core Runtime
 
----
-
-## Dependencies (`requirements.txt`)
-
-| Package | Purpose | Status |
+| Component | Technology | Notes |
 |---|---|---|
-| fastapi | API | **IMPLEMENTED IN M1** |
-| uvicorn | Server | **IMPLEMENTED IN M1** |
-| python-multipart | Uploads | **IMPLEMENTED IN M1** |
-| pymupdf | PDF | **IMPLEMENTED IN M1** |
-| python-docx | DOCX | **IMPLEMENTED IN M1** |
-| pandas | CSV | **IMPLEMENTED IN M1** |
-| numpy | Arrays | **IMPLEMENTED IN M1** |
-| sentence-transformers | Embeddings | **IMPLEMENTED IN M1** |
-| faiss-cpu | Vector index | **IMPLEMENTED IN M1** |
-| fpdf | Sample PDFs | **IMPLEMENTED IN M1** |
-| tiktoken | Chunking | **IMPLEMENTED IN M1** |
-| httpx | Tests | **IMPLEMENTED IN M1** |
-| openai | LLM | **FUTURE MILESTONES** (commented) |
-| python-dotenv | Config | **FUTURE MILESTONES** (commented) |
+| Language | **Python 3.11** | Type hints throughout, dataclasses |
+| HTTP server | **Uvicorn** | ASGI |
+| API framework | **FastAPI** | `/health` · `/upload` · `/retrieve` |
+| Request validation | **Pydantic** | `RetrieveRequest` model |
+| File uploads | **python-multipart** | Multipart form support |
+
+### Document Ingestion
+
+| Component | Technology | What it extracts |
+|---|---|---|
+| PDF | **PyMuPDF** (`fitz`) | Text per page, page metadata, no OCR |
+| DOCX | **python-docx** | Paragraphs + table text in body order |
+| CSV | **pandas** | `"Column: Value"` semantic row strings |
+| TXT | **Python stdlib** | Raw UTF-8 text with line count |
+| Tokeniser | **tiktoken** (`cl100k_base`) | Deterministic token counting for chunking |
+
+### Embeddings and Search
+
+| Component | Technology | Notes |
+|---|---|---|
+| Embedding model | **all-MiniLM-L6-v2** | 384 dimensions · 22M params · local CPU inference |
+| Model runner | **sentence-transformers** | Wraps HuggingFace model |
+| Vector index | **faiss-cpu `IndexFlatL2`** | Exact L2 nearest-neighbour search |
+| Numerics | **numpy** | float32 vectors |
+| Metadata store | **JSON file** | `metadata.json` keyed by FAISS row index |
+
+### Agent Layer
+
+| Component | Technology | Notes |
+|---|---|---|
+| All agents | **Plain Python classes** | No LangGraph, no LangChain |
+| Intent classification | **Regex pattern matching** | No LLM required |
+| Conversation memory | **In-process deque** | Per session_id, max 5 turns |
+
+### Testing
+
+| Component | Technology | Notes |
+|---|---|---|
+| Test runner | **pytest** | 41 tests, all passing |
+| HTTP test client | **httpx** (via FastAPI TestClient) | Integration tests for API |
+| Synthetic corpus | **fpdf** | Generates PDF files for evaluation |
 
 ---
 
-## Design Constraints (M1)
+## `requirements.txt`
 
-- **Local-first:** no external API required for ingestion or retrieval.
-- **Swappable embedding model:** change constructor param in `VectorStore` / `EmbeddingService`.
-- **Swappable vector backend:** `VectorStore` interface hides FAISS details.
-- **Retrieval before generation:** LLM deferred until retrieval baseline is validated.
+```
+# Runtime — all needed for M1
+fastapi
+uvicorn
+python-multipart
+pymupdf
+python-docx
+pandas
+numpy
+sentence-transformers
+faiss-cpu
+fpdf
+tiktoken
+
+# Test
+httpx
+pytest
+
+# Future (commented out — not imported in M1)
+# openai
+# python-dotenv
+```
+
+---
+
+## Chunking Configuration
+
+| Parameter | Value | Rationale |
+|---|---|---|
+| Chunk size | **650 tokens** | Balances context richness vs embedding noise |
+| Overlap | **75 tokens** | Preserves context across chunk boundaries |
+| Max chunk size | **800 tokens** | Hard cap; oversized blocks are token-sliced |
+| Tokeniser | **`cl100k_base`** | Same tokeniser as GPT — deterministic counts |
+
+---
+
+## Evaluation Configuration
+
+| Parameter | Value |
+|---|---|
+| Embedding model | `all-MiniLM-L6-v2` |
+| Index type | FAISS `IndexFlatL2` |
+| Domains | Software Engineering · Hospital Administration |
+| Query types | Factual · Procedural · Comparative · Unavailable |
+| Evaluated top-k | 1, 3, 5 |
+| Hit@1 / Hit@3 / Hit@5 | **100% / 100% / 100%** (15 scorable queries) |
+
+---
+
+## Design Principles
+
+| Principle | How it's applied |
+|---|---|
+| **Local-first** | No external API needed; model runs on CPU |
+| **Retrieval before generation** | LLM deferred; retrieval quality validated first |
+| **Swappable embeddings** | Change one param in `VectorStore(model_name=…)` |
+| **Swappable vector backend** | `VectorStore` interface hides FAISS internals |
+| **No secrets in code** | `openai` / `python-dotenv` commented out in requirements |
+| **Testable determinism** | Rule-based agents; no LLM non-determinism |
+
+---
+
+## Future Stack Additions (M2+)
+
+| Layer | Technology | Reason |
+|---|---|---|
+| LLM generation | OpenAI API / local LLM | Grounded answers instead of extractive |
+| Config / secrets | python-dotenv | API key management |
+| Frontend | React or plain HTML | Chat interface |
+| Voice | Web Speech API | Browser STT/TTS |
+| Vector DB | Qdrant / Pinecone | Multi-user, persistent, scalable |
+| Session store | Redis / SQLite | Multi-turn memory across restarts |
+| Auth | OAuth / API keys | Multi-user support |
+| Deployment | Docker + cloud | Production hosting |

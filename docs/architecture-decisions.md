@@ -1,153 +1,204 @@
 # Architecture Decisions — RAG Multi-Agent Knowledge Assistant
 
-Decision log for Milestone 1.2. Each entry maps to implemented code or a documented
-future boundary.
+Decision log for Milestone 1. Each entry explains **what** was decided, **why**, and what its **current status** is.
 
-**Legend:** **IMPLEMENTED IN M1** · **FUTURE MILESTONES**
+> 🟢 = Implemented in M1 · 🟡 = Planned for future milestone
 
 ---
 
 ## AD-01: Thin Vertical Slice First
 
-**Decision:** Ship one complete ingestion → retrieval path before agent or generation layers.
+**Decision:** Build one complete ingestion → retrieval → agent path before adding LLM generation or a UI.
 
-**Status:** **IMPLEMENTED IN M1**
+**Rationale:** Validates retrieval quality (Hit@1/3/5) on real document content before introducing LLM complexity. Failures are easier to diagnose and fix without a generation layer masking retrieval problems.
 
-**Rationale:** Produces testable evidence (Hit@1/3/5) and validates semantic search on the
-two-domain corpus before adding LLM complexity.
+**Status:** 🟢 Implemented — full pipeline validated, 100% Hit@1/3/5 on 15 scored queries.
 
 ---
 
 ## AD-02: Separate Ingestion and Query Lifecycles
 
-**Decision:** Ingestion persists to disk; retrieval loads the index per process start.
+**Decision:** Ingestion writes to disk once; retrieval loads the index at process start.
 
-| Path | Trigger | Status |
+| Operation | Trigger | Status |
 |---|---|---|
-| Upload → embed → save | `POST /upload`, `index_samples.py` | **IMPLEMENTED IN M1** |
-| Load → search | `POST /retrieve` | **IMPLEMENTED IN M1** |
+| Ingest → embed → save | `index_evaluation_corpus.py` / `POST /upload` | 🟢 Implemented |
+| Load → search | `VectorStore.load()` at startup | 🟢 Implemented |
 
-**Rationale:** Incremental corpus growth without re-embedding at query time.
+**Rationale:** Corpus grows incrementally without re-embedding everything at query time. The FAISS index can be rebuilt from scratch at any time by re-running the ingestion scripts.
 
 ---
 
 ## AD-03: Unified Extraction Interface
 
-**Decision:** All format logic lives in `ingestion/`; API and vector store are format-agnostic.
+**Decision:** All format-specific logic lives in `ingestion/`; the API and vector store are format-agnostic.
 
 | Format | Library | Status |
 |---|---|---|
-| PDF | PyMuPDF | **IMPLEMENTED IN M1** |
-| DOCX | python-docx | **IMPLEMENTED IN M1** |
-| TXT | stdlib | **IMPLEMENTED IN M1** |
-| CSV | pandas | **IMPLEMENTED IN M1** |
+| PDF | PyMuPDF | 🟢 Implemented |
+| DOCX | python-docx | 🟢 Implemented |
+| TXT | Python stdlib | 🟢 Implemented |
+| CSV | pandas | 🟢 Implemented |
+| OCR / scanned PDF | — | 🟡 Future |
+| HTML / web pages | — | 🟡 Future |
 
-**Deferred:** OCR, HTML, image extraction — **FUTURE MILESTONES**.
+**Rationale:** New formats only require adding an extractor class — no changes to the API or vector store.
 
 ---
 
-## AD-04: Token-Aware Fixed-Size Chunking
+## AD-04: Token-Aware Paragraph-Preserving Chunking
 
-**Decision:** 600-token chunks, 80-token overlap via tiktoken (`ingestion/chunker.py`).
+**Decision:** Use tiktoken with 650-token chunks, 75-token overlap, and paragraph/page/row boundary preference.
 
-**Status:** **IMPLEMENTED IN M1** (full pipeline); `app.py` still uses char-based
-`simple_chunk()` — known integration gap.
+**Parameters:**
 
-**Deferred:** Semantic / sentence-boundary chunking — **FUTURE MILESTONES**.
+| Parameter | Value | Why |
+|---|---|---|
+| Chunk size | 650 tokens | Within the 500–800 token sweet spot for MiniLM |
+| Overlap | 75 tokens | Preserves cross-boundary context |
+| Max chunk size | 800 tokens | Hard cap; oversized segments are token-sliced |
+| Tokeniser | `cl100k_base` | Deterministic; same as GPT tokenisers |
+| Boundary preference | Paragraph → Page → CSV row → Token window | Keeps semantic units intact |
+
+**Known gap:** `POST /upload` still uses `simple_chunk()` (500-char, no overlap). The evaluated pipeline is `index_evaluation_corpus.py`. This will be fixed in M2.
+
+**Status:** 🟢 Implemented (full pipeline) · `POST /upload` gap noted for M2.
 
 ---
 
 ## AD-05: Local Embedding Model
 
-**Decision:** `sentence-transformers/all-MiniLM-L6-v2` (384-d) for chunks and queries.
+**Decision:** Use `sentence-transformers/all-MiniLM-L6-v2` (384-d) for all chunk and query embeddings.
 
-**Status:** **IMPLEMENTED IN M1**
+**Why chosen:**
+- Runs on CPU — no GPU, no API key required
+- Fast inference (~50ms per batch on modern CPU)
+- Standard dense retrieval baseline with good benchmark performance
+- Same model for chunks and queries ensures distance comparability
 
-**Alternatives rejected for M1:** OpenAI embeddings (cost/API), mpnet (latency).
+**Alternatives rejected for M1:**
+- OpenAI embeddings: cost, API key dependency
+- `all-mpnet-base-v2`: slower, higher latency, marginal quality gain for M1
 
-**Deferred:** Model comparison / fine-tuning — **FUTURE MILESTONES**.
+**Status:** 🟢 Implemented in `vector_store/embeddings.py`.
 
 ---
 
 ## AD-06: FAISS IndexFlatL2 + JSON Metadata
 
-**Decision:** In-process FAISS for vectors; parallel `metadata.json` keyed by row ID.
+**Decision:** Use in-process FAISS for vectors; parallel `metadata.json` keyed by FAISS row ID.
 
-**Status:** **IMPLEMENTED IN M1**
+**Why FAISS:**
+- Zero additional process or service to run
+- Exact L2 search — no approximation, no tuning parameters
+- Sufficient for M1 corpus size (8–100 chunks)
+- Single `.faiss` file — easy to version, share, rebuild
 
-**Deferred:** Qdrant / Pinecone — **FUTURE MILESTONES** when scale or concurrency requires.
+**Metadata design:**
+- Each FAISS row index maps to a JSON key containing the full chunk record
+- `_indexed_sources` dict tracks which source files are indexed (for duplicate guard)
+
+**Limitation:** FAISS `IndexFlatL2` always returns a nearest neighbour — there is no "no match" result. Unavailable queries still receive a Top-1 document. A confidence threshold will fix this in M2.
+
+**Status:** 🟢 Implemented. Managed vector DB (Qdrant/Pinecone) deferred to 🟡 future.
 
 ---
 
 ## AD-07: FastAPI HTTP Layer
 
-**Decision:** FastAPI + Pydantic for three endpoints.
+**Decision:** Three endpoints: `GET /health`, `POST /upload`, `POST /retrieve`.
 
-**Status:** **IMPLEMENTED IN M1**
+| Endpoint | Purpose | Status |
+|---|---|---|
+| `GET /health` | Liveness check | 🟢 Implemented |
+| `POST /upload` | Ingest a document | 🟢 Implemented (simple-chunk path) |
+| `POST /retrieve` | Semantic search | 🟢 Implemented (direct, no agents) |
+| `POST /chat` | Orchestrated Q&A | 🟡 Future — will wire `Orchestrator` |
 
-**Deferred:** Orchestrated `/chat` endpoint — **FUTURE MILESTONES**.
-
----
-
-## AD-08: Retrieval Validated Before Generation
-
-**Decision:** M1 proves retrieval quality; no LLM in the critical path.
-
-**Status:** **IMPLEMENTED IN M1** (`evaluate_retrieval.py`, `docs/validation.md`)
-
-**Deferred:** Response Generation Agent — **FUTURE MILESTONES**.
+**Status:** 🟢 Implemented. `/chat` deferred to 🟡 M2.
 
 ---
 
-## AD-09: Multi-Agent Layer as Orchestrated Wrapper
+## AD-08: Validate Retrieval Before Adding Generation
 
-**Decision:** Agents wrap existing retrieval; orchestrator routes by intent and ambiguity.
+**Decision:** M1 proves retrieval quality with Hit@1/3/5 before introducing an LLM.
+
+**Results (live run, `evaluation/evaluate_retrieval.py`):**
+
+| Metric | Excl. unavailable | Incl. unavailable |
+|---|---|---|
+| Hit@1 | **100.0%** | 78.95% |
+| Hit@3 | **100.0%** | 78.95% |
+| Hit@5 | **100.0%** | 78.95% |
+
+19 total queries · 15 scored · 4 unavailable-information (correctly rejected)
+
+**Status:** 🟢 Implemented. LLM generation deferred to 🟡 M2.
+
+---
+
+## AD-09: Deterministic Multi-Agent Pipeline (No Framework)
+
+**Decision:** Implement all agents as plain Python classes coordinated by a fixed-sequence `Orchestrator`. No LangGraph, no LangChain.
 
 ```mermaid
 flowchart LR
-    API --> ORCH["Orchestrator<br/>M1.4"]
-    ORCH --> QU["Query Understanding<br/>M1.4"]
-    ORCH --> RA["Retrieval Agent<br/>M1.4"]
-    RA --> SR["SemanticRetriever<br/>M1.3"]
-    ORCH --> RG["Response Generation<br/>M1.4"]
+    API --> ORCH["Orchestrator\norchestrator.py"]
+    ORCH --> QU["QueryUnderstanding\nquery_understanding.py"]
+    ORCH --> RA["RetrievalAgent\nretrieval_agent.py"]
+    RA --> SR["SemanticRetriever\nretriever.py"]
+    ORCH --> RG["ResponseGeneration\nresponse_generation.py"]
+    ORCH --> CLAR["Clarification\nclarification.py"]
+    ORCH <--> MEM["Memory\nmemory.py"]
 ```
 
-**Status:** **IMPLEMENTED IN M1.4** — all five agents (QueryUnderstanding, RetrievalAgent, ResponseGeneration, ClarificationAgent, ConversationMemory) plus Orchestrator ship in `agents/`.
+**Why no framework:**
+- Deterministic behaviour — no LLM non-determinism
+- Fully testable — 41 unit + integration tests, all passing
+- No external dependencies or framework versioning issues
+- Intent routing is rule-based regex, not probabilistic
+
+**Status:** 🟢 Implemented — all 5 agents + orchestrator ship in `agents/`.
 
 ---
 
 ## AD-10: Browser-Native Voice Boundary
 
-**Decision:** Web Speech API handles STT/TTS in the client; backend is text-only.
+**Decision:** Web Speech API handles STT/TTS entirely in the client browser. The backend is text-only and never processes audio.
 
-**Status:** **FUTURE MILESTONES** (documented in `architecture/system-architecture.md`)
+**Design:**
+```
+User speech → browser SpeechRecognition → text → POST /retrieve → text → browser SpeechSynthesis → spoken answer
+```
 
-**Rationale:** No backend audio processing; reuse existing `/retrieve` contract.
+**Rationale:** No audio codec, no streaming, no server-side model — the browser handles it for free.
+
+**Status:** 🟡 Future — no UI shipped in M1. Backend text API is ready to receive the transcribed text.
 
 ---
 
-## AD-11: Citations and Confidence from Retrieval Scores
+## AD-11: Extractive Responses with Citations (M1)
 
-**Decision:** `similarity_score` (L2) is the M1 transparency signal; normalised
-`confidence` and inline `citations[]` attach at the Response Generation step.
+**Decision:** M1 answers are extracted directly from retrieved chunk text, not generated by an LLM.
 
-| Signal | M1 | Future |
+| Signal | M1 | M2+ |
 |---|---|---|
-| Raw L2 distance | ✓ | |
-| Normalised confidence (1/(1+L2)) | ✓ | |
-| Inline citations in answer ([source:…]) | ✓ | |
-| Unavailable-information guard | ✓ | |
-| Cross-encoder re-ranking | | ✓ |
+| Raw L2 distance | 🟢 Returned as `similarity_score` | |
+| Normalised confidence `1/(1+L2)` | 🟢 Used for clarification gating | |
+| Inline `[source: filename]` citations | 🟢 Appended to every answer | |
+| Unavailable-intent guard | 🟢 Short-circuits before retrieval | |
+| LLM-grounded generation | | 🟡 M2+ |
+| Cross-encoder re-ranking | | 🟡 M2+ |
+
+**Status:** 🟢 Implemented in `agents/response_generation.py`.
 
 ---
 
 ## AD-12: Honest Status Labelling
 
-**Decision:** Components are labelled **IMPLEMENTED IN M1** only when executed with
-verifiable output. Agent, UI, voice, and LLM layers remain **FUTURE MILESTONES** until
-code ships.
+**Decision:** Components are labelled 🟢 Implemented only when code exists, tests pass, and output is verifiable.
 
-**Status:** **IMPLEMENTED IN M1** (documentation policy)
+**Status:** 🟢 Applied throughout all documentation.
 
 ---
 
@@ -155,9 +206,9 @@ code ships.
 
 | Document | Purpose |
 |---|---|
-| [`architecture/system-architecture.md`](../architecture/system-architecture.md) | System overview |
-| [`architecture/ingestion-flow.md`](../architecture/ingestion-flow.md) | Upload pipeline |
-| [`architecture/rag-query-flow.md`](../architecture/rag-query-flow.md) | Query pipeline |
-| [`architecture/multi-agent-orchestration.md`](../architecture/multi-agent-orchestration.md) | Agent routing |
-| [`data-models.md`](data-models.md) | Schema definitions |
-| [`tech-stack.md`](tech-stack.md) | Technology map |
+| [`architecture/system-architecture.md`](../architecture/system-architecture.md) | End-to-end system overview |
+| [`architecture/ingestion-flow.md`](../architecture/ingestion-flow.md) | Ingestion pipeline detail |
+| [`architecture/rag-query-flow.md`](../architecture/rag-query-flow.md) | Query pipeline detail |
+| [`architecture/multi-agent-orchestration.md`](../architecture/multi-agent-orchestration.md) | Agent routing logic |
+| [`data-models.md`](data-models.md) | Schema field definitions |
+| [`tech-stack.md`](tech-stack.md) | Technology choices |
