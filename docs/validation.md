@@ -1,4 +1,6 @@
-# Retrieval Validation Report — Milestone 1
+# Historical Retrieval Validation Snapshot — Milestone 1
+
+> This report records the earlier 19-query corpus and is retained for history. The current 27-query retrieval report is [`evaluation/results.md`](../evaluation/results.md); the M1–M3 release decision and its limitations are in [`m1-m3-release-audit.md`](m1-m3-release-audit.md).
 
 Live results from `python evaluation/evaluate_retrieval.py`.
 Corpus: `data/evaluation/` — 8 documents across 2 domains, 19 labelled queries.

@@ -1,7 +1,8 @@
 # Data Models — RAG Multi-Agent Knowledge Assistant
 
-Canonical schemas for all data structures used in Milestones 1 and 2.
-🟢 = Implemented in M1 · 🟡 = Planned for future milestone
+Canonical schemas for the as-built M1–M3 system. Some sections retain their
+historical milestone labels; M3 conversation and transparency models are listed
+below.
 
 ---
 
@@ -251,7 +252,7 @@ Legacy compatibility model. The M2 orchestrator returns `ResponseResult`.
 ## 12. ConversationTurn 🟢
 
 One user–assistant exchange, stored in `ConversationMemoryAgent`.
-In-memory only — not persisted to disk in M1.
+In-memory only, bounded per session, and not persisted across process restarts.
 
 | Field | Type | Description |
 |---|---|---|
@@ -259,10 +260,39 @@ In-memory only — not persisted to disk in M1.
 | `query` | `str` | User's question for this turn |
 | `answer` | `str` | Agent's answer for this turn |
 | `turn_index` | `int` | 0-based turn number within the session |
+| `query_classification` | `str \| None` | Query understanding category |
+| `clarification_question` | `str \| None` | Clarification requested for this turn |
+| `clarification_answer` | `str \| None` | User's answer to a clarification |
+| `refined_query` | `str \| None` | Context-resolved or clarification-refined query |
+| `referenced_documents` | `list[str]` | Documents returned by retrieval |
+| `citations` | `list[str]` | `filename#chunk_id` references |
+| `active_topics` | `list[str]` | Topics extracted from the resolved query |
+| `referenced_entities` | `list[str]` | Entities from the response/context |
 
 ---
 
-## 13. API Schemas
+## 13. M3 Clarification and Memory Models
+
+`ClarificationState` preserves `original_query`, `question`, `clarification_id`,
+`clarification_answer`, `refined_query`, ambiguity type, and resolution state.
+`MemoryContext` exposes selected turns/context, session ID, referenced documents,
+active topic, and pending clarification state. `ContextResolutionResult` carries
+original/resolved queries, whether context was used, reason, and referenced
+entities.
+
+---
+
+## 14. M3 Transparency Models
+
+`TransparencyReport` is built from actual query-understanding, retrieval, and
+response outputs. It contains stage traces, retrieval/filtered counts, retrieval
+confidence, grounded state, citations, and `EvidenceItem` rows mapped to actual
+retrieval hits. Evidence may include page/row ranges and section only when those
+values are present in retrieved metadata; missing metadata is not fabricated.
+
+---
+
+## 15. API Schemas
 
 ### POST /upload response
 
@@ -280,17 +310,24 @@ In-memory only — not persisted to disk in M1.
 |---|---|---|---|
 | `query` | `str` | required | Natural language question |
 | `top_k` | `int` | 3 | Number of results to return |
+| `session_id` | `str \| None` | generated | Per-session conversation ID |
+| `clarification_id` | `str \| None` | none | Pending clarification being answered |
 
 ### POST /retrieve response
 
 | Field | Type | Description |
 |---|---|---|
 | `query` | `str` | Echo of the input query |
-| `results` | `list` | List of chunk metadata dicts with `similarity_score` |
+| `session_id` | `str` | Resolved/created session ID |
+| `query_type` | `str` | Factual, procedural, comparative, or ambiguous |
+| `answer` | `str` | Answer, clarification, or controlled no-information response |
+| `retrieval` | `RetrievalResult \| None` | Ranked hits and evidence state |
+| `citations` | `list[Citation]` | Source/chunk references |
+| `m3` | `M3ResponseResult \| None` | Memory, clarification, and transparency data |
 
 ---
 
-## 14. Status Summary
+## 16. Status Summary
 
 | Model | M1 Status | Module |
 |---|---|---|
@@ -298,13 +335,16 @@ In-memory only — not persisted to disk in M1.
 | `Chunk` | 🟢 Implemented | `ingestion/models.py` |
 | `Embedding` | 🟢 Implemented (in FAISS) | `vector_store/embeddings.py` |
 | `ParsedQuery` | 🟢 Implemented | `agents/models.py` |
-| `QueryUnderstandingResult` | 🟡 Contract added | `agents/models.py` |
+| `QueryUnderstandingResult` | 🟢 Implemented | `agents/models.py` |
 | `RetrievalHit` | 🟢 Implemented | `agents/models.py` |
-| `RetrievalResult` | 🟡 Contract added | `agents/models.py` |
+| `RetrievalResult` | 🟢 Implemented | `agents/models.py` |
 | `Citation` | 🟢 Implemented | `agents/models.py` |
-| `ResponseResult` | 🟡 Contract added | `agents/models.py` |
-| `AgentError` | 🟡 Contract added | `agents/models.py` |
+| `ResponseResult` | 🟢 Implemented | `agents/models.py` |
+| `AgentError` | 🟢 Implemented | `agents/models.py` |
 | `AgentResponse` | 🟢 Implemented | `agents/models.py` |
 | `ConversationTurn` | 🟢 Implemented (in-memory) | `agents/models.py` |
-| Persistent session store | 🟡 Future | Redis / SQLite (M2+) |
-| `AgentMessage` (UI protocol) | 🟡 Future | Chat UI layer (M2+) |
+| `ClarificationState` | 🟢 Implemented (in-memory) | `agents/models.py` |
+| `MemoryContext` | 🟢 Implemented | `agents/models.py` |
+| `ContextResolutionResult` | 🟢 Implemented | `agents/models.py` |
+| `EvidenceItem` / `TransparencyReport` | 🟢 Implemented | `agents/models.py` |
+| Persistent session store | 🟡 Beyond M3 | Redis / SQLite |

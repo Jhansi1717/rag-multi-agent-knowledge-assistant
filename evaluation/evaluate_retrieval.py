@@ -12,10 +12,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from agents.retrieval_agent import RetrievalAgent
-from retrieval.retriever import SemanticRetriever
-from vector_store.store import VectorStore
-
 QUERIES_PATH = os.path.join(ROOT, "data", "evaluation", "queries.json")
 INDEX_PATH = os.path.join(ROOT, "data", "evaluation", "index.faiss")
 META_PATH = os.path.join(ROOT, "data", "evaluation", "metadata.json")
@@ -66,11 +62,42 @@ def _mean(values: List[int]) -> float:
     return round(100.0 * sum(values) / len(values), 2)
 
 
-def evaluate_query(agent: RetrievalAgent, spec: dict) -> dict:
+def evaluate_query(agent, spec: dict) -> dict:
+    """Legacy unit-test helper; its output is never production acceptance evidence."""
     query = spec["query"]
     expected_doc = spec.get("expected_document") or "NONE"
     keywords = spec.get("expected_keywords") or []
-    unavailable = expected_doc.upper() == "NONE" or spec.get("category") == "unavailable-information"
+    not_applicable = spec.get("category") == "ambiguous"
+    unavailable = not not_applicable and (
+        expected_doc.upper() == "NONE"
+        or spec.get("category") == "unavailable-information"
+    )
+
+    if not_applicable:
+        return {
+            "query_id": spec["query_id"],
+            "domain": spec["domain"],
+            "category": spec["category"],
+            "query": query,
+            "expected_document": expected_doc,
+            "expected_keywords": keywords,
+            "unavailable": False,
+            "not_applicable": True,
+            "top1": None,
+            "top1_score": None,
+            "relevant_rank": None,
+            "keywords_found_in_top5": [],
+            "keyword_coverage": None,
+            "hit@1": None,
+            "hit@3": None,
+            "hit@5": None,
+            "failed": False,
+            "low_relevance": False,
+            "failure_reason": None,
+            "top1_results": [],
+            "top3_results": [],
+            "top5_results": [],
+        }
 
     hits = agent.retrieve(query, top_k=5)
     top1 = _filename(hits[0]) if hits else None
@@ -91,8 +118,10 @@ def evaluate_query(agent: RetrievalAgent, spec: dict) -> dict:
     failure_reason = None
     if unavailable:
         failure_reason = (
-            "Unavailable-information query: FAISS still returned a nearest neighbor "
-            f"({top1}). No relevant document exists in the KB."
+            "Unavailable-information query: nearest neighbor returned "
+            f"{top1}; no relevant document exists in the KB."
+            if hits
+            else "Unavailable-information query correctly returned no evidence."
         )
     elif rank is None:
         failure_reason = (
@@ -103,9 +132,11 @@ def evaluate_query(agent: RetrievalAgent, spec: dict) -> dict:
             f"Expected {expected_doc} ranked {rank}, so Hit@1 failed (Top-1={top1})."
         )
 
-    failed = unavailable or rank is None or rank > 1
+    failed = not unavailable and (rank is None or rank > 1)
 
     return {
+        "provenance_class": "MOCK_RETRIEVER",
+        "counts_toward_acceptance": False,
         "query_id": spec["query_id"],
         "domain": spec["domain"],
         "category": spec["category"],
@@ -113,6 +144,9 @@ def evaluate_query(agent: RetrievalAgent, spec: dict) -> dict:
         "expected_document": expected_doc,
         "expected_keywords": keywords,
         "unavailable": unavailable,
+        "not_applicable": False,
+        "unavailable_no_result": unavailable and not hits,
+        "unavailable_false_positive": unavailable and bool(hits),
         "top1": top1,
         "top1_score": top1_score,
         "relevant_rank": rank,
@@ -138,11 +172,17 @@ def _group_metrics(rows: List[dict], key: str) -> Dict[str, dict]:
         groups[row[key]].append(row)
     out = {}
     for name, items in groups.items():
-        scored = [r for r in items if not r["unavailable"]]
+        scored = [
+            r for r in items
+            if not r["unavailable"] and not r.get("not_applicable", False)
+        ]
         out[name] = {
             "total_queries": len(items),
             "scored_queries": len(scored),
-            "unavailable_queries": len(items) - len(scored),
+            "unavailable_queries": sum(r["unavailable"] for r in items),
+            "not_applicable_queries": sum(
+                r.get("not_applicable", False) for r in items
+            ),
             "hit@1": _mean([r["hit@1"] for r in scored]) if scored else None,
             "hit@3": _mean([r["hit@3"] for r in scored]) if scored else None,
             "hit@5": _mean([r["hit@5"] for r in scored]) if scored else None,
@@ -151,25 +191,41 @@ def _group_metrics(rows: List[dict], key: str) -> Dict[str, dict]:
 
 
 def build_report(rows: List[dict]) -> dict:
-    scored = [r for r in rows if not r["unavailable"]]
+    scored = [
+        r for r in rows
+        if not r["unavailable"] and not r.get("not_applicable", False)
+    ]
+    retrieval_rows = [r for r in rows if not r.get("not_applicable", False)]
     failed = [r for r in rows if r["failed"]]
     low_rel = [r for r in rows if r["low_relevance"]]
 
     return {
+        "acceptance_status": "TEST_ONLY",
+        "provenance_class": "MOCK_RETRIEVER",
+        "counts_toward_acceptance": False,
         "index": INDEX_PATH,
         "queries_path": QUERIES_PATH,
         "total_queries": len(rows),
         "scored_queries_excluding_unavailable": len(scored),
-        "unavailable_queries": len(rows) - len(scored),
+        "unavailable_queries": sum(r["unavailable"] for r in rows),
+        "unavailable_no_result_queries": sum(
+            r.get("unavailable_no_result", False) for r in rows
+        ),
+        "unavailable_false_positive_queries": sum(
+            r.get("unavailable_false_positive", False) for r in rows
+        ),
+        "not_applicable_queries": sum(
+            r.get("not_applicable", False) for r in rows
+        ),
         "metrics_excluding_unavailable": {
             "hit@1": _mean([r["hit@1"] for r in scored]),
             "hit@3": _mean([r["hit@3"] for r in scored]),
             "hit@5": _mean([r["hit@5"] for r in scored]),
         },
         "metrics_including_unavailable": {
-            "hit@1": _mean([r["hit@1"] for r in rows]),
-            "hit@3": _mean([r["hit@3"] for r in rows]),
-            "hit@5": _mean([r["hit@5"] for r in rows]),
+            "hit@1": _mean([r["hit@1"] for r in retrieval_rows]),
+            "hit@3": _mean([r["hit@3"] for r in retrieval_rows]),
+            "hit@5": _mean([r["hit@5"] for r in retrieval_rows]),
         },
         "domain_wise": _group_metrics(rows, "domain"),
         "category_wise": _group_metrics(rows, "category"),
@@ -209,13 +265,16 @@ def write_markdown(report: dict) -> str:
         "",
         "Metrics computed from live FAISS retrieval against `data/evaluation/queries.json`.",
         "Hit@k = expected_document appears in the top-k filenames.",
-        "Unavailable-information queries have `expected_document=NONE` and are excluded from the primary Hit@ averages because no relevant document exists; FAISS still returns a nearest neighbor.",
+        "Unavailable-information queries have `expected_document=NONE`; ambiguous queries are not retrieval cases and are excluded from Hit@ metrics.",
         "",
         "## Overall",
         "",
         f"- Total queries: **{report['total_queries']}**",
         f"- Scored (excl. unavailable): **{report['scored_queries_excluding_unavailable']}**",
         f"- Unavailable-information: **{report['unavailable_queries']}**",
+        f"- Unavailable queries returning no evidence: **{report['unavailable_no_result_queries']}**",
+        f"- Unavailable queries with a nearest-neighbor false positive: **{report['unavailable_false_positive_queries']}**",
+        f"- Not applicable (ambiguous): **{report['not_applicable_queries']}**",
         "",
         "| Metric | Excl. unavailable | Incl. unavailable |",
         "|---|---|---|",
@@ -255,10 +314,13 @@ def write_markdown(report: dict) -> str:
               "|---|---|---|---|---|---|---|---|---|"]
     for r in report["queries"]:
         rank = r["relevant_rank"] if r["relevant_rank"] is not None else "N/A"
+        hit1 = r["hit@1"] if r["hit@1"] is not None else "N/A"
+        hit3 = r["hit@3"] if r["hit@3"] is not None else "N/A"
+        hit5 = r["hit@5"] if r["hit@5"] is not None else "N/A"
         lines.append(
             f"| {r['query_id']} | {r['domain']} | {r['category']} | "
             f"{r['expected_document']} | {r['top1']} | {rank} | "
-            f"{r['hit@1']} | {r['hit@3']} | {r['hit@5']} |"
+            f"{hit1} | {hit3} | {hit5} |"
         )
 
     lines += ["", "## Failed queries", ""]
@@ -325,33 +387,11 @@ def write_markdown(report: dict) -> str:
     return "\n".join(lines)
 
 
-def main() -> None:
-    if not os.path.exists(INDEX_PATH) or not os.path.exists(META_PATH):
-        raise FileNotFoundError(
-            f"Evaluation index missing ({INDEX_PATH}). Run index_evaluation_corpus.py first."
-        )
-    with open(QUERIES_PATH, encoding="utf-8") as f:
-        payload = json.load(f)
-    queries = payload["queries"]
+def main() -> int:
+    """Run only the provenance-gated M1.4 acceptance evaluator."""
+    from evaluation.m14_provenance import main as provenance_main
 
-    store = VectorStore(index_path=INDEX_PATH, meta_path=META_PATH)
-    store.load()
-    agent = RetrievalAgent(SemanticRetriever(store))
-
-    rows = [evaluate_query(agent, spec) for spec in queries]
-    report = build_report(rows)
-
-    os.makedirs(os.path.dirname(RESULTS_JSON), exist_ok=True)
-    with open(RESULTS_JSON, "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2)
-    with open(RESULTS_MD, "w", encoding="utf-8") as f:
-        f.write(write_markdown(report))
-
-    m = report["metrics_excluding_unavailable"]
-    print("Wrote", RESULTS_JSON, "and", RESULTS_MD)
-    print("Total:", report["total_queries"], "scored:", report["scored_queries_excluding_unavailable"])
-    print(f"Hit@1={m['hit@1']}% Hit@3={m['hit@3']}% Hit@5={m['hit@5']}%")
-    print("Failed:", len(report["failed_queries"]))
+    return provenance_main()
 
 
 if __name__ == "__main__":

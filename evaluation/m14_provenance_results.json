@@ -1,0 +1,1436 @@
+{
+  "evaluation": "M1.4 provenance-aware retrieval validation",
+  "status": "BLOCKED",
+  "acceptance_status": "BLOCKED",
+  "retrieval_algorithm_modified": false,
+  "index_path": "data\\evaluation\\index.faiss",
+  "manifest_path": "evaluation\\m14_provenance_manifest.json",
+  "query_dataset": {
+    "path": "data/evaluation/queries.json",
+    "provenance_class": "TEST_FIXTURE",
+    "provenance_status": "UNVERIFIED_AUTHORSHIP",
+    "note": "Repository evaluation prompts have no external or production-query provenance record. They are evaluation fixtures and do not count as real-source queries."
+  },
+  "provenance_policy": {
+    "accepted_class": "REAL_SOURCE_DOCUMENT",
+    "generated_samples_count_for_acceptance": false,
+    "test_fixtures_count_for_acceptance": false,
+    "mock_retrievers_count_for_acceptance": false,
+    "unregistered_sources_are": "UNVERIFIED_SOURCE"
+  },
+  "counts": {
+    "query_count": 28,
+    "valid_real_source_query_count": 0,
+    "synthetic_test_only_query_count": 28,
+    "generated_sample_expected_source_query_count": 15,
+    "unavailable_query_count": 4,
+    "low_relevance_query_count": 1,
+    "comparative_query_count": 4,
+    "category_counts": {
+      "factual": 6,
+      "procedural": 5,
+      "comparative": 4,
+      "unavailable": 4,
+      "low-relevance": 1
+    },
+    "mock_retriever_test_suites": 1
+  },
+  "production_hit_at_k_percent": {
+    "hit@1": null,
+    "hit@3": null,
+    "hit@5": null
+  },
+  "unavailable_false_positives": {
+    "count": null,
+    "eligible_queries": 0,
+    "status": "NOT PROVEN"
+  },
+  "low_relevance_rejection": {
+    "rejected": null,
+    "eligible_queries": 0,
+    "status": "NOT PROVEN"
+  },
+  "corpus_sources": [
+    {
+      "path": "data/software_engineering/coding_standards.docx",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "f1dc840864cdc8e8f890b728b5b6b3a205535db94d4067c6b0a4abe68546f7e8",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/software_engineering/git_workflow.txt",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "98a259608917dbda7cf1480ca069e06e90af41615442e0071ddb6310ff8fdfcf",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/software_engineering/microservices_architecture.pdf",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "4661a8047141ea0d01d7a971dd8ac5aec17ff0935a379f80025a26b87dd14ceb",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/software_engineering/programming_languages.csv",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "b5b168f6a2302a17bcbc8a17bc61c7d95ebafe3b81831005f8aa791f6919c565",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/hospital_administration/emergency_protocols.txt",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "d1ccbaf499e6f829ad67c925b754650f85e82833778a575a7f3f115b7a8aac7a",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/hospital_administration/medication_dosage_reference.csv",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "3eb0dd216a559c2c4ff61aa114280c12ecfd4598ce6a2a4328ae239be40f98eb",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/hospital_administration/nursing_procedures.docx",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "92e897826c84150fe09a3a713837bf36c52741813f1544c8a2926818bf6192ca",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/hospital_administration/patient_admission_policy.pdf",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py",
+      "sha256_actual": "8503407d76fe3155db4d4cf02d2d361e9d47c64ed92211ae4d79b81842337961",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/hr/leave_allowance.csv",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py",
+      "sha256_actual": "6603ed44817605e6072e05098aa7df5d938206f3a10a71ce6ee885763150c208",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/hr/leave_policy.pdf",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py",
+      "sha256_actual": "93c456729abb4ac8bfa500cf4a44bb07c8839f05ba30ca641e34b06db1ec20f8",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/technical/api_documentation.docx",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py",
+      "sha256_actual": "fbfd0f28c77a8939ba1b39b5c578d11518f34f1ad6713822d78f5a5c42924a2e",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    },
+    {
+      "path": "data/technical/deployment_guide.txt",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py",
+      "sha256_actual": "edc77c8059d59c37786390c6ebdda7f9a53a66232dd8af427b0f6e204699155f",
+      "exists": true,
+      "counts_toward_acceptance": false,
+      "verified_sha256": null,
+      "acceptance_reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+    }
+  ],
+  "test_only_suites": [
+    {
+      "path": "test_m14_retrieval.py::TestRetrievalAgent",
+      "provenance_class": "MOCK_RETRIEVER",
+      "counts_toward_acceptance": false,
+      "note": "RetrievalAgent unit behavior is supplied by FakeRetriever instances."
+    },
+    {
+      "path": "test_m14_retrieval.py::TestOrchestrator",
+      "provenance_class": "GENERATED_SAMPLE",
+      "counts_toward_acceptance": false,
+      "note": "Uses the generated evaluation index and FakeLLM; it is an integration test, not original-source evidence."
+    },
+    {
+      "path": "test_m14_retrieval.py::TestQueryUnderstanding",
+      "provenance_class": "TEST_FIXTURE",
+      "counts_toward_acceptance": false,
+      "note": "Classifier fixtures do not measure retrieval against source documents."
+    },
+    {
+      "path": "test_retrieval.py::test_semantic_retrieval",
+      "provenance_class": "TEST_FIXTURE",
+      "counts_toward_acceptance": false,
+      "note": "Uploads a temporary test document through the API."
+    },
+    {
+      "path": "evaluation/evaluate_m2_retrieval.py",
+      "provenance_class": "GENERATED_SAMPLE",
+      "counts_toward_acceptance": false,
+      "note": "Threshold diagnostics use the generated evaluation corpus and are not original-source acceptance evidence."
+    }
+  ],
+  "missing_evidence": [
+    {
+      "query_id": "se_q01",
+      "expected_document": "microservices_architecture.pdf",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/microservices_architecture.pdf"
+    },
+    {
+      "query_id": "se_q02",
+      "expected_document": "git_workflow.txt",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/git_workflow.txt"
+    },
+    {
+      "query_id": "se_q03",
+      "expected_document": "microservices_architecture.pdf",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/microservices_architecture.pdf"
+    },
+    {
+      "query_id": "se_q04",
+      "expected_document": "coding_standards.docx",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/coding_standards.docx"
+    },
+    {
+      "query_id": "se_q05",
+      "expected_document": "coding_standards.docx",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/coding_standards.docx"
+    },
+    {
+      "query_id": "se_q06",
+      "expected_document": "programming_languages.csv",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/programming_languages.csv"
+    },
+    {
+      "query_id": "se_q07",
+      "expected_document": "programming_languages.csv",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/software_engineering/programming_languages.csv"
+    },
+    {
+      "query_id": "ha_q01",
+      "expected_document": "patient_admission_policy.pdf",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/patient_admission_policy.pdf"
+    },
+    {
+      "query_id": "ha_q02",
+      "expected_document": "patient_admission_policy.pdf",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/patient_admission_policy.pdf"
+    },
+    {
+      "query_id": "ha_q03",
+      "expected_document": "nursing_procedures.docx",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/nursing_procedures.docx"
+    },
+    {
+      "query_id": "ha_q04",
+      "expected_document": "nursing_procedures.docx",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/nursing_procedures.docx"
+    },
+    {
+      "query_id": "ha_q05",
+      "expected_document": "emergency_protocols.txt",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/emergency_protocols.txt"
+    },
+    {
+      "query_id": "ha_q06",
+      "expected_document": "medication_dosage_reference.csv",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/medication_dosage_reference.csv"
+    },
+    {
+      "query_id": "ha_q07",
+      "expected_document": "medication_dosage_reference.csv",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/medication_dosage_reference.csv"
+    },
+    {
+      "query_id": "ha_q08",
+      "expected_document": "emergency_protocols.txt",
+      "provenance_class": "GENERATED_SAMPLE",
+      "reason": "Expected answer source is not a verified real source document.",
+      "source_path": "data/hospital_administration/emergency_protocols.txt"
+    },
+    {
+      "requirement": "verified_real_source_corpus",
+      "reason": "No query has a verified REAL_SOURCE_DOCUMENT as its expected answer source.",
+      "missing_source_paths": [
+        "data/hospital_administration/emergency_protocols.txt",
+        "data/hospital_administration/medication_dosage_reference.csv",
+        "data/hospital_administration/nursing_procedures.docx",
+        "data/hospital_administration/patient_admission_policy.pdf",
+        "data/software_engineering/coding_standards.docx",
+        "data/software_engineering/git_workflow.txt",
+        "data/software_engineering/microservices_architecture.pdf",
+        "data/software_engineering/programming_languages.csv"
+      ]
+    },
+    {
+      "requirement": "complete_verified_negative_test_scope",
+      "reason": "Unavailable and low-relevance rejection require complete, verified source coverage for the tested domain; no such domain scope is registered.",
+      "complete_coverage_domains": []
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "se_q01",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "How long is a typical agile sprint in the engineering guide?",
+      "expected_document": "microservices_architecture.pdf",
+      "expected_keywords": [
+        "two-week",
+        "sprint",
+        "agile"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "factual",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/microservices_architecture.pdf",
+        "sha256": "4661a8047141ea0d01d7a971dd8ac5aec17ff0935a379f80025a26b87dd14ceb",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q02",
+      "domain": "Software Engineering",
+      "category": "procedural",
+      "query": "What are the steps to create a feature branch in git?",
+      "expected_document": "git_workflow.txt",
+      "expected_keywords": [
+        "checkout",
+        "feature",
+        "branch",
+        "pull request"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "procedural",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/git_workflow.txt",
+        "sha256": "98a259608917dbda7cf1480ca069e06e90af41615442e0071ddb6310ff8fdfcf",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q03",
+      "domain": "Software Engineering",
+      "category": "comparative",
+      "query": "How do microservices differ from a monolithic architecture?",
+      "expected_document": "microservices_architecture.pdf",
+      "expected_keywords": [
+        "microservices",
+        "monolith",
+        "independently deployable"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "comparative",
+      "comparison_targets": [
+        {
+          "target": "microservices",
+          "expected_document": "microservices_architecture.pdf",
+          "terms": [
+            "microservices"
+          ]
+        },
+        {
+          "target": "monolithic architecture",
+          "expected_document": "microservices_architecture.pdf",
+          "terms": [
+            "monolith"
+          ]
+        }
+      ],
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/microservices_architecture.pdf",
+        "sha256": "4661a8047141ea0d01d7a971dd8ac5aec17ff0935a379f80025a26b87dd14ceb",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q04",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "What naming convention should classes use in the coding standards?",
+      "expected_document": "coding_standards.docx",
+      "expected_keywords": [
+        "PascalCase",
+        "Classes"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "factual",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/coding_standards.docx",
+        "sha256": "f1dc840864cdc8e8f890b728b5b6b3a205535db94d4067c6b0a4abe68546f7e8",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q05",
+      "domain": "Software Engineering",
+      "category": "procedural",
+      "query": "How should production errors be logged according to coding standards?",
+      "expected_document": "coding_standards.docx",
+      "expected_keywords": [
+        "structured JSON",
+        "correlation_id",
+        "stack trace"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "procedural",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/coding_standards.docx",
+        "sha256": "f1dc840864cdc8e8f890b728b5b6b3a205535db94d4067c6b0a4abe68546f7e8",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q06",
+      "domain": "Software Engineering",
+      "category": "comparative",
+      "query": "Compare Rust and Go for systems and cloud infrastructure programming.",
+      "expected_document": "programming_languages.csv",
+      "expected_keywords": [
+        "Rust",
+        "Go",
+        "Systems",
+        "Cloud infrastructure"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "comparative",
+      "comparison_targets": [
+        {
+          "target": "Rust",
+          "expected_document": "programming_languages.csv",
+          "terms": [
+            "rust"
+          ]
+        },
+        {
+          "target": "Go",
+          "expected_document": "programming_languages.csv",
+          "terms": [
+            "go"
+          ]
+        }
+      ],
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/programming_languages.csv",
+        "sha256": "b5b168f6a2302a17bcbc8a17bc61c7d95ebafe3b81831005f8aa791f6919c565",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q07",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "Which programming languages use static typing?",
+      "expected_document": "programming_languages.csv",
+      "expected_keywords": [
+        "Static",
+        "Java",
+        "Rust",
+        "Go"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "factual",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/software_engineering/programming_languages.csv",
+        "sha256": "b5b168f6a2302a17bcbc8a17bc61c7d95ebafe3b81831005f8aa791f6919c565",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q08",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "What is the annual revenue of TechCorp International?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "unavailable",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Cannot prove absence or low relevance without a verified complete corpus scope for this domain.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q09",
+      "domain": "Software Engineering",
+      "category": "factual",
+      "query": "Who invented the Python programming language and in what year?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "unavailable",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Cannot prove absence or low relevance without a verified complete corpus scope for this domain.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q01",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "How many hours do non-emergency patients have to finalize admission paperwork?",
+      "expected_document": "patient_admission_policy.pdf",
+      "expected_keywords": [
+        "4 hours",
+        "admission paperwork"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "factual",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/patient_admission_policy.pdf",
+        "sha256": "8503407d76fe3155db4d4cf02d2d361e9d47c64ed92211ae4d79b81842337961",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q02",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "What insurance documents are required at patient registration?",
+      "expected_document": "patient_admission_policy.pdf",
+      "expected_keywords": [
+        "insurance card",
+        "photo ID",
+        "registration"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "factual",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/patient_admission_policy.pdf",
+        "sha256": "8503407d76fe3155db4d4cf02d2d361e9d47c64ed92211ae4d79b81842337961",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q03",
+      "domain": "Hospital Administration",
+      "category": "procedural",
+      "query": "What are the five rights of medication administration?",
+      "expected_document": "nursing_procedures.docx",
+      "expected_keywords": [
+        "right patient",
+        "right drug",
+        "right dose",
+        "right route",
+        "right time"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "procedural",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/nursing_procedures.docx",
+        "sha256": "92e897826c84150fe09a3a713837bf36c52741813f1544c8a2926818bf6192ca",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q04",
+      "domain": "Hospital Administration",
+      "category": "procedural",
+      "query": "How should nurses perform hand hygiene before patient contact?",
+      "expected_document": "nursing_procedures.docx",
+      "expected_keywords": [
+        "alcohol-based rub",
+        "20 seconds",
+        "hand hygiene"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "procedural",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/nursing_procedures.docx",
+        "sha256": "92e897826c84150fe09a3a713837bf36c52741813f1544c8a2926818bf6192ca",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q05",
+      "domain": "Hospital Administration",
+      "category": "comparative",
+      "query": "What is the difference between Code Blue and Code Red emergencies?",
+      "expected_document": "emergency_protocols.txt",
+      "expected_keywords": [
+        "Code Blue",
+        "Code Red",
+        "cardiac arrest",
+        "fire"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "comparative",
+      "comparison_targets": [
+        {
+          "target": "Code Blue",
+          "expected_document": "emergency_protocols.txt",
+          "terms": [
+            "code blue"
+          ]
+        },
+        {
+          "target": "Code Red",
+          "expected_document": "emergency_protocols.txt",
+          "terms": [
+            "code red"
+          ]
+        }
+      ],
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/emergency_protocols.txt",
+        "sha256": "d1ccbaf499e6f829ad67c925b754650f85e82833778a575a7f3f115b7a8aac7a",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q06",
+      "domain": "Hospital Administration",
+      "category": "comparative",
+      "query": "Compare oral versus intravenous Ibuprofen dosing limits.",
+      "expected_document": "medication_dosage_reference.csv",
+      "expected_keywords": [
+        "Ibuprofen",
+        "Oral",
+        "Intravenous",
+        "Max_Daily_Dose"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "comparative",
+      "comparison_targets": [
+        {
+          "target": "oral Ibuprofen",
+          "expected_document": "medication_dosage_reference.csv",
+          "terms": [
+            "ibuprofen",
+            "oral"
+          ]
+        },
+        {
+          "target": "intravenous Ibuprofen",
+          "expected_document": "medication_dosage_reference.csv",
+          "terms": [
+            "ibuprofen",
+            "intravenous"
+          ]
+        }
+      ],
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/medication_dosage_reference.csv",
+        "sha256": "3eb0dd216a559c2c4ff61aa114280c12ecfd4598ce6a2a4328ae239be40f98eb",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q07",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "What is the standard oral dose of Acetaminophen?",
+      "expected_document": "medication_dosage_reference.csv",
+      "expected_keywords": [
+        "Acetaminophen",
+        "650 mg",
+        "Oral"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "factual",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/medication_dosage_reference.csv",
+        "sha256": "3eb0dd216a559c2c4ff61aa114280c12ecfd4598ce6a2a4328ae239be40f98eb",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q08",
+      "domain": "Hospital Administration",
+      "category": "procedural",
+      "query": "What steps should staff follow during a Code Blue cardiac arrest?",
+      "expected_document": "emergency_protocols.txt",
+      "expected_keywords": [
+        "CPR",
+        "AED",
+        "Code Blue",
+        "compressions"
+      ],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "procedural",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "GENERATED_SAMPLE",
+        "path": "data/hospital_administration/emergency_protocols.txt",
+        "sha256": "d1ccbaf499e6f829ad67c925b754650f85e82833778a575a7f3f115b7a8aac7a",
+        "origin": "generate_evaluation_corpus.py",
+        "counts_toward_acceptance": false,
+        "reason": "Source is not classified as REAL_SOURCE_DOCUMENT."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Expected answer source is not a verified real source document.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q09",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "What was Riverside General Hospital's total revenue last fiscal year?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "unavailable",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Cannot prove absence or low relevance without a verified complete corpus scope for this domain.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q10",
+      "domain": "Hospital Administration",
+      "category": "factual",
+      "query": "Who won the Nobel Prize in Medicine this year?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "unavailable",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Cannot prove absence or low relevance without a verified complete corpus scope for this domain.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q10",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "Which protocol?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q11",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "What about that?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q12",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "That process?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "se_q13",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "Can you explain this?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q11",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "Which protocol?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q12",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "What about that?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q13",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "That process?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "ha_q14",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "Can you explain this?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "UNVERIFIED_AUTHORSHIP",
+      "evaluation_kind": "ambiguous",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "UNVERIFIED_AUTHORSHIP",
+        "query_set": "data/evaluation/queries.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Ambiguous query is not a retrieval acceptance case.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    },
+    {
+      "query_id": "m14_low_relevance_01",
+      "domain": "Software Engineering",
+      "category": "low-relevance",
+      "query": "How many confirmed cryovolcanic eruptions were recorded on Enceladus in the last orbital cycle?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "provenance_class": "TEST_FIXTURE",
+      "provenance_status": "AUTHORED_FOR_RETRIEVAL_REJECTION_DIAGNOSTIC",
+      "query_provenance_class": "TEST_FIXTURE",
+      "query_provenance_status": "AUTHORED_FOR_RETRIEVAL_REJECTION_DIAGNOSTIC",
+      "evaluation_kind": "low-relevance",
+      "query_provenance": {
+        "provenance_class": "TEST_FIXTURE",
+        "provenance_status": "AUTHORED_FOR_RETRIEVAL_REJECTION_DIAGNOSTIC",
+        "query_set": "evaluation/m14_provenance_manifest.json"
+      },
+      "expected_source_provenance": {
+        "provenance_class": "NO_EXPECTED_SOURCE",
+        "path": null,
+        "sha256": null,
+        "counts_toward_acceptance": false,
+        "reason": "The query is expected to have no supporting source in the declared corpus scope."
+      },
+      "acceptance_eligible": false,
+      "eligibility_reason": "Cannot prove absence or low relevance without a verified complete corpus scope for this domain.",
+      "results": [],
+      "hit_metrics": {
+        "hit@1": null,
+        "hit@3": null,
+        "hit@5": null
+      },
+      "unavailable_false_positive": null,
+      "low_relevance_rejected": null
+    }
+  ],
+  "retrieval_diagnostics": {
+    "status": "NOT RUN",
+    "reason": "No verified real-source acceptance query is eligible. Synthetic/test-only corpus results are intentionally not substituted."
+  }
+}

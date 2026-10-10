@@ -282,9 +282,13 @@ def chunk_document(
     doc_chunks: List[Chunk] = []
 
     for raw in raw_chunks:
-        chunk_meta: Dict[str, Any] = dict(document.metadata)
+        chunk_meta: Dict[str, Any] = {
+            key: value for key, value in document.metadata.items()
+            if key != "page_texts"
+        }
         chunk_meta.update({
             "filename": document.filename,
+            "original_filename": document.filename,
             "file_type": document.file_type,
             "domain": resolved_domain,
             "token_start": raw["token_start"],

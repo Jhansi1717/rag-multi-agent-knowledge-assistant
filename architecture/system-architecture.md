@@ -1,10 +1,12 @@
-# System Architecture — M1 COMPLETED + M2 COMPLETED
+# System Architecture — M1–M3 As Built
 
-This document describes the implemented system. M1 provides ingestion, embeddings,
-FAISS storage, and retrieval. M2 adds deterministic query understanding, retrieval
-normalization, grounded response generation, and fixed-sequence orchestration.
+M1 provides multi-format ingestion, local embeddings, FAISS storage, and retrieval.
+M2 adds deterministic query understanding and evidence-grounded response
+generation. M3 adds clarification lifecycle, session memory, contextual query
+resolution, browser voice controls, and evidence transparency. OpenAI generation
+is optional and requires `OPENAI_API_KEY`; STT/TTS run in the browser.
 
-## Implemented: M1 + M2
+## Implemented: M1 + M2 + M3
 
 ```mermaid
 flowchart TB
@@ -13,66 +15,61 @@ flowchart TB
     EMBED["EmbeddingProvider\nall-MiniLM-L6-v2"]
     STORE["VectorStore\nFAISS IndexFlatL2 + metadata"]
     QUERY["User Query"]
+    MEM["Conversation Memory\nper session"]
+    CTX["Context Resolution"]
+    CLAR["Clarification\nstate + continuation"]
     QU["Query Understanding\n4 categories + routing"]
     RET["Retrieval\nTop-K, ranking, filtering"]
     SR["SemanticRetriever"]
-    RG["Response Generation\ncontext-only LLM prompt"]
+    RG["Response Generation\noptional grounded LLM"]
+    TRANS["Transparency\nactual hits, citations, stages"]
     FINAL["Final Response\nanswer, citations, confidence, request_id"]
-    CLAR["M3 Clarification route"]
+    VOICE["Browser STT / TTS"]
 
     UPLOAD --> PIPE --> EMBED --> STORE
-    QUERY --> QU
+    QUERY --> MEM --> CTX --> CLAR --> QU
     QU -->|"RETRIEVAL"| RET
     RET --> SR --> STORE
     STORE --> SR --> RET
-    RET --> RG --> FINAL
-    QU -->|"ambiguous"| CLAR
+    RET --> RG --> TRANS --> FINAL --> MEM
+    QU -->|"ambiguous"| FINAL
+    VOICE --> QUERY
 ```
 
 ### Query path
 
 ```text
-User Query
-    ↓
-Query Understanding
-    ↓
-Retrieval
-    ↓
-Response Generation
-    ↓
-Final Response
+User Query → Memory → Context Resolution → Clarification → Query Understanding
+           → Retrieval → Response Generation → Transparency → Final Response → Memory
 ```
 
-Ambiguous queries take the implemented M2 boundary toward M3:
+Unresolved or incomplete queries return after clarification and do not retrieve
+until the user responds. The clarified request resumes through classification,
+retrieval, generation, and transparency. `/retrieve` and `/chat` both use this
+orchestrator; `/retrieve` remains for backward compatibility.
 
-```text
-Ambiguous
-    ↓
-Clarification route
-    ↓
-M3 clarification
-```
-
-The current route returns a structured clarification-needed response. It does not
-perform autonomous planning, tool selection, multi-agent negotiation, or M3
-multi-turn clarification.
+The orchestrator is fixed-sequence Python code, not autonomous planning, tool
+selection, or agent-to-agent negotiation.
 
 ## API
 
 | Endpoint | Implemented behavior |
 |---|---|
 | `GET /health` | Liveness response |
+| `GET /ready` | Nonempty FAISS index/metadata readiness |
 | `POST /upload` | Full ingestion pipeline and FAISS/metadata persistence |
-| `POST /retrieve` | Full M2 orchestrator |
-| `POST /chat` | Compatibility alias for the M2 orchestrator |
+| `GET /documents` | Grouped indexed-document metadata |
+| `POST /retrieve` | Backward-compatible orchestrator route |
+| `POST /chat` | Clarification-aware M3 orchestrator |
+| `GET /sessions/{id}/history` | In-process conversation history |
+| `DELETE /sessions/{id}` | Clear session memory |
 
 `POST /retrieve` returns query type, classification confidence, answer, confidence
 level, citations, retrieval summary/results, no-information state, clarification
 state, and request ID. Internal API keys and provider objects are not exposed.
 
-## Future: M3 and later
+## Beyond M3
 
-- Multi-turn clarification and conversational disambiguation
 - Hybrid sparse+dense retrieval and cross-encoder reranking
-- Web UI and browser voice features
 - Managed vector databases and deployment infrastructure
+- Persistent or multi-user session storage and authentication

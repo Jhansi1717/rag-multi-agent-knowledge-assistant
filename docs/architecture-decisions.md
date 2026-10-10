@@ -115,7 +115,7 @@ low-relevance results so unavailable queries produce no-evidence responses.
 | `POST /retrieve` | Full M2 orchestrated response | 🟢 Implemented |
 | `POST /chat` | Compatibility alias for M2 orchestration | 🟢 Implemented |
 
-**Status:** 🟢 Implemented for M1 + M2.
+**Status:** 🟢 Implemented for M1–M3; `/retrieve` remains backward compatible.
 
 ---
 
@@ -157,8 +157,9 @@ flowchart LR
 - No external dependencies or framework versioning issues
 - Intent routing is rule-based regex, not probabilistic
 
-**Status:** 🟢 Implemented for the fixed M2 sequence. The implementation does
-not claim autonomous or agentic planning.
+**Status:** 🟢 Implemented for the fixed M1–M3 sequence. Context and
+clarification precede final query classification; the implementation does not
+claim autonomous or agentic planning.
 
 ---
 
@@ -173,7 +174,8 @@ User speech → browser SpeechRecognition → text → POST /retrieve → text �
 
 **Rationale:** No audio codec, no streaming, no server-side model — the browser handles it for free.
 
-**Status:** 🟡 Future — no UI shipped in M1. Backend text API is ready to receive the transcribed text.
+**Status:** 🟢 Implemented in M3. The browser UI converts speech to editable text
+and submits it through `/chat`; browser synthesis reads assistant responses.
 
 ---
 
@@ -194,15 +196,15 @@ no-information response.
 
 **Status:** 🟢 Implemented in `agents/response_generation.py`.
 
-## AD-13: M2 Fixed Orchestration
+## AD-13: M1–M3 Fixed Orchestration
 
-**Decision:** Use the explicit sequence
-`Query Understanding → Retrieval → Response Generation → Final Response`.
-Ambiguous queries return a structured clarification-needed response. Request IDs
-correlate the stages. Memory records turns but is not a required resolution
-stage.
+**Decision:** Use deterministic Python orchestration. M3 resolves context and
+clarification before final query classification, then follows
+`Query Understanding → Retrieval → Response Generation → Transparency → Final Response`
+and stores the completed turn in bounded session memory. Request IDs correlate
+the stages; the implementation does not perform autonomous planning.
 
-**Status:** 🟢 Implemented. Rich multi-turn clarification is M3 and later.
+**Status:** 🟢 Implemented in M3.
 
 ---
 
@@ -211,6 +213,16 @@ stage.
 **Decision:** Components are labelled 🟢 Implemented only when code exists, tests pass, and output is verifiable.
 
 **Status:** 🟢 Applied throughout all documentation.
+
+## AD-14: M3 Context and Transparency
+
+**Decision:** Resolve conversational references from bounded per-session memory
+before final query classification. Clarification state preserves the original
+query, question, answer, and refined query. Transparency is mapped only from
+actual retrieval results and generated citations.
+
+**Status:** 🟢 Implemented in `agents/context_resolution.py`,
+`agents/memory.py`, `agents/orchestrator.py`, and `agents/transparency.py`.
 
 ---
 

@@ -8,17 +8,17 @@
 - Generation path: Real QueryUnderstandingAgent -> RetrievalAgent -> ResponseGenerationAgent -> Orchestrator; only the external OpenAI chat-completions API is mocked.
 - No automated factual-accuracy claim is made for mocked LLM output.
 
-## Actual metrics
+## Mock-boundary metrics
 
 | Metric | Result |
 |---|---:|
 | Total Queries | 20 |
 | Classification Accuracy | 100.0% |
 | Retrieval Evidence Success | 100.0% |
-| Grounded Response Rate | 100.0% |
-| Citation Coverage | 100.0% |
+| Mocked Generation Acceptance Rate | 100.0% |
+| Citation Source Mapping Rate | 100.0% |
 | No Evidence Handling Rate | 75.0% |
-| End To End Success Rate | 95.0% |
+| Mock Pipeline Contract Success Rate | 95.0% |
 | Ambiguous Detection Rate | 100.0% |
 
 ## Query-level results

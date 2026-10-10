@@ -35,6 +35,9 @@ data/evaluation/ingestion_report.json
 # Tests
 .pytest_cache/
 
+# Local model cache
+.hf_cache/
+
 # IDE
 .vscode/
 .idea/

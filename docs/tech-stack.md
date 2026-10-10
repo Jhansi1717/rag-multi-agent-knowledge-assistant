@@ -1,7 +1,8 @@
 # Technology Stack — RAG Multi-Agent Knowledge Assistant
 
-M1 retrieval and M2 deterministic stages run locally. M2 response generation can
-use the OpenAI API when `OPENAI_API_KEY` is configured; tests use injected mocks.
+M1 ingestion/retrieval, M2 query understanding and response generation, and the
+M3 clarification/memory/browser experience are implemented. OpenAI response
+generation is optional and uses the configured API key when present.
 
 > 🟢 = Implemented and in use · 🟡 = Planned for future milestone
 
@@ -11,7 +12,7 @@ use the OpenAI API when `OPENAI_API_KEY` is configured; tests use injected mocks
 
 ```mermaid
 flowchart TB
-    subgraph CLIENT["🟡 Client Layer  (Future Milestone)"]
+    subgraph CLIENT["🟢 Client Layer  (M3)"]
         UI["Web UI"]
         VOICE["Web Speech API  STT / TTS\n(browser)"]
     end
@@ -50,10 +51,12 @@ flowchart TB
         JSON2["metadata.json"]
     end
 
-    subgraph FUTURE_BOX["🟡 Future Layers"]
-        LLM["OpenAI / Local LLM\nGrounded generation"]
+    subgraph OPTIONAL["🟢 Optional / Configured"]
+        LLM["OpenAI Chat Completions\nGrounded generation when configured"]
+    end
+    subgraph FUTURE_BOX["🟡 Beyond M3"]
         VDB["Qdrant / Pinecone\nManaged vector DB"]
-        SESS["Redis / SQLite\nSession store"]
+        SESS["Persistent session store"]
     end
 
     UI --> FA
@@ -62,6 +65,7 @@ flowchart TB
     AGENTS_BOX --> INGEST
     AGENTS_BOX --> ML
     ML --> STORE
+    AGENTS_BOX --> OPTIONAL
     AGENTS_BOX --> FUTURE_BOX
 ```
 
@@ -75,8 +79,8 @@ flowchart TB
 |---|---|---|
 | Language | **Python 3.11** | Type hints throughout, dataclasses |
 | HTTP server | **Uvicorn** | ASGI |
-| API framework | **FastAPI** | `/health` · `/upload` · `/retrieve` |
-| Request validation | **Pydantic** | `RetrieveRequest` model |
+| API framework | **FastAPI** | `/health` · `/ready` · `/upload` · `/documents` · `/retrieve` · `/chat` |
+| Request validation | **Pydantic** | Retrieve, chat, upload, and response schemas |
 | File uploads | **python-multipart** | Multipart form support |
 
 ### Document Ingestion
@@ -105,13 +109,13 @@ flowchart TB
 |---|---|---|
 | All agents | **Plain Python classes** | No LangGraph, no LangChain |
 | Intent classification | **Regex pattern matching** | No LLM required |
-| Conversation memory | **In-process deque** | Per session_id, max 5 turns |
+| Conversation memory | **In-process bounded session map** | Per `session_id`, up to 10 turns and 4,000 context characters by default |
 
 ### Testing
 
 | Component | Technology | Notes |
 |---|---|---|
-| Test runner | **pytest** | 41 tests, all passing |
+| Test runner | **pytest** | Unit, integration, API, and M3 regression suites |
 | HTTP test client | **httpx** (via FastAPI TestClient) | Integration tests for API |
 | Synthetic corpus | **fpdf** | Generates PDF files for evaluation |
 
@@ -120,7 +124,7 @@ flowchart TB
 ## `requirements.txt`
 
 ```
-# Runtime — all needed for M1
+# Runtime
 fastapi
 uvicorn
 python-multipart
@@ -137,9 +141,9 @@ tiktoken
 httpx
 pytest
 
-# Future (commented out — not imported in M1)
-# openai
-# python-dotenv
+# Optional configured LLM provider
+openai
+python-dotenv
 ```
 
 ---
@@ -173,22 +177,18 @@ pytest
 | Principle | How it's applied |
 |---|---|
 | **Local-first** | No external API needed; model runs on CPU |
-| **Retrieval before generation** | LLM deferred; retrieval quality validated first |
+| **Retrieval before generation** | Optional LLM receives retrieved evidence only |
 | **Swappable embeddings** | Change one param in `VectorStore(model_name=…)` |
 | **Swappable vector backend** | `VectorStore` interface hides FAISS internals |
-| **No secrets in code** | `openai` / `python-dotenv` commented out in requirements |
+| **No secrets in code** | OpenAI keys are read from environment configuration and are not embedded in source |
 | **Testable determinism** | Rule-based agents; no LLM non-determinism |
 
 ---
 
-## Future Stack Additions (M3+)
+## Beyond M3
 
 | Layer | Technology | Reason |
 |---|---|---|
-| LLM generation | OpenAI API / local LLM | Grounded answers instead of extractive |
-| Config / secrets | python-dotenv | API key management |
-| Frontend | React or plain HTML | Chat interface |
-| Voice | Web Speech API | Browser STT/TTS |
 | Vector DB | Qdrant / Pinecone | Multi-user, persistent, scalable |
 | Session store | Redis / SQLite | Multi-turn memory across restarts |
 | Auth | OAuth / API keys | Multi-user support |

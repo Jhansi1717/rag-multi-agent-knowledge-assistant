@@ -1,0 +1,171 @@
+{
+  "version": 1,
+  "query_dataset": {
+    "path": "data/evaluation/queries.json",
+    "provenance_class": "TEST_FIXTURE",
+    "provenance_status": "UNVERIFIED_AUTHORSHIP",
+    "note": "Repository evaluation prompts have no external or production-query provenance record. They are evaluation fixtures and do not count as real-source queries."
+  },
+  "real_source_acceptance_requirements": [
+    "provenance_class must be REAL_SOURCE_DOCUMENT",
+    "provenance_status must be VERIFIED",
+    "approved_for_production must be true",
+    "origin_uri must identify the authoritative original source",
+    "sha256 must match the indexed source file",
+    "document must be present in the evaluated index"
+  ],
+  "complete_coverage_domains": [],
+  "sources": [
+    {
+      "path": "data/software_engineering/coding_standards.docx",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/software_engineering/git_workflow.txt",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/software_engineering/microservices_architecture.pdf",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/software_engineering/programming_languages.csv",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/hospital_administration/emergency_protocols.txt",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/hospital_administration/medication_dosage_reference.csv",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/hospital_administration/nursing_procedures.docx",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/hospital_administration/patient_admission_policy.pdf",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_evaluation_corpus.py"
+    },
+    {
+      "path": "data/hr/leave_allowance.csv",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py"
+    },
+    {
+      "path": "data/hr/leave_policy.pdf",
+      "domain": "Hospital Administration",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py"
+    },
+    {
+      "path": "data/technical/api_documentation.docx",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py"
+    },
+    {
+      "path": "data/technical/deployment_guide.txt",
+      "domain": "Software Engineering",
+      "provenance_class": "GENERATED_SAMPLE",
+      "provenance_status": "VERIFIED_GENERATOR",
+      "origin": "generate_samples.py"
+    }
+  ],
+  "comparative_targets": {
+    "se_q03": [
+      {"target": "microservices", "expected_document": "microservices_architecture.pdf", "terms": ["microservices"]},
+      {"target": "monolithic architecture", "expected_document": "microservices_architecture.pdf", "terms": ["monolith"]}
+    ],
+    "se_q06": [
+      {"target": "Rust", "expected_document": "programming_languages.csv", "terms": ["rust"]},
+      {"target": "Go", "expected_document": "programming_languages.csv", "terms": ["go"]}
+    ],
+    "ha_q05": [
+      {"target": "Code Blue", "expected_document": "emergency_protocols.txt", "terms": ["code blue"]},
+      {"target": "Code Red", "expected_document": "emergency_protocols.txt", "terms": ["code red"]}
+    ],
+    "ha_q06": [
+      {"target": "oral Ibuprofen", "expected_document": "medication_dosage_reference.csv", "terms": ["ibuprofen", "oral"]},
+      {"target": "intravenous Ibuprofen", "expected_document": "medication_dosage_reference.csv", "terms": ["ibuprofen", "intravenous"]}
+    ]
+  },
+  "additional_test_only_queries": [
+    {
+      "query_id": "m14_low_relevance_01",
+      "domain": "Software Engineering",
+      "category": "low-relevance",
+      "query": "How many confirmed cryovolcanic eruptions were recorded on Enceladus in the last orbital cycle?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "provenance_class": "TEST_FIXTURE",
+      "provenance_status": "AUTHORED_FOR_RETRIEVAL_REJECTION_DIAGNOSTIC"
+    }
+  ],
+  "test_only_suites": [
+    {
+      "path": "test_m14_retrieval.py::TestRetrievalAgent",
+      "provenance_class": "MOCK_RETRIEVER",
+      "counts_toward_acceptance": false,
+      "note": "RetrievalAgent unit behavior is supplied by FakeRetriever instances."
+    },
+    {
+      "path": "test_m14_retrieval.py::TestOrchestrator",
+      "provenance_class": "GENERATED_SAMPLE",
+      "counts_toward_acceptance": false,
+      "note": "Uses the generated evaluation index and FakeLLM; it is an integration test, not original-source evidence."
+    },
+    {
+      "path": "test_m14_retrieval.py::TestQueryUnderstanding",
+      "provenance_class": "TEST_FIXTURE",
+      "counts_toward_acceptance": false,
+      "note": "Classifier fixtures do not measure retrieval against source documents."
+    },
+    {
+      "path": "test_retrieval.py::test_semantic_retrieval",
+      "provenance_class": "TEST_FIXTURE",
+      "counts_toward_acceptance": false,
+      "note": "Uploads a temporary test document through the API."
+    },
+    {
+      "path": "evaluation/evaluate_m2_retrieval.py",
+      "provenance_class": "GENERATED_SAMPLE",
+      "counts_toward_acceptance": false,
+      "note": "Threshold diagnostics use the generated evaluation corpus and are not original-source acceptance evidence."
+    }
+  ],
+  "unknown_source_policy": {
+    "provenance_class": "UNVERIFIED_SOURCE",
+    "counts_toward_acceptance": false,
+    "note": "An unregistered or unverifiable source is never inferred to be real."
+  }
+}

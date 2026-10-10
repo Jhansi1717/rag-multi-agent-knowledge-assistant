@@ -1,0 +1,13 @@
+{
+  "index_created_at": "2026-10-07T05:48:29.903627Z",
+  "provenance_type": "REAL_SOURCE_DOCUMENT",
+  "documents_indexed": 4,
+  "total_chunks": 27,
+  "total_vectors": 27,
+  "domains": [
+    "Software Engineering",
+    "Hospital Administration"
+  ],
+  "index_path": "data\\real_sources\\evaluation_index\\index.faiss",
+  "meta_path": "data\\real_sources\\evaluation_index\\metadata.json"
+}

@@ -1,15 +1,10 @@
 import os
+import tempfile
 import uuid
 from vector_store.store import VectorStore
 
-def run_tests():
-    os.makedirs("data", exist_ok=True)
-    index_path = "data/test_index.faiss"
-    meta_path = "data/test_metadata.json"
-    
-    # Clean up previous tests if they exist
-    if os.path.exists(index_path): os.remove(index_path)
-    if os.path.exists(meta_path): os.remove(meta_path)
+def run_tests(index_path, meta_path):
+    os.makedirs(os.path.dirname(index_path) or ".", exist_ok=True)
     
     print("--- Initializing VectorStore ---")
     store = VectorStore(index_path=index_path, meta_path=meta_path)
@@ -64,7 +59,11 @@ def run_tests():
     
     # 3. Reload
     print("\n--- Reloading Index from Disk ---")
-    store2 = VectorStore(index_path=index_path, meta_path=meta_path)
+    store2 = VectorStore(
+        index_path=index_path,
+        meta_path=meta_path,
+        embedder=store.embedder,
+    )
     store2.load()
     
     print(f"Reloaded embeddings: {store2.index.ntotal}")
@@ -93,5 +92,13 @@ def run_tests():
     print("\nSample search returns successfully ranked chunks.")
     print("\nAll Acceptance Criteria Met.")
 
+def test_vector_store_round_trip_and_search(tmp_path):
+    run_tests(str(tmp_path / "index.faiss"), str(tmp_path / "metadata.json"))
+
+
 if __name__ == "__main__":
-    run_tests()
+    with tempfile.TemporaryDirectory(prefix="vector-store-tests-") as temp_dir:
+        run_tests(
+            os.path.join(temp_dir, "index.faiss"),
+            os.path.join(temp_dir, "metadata.json"),
+        )

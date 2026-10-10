@@ -1,0 +1,216 @@
+{
+  "provenance_type": "REAL_SOURCE_DOCUMENT",
+  "corpus_info": {
+    "documents": 4,
+    "chunks": 27,
+    "vectors": 27,
+    "domains": [
+      "Software Engineering",
+      "Hospital Administration"
+    ]
+  },
+  "results_by_category": {
+    "factual": {
+      "total": 5,
+      "hit_at_1": 5,
+      "hit_at_3": 5,
+      "hit_at_5": 5
+    },
+    "procedural": {
+      "total": 4,
+      "hit_at_1": 3,
+      "hit_at_3": 4,
+      "hit_at_5": 4
+    },
+    "comparative": {
+      "total": 3,
+      "hit_at_1": 2,
+      "hit_at_3": 2,
+      "hit_at_5": 3
+    },
+    "unavailable": {
+      "total": 2,
+      "false_positives": 0
+    },
+    "low-relevance": {
+      "total": 1,
+      "rejected": 1
+    },
+    "overall": {
+      "total": 15,
+      "hit_at_1": 10,
+      "hit_at_3": 11,
+      "hit_at_5": 12
+    }
+  },
+  "detailed_results": [
+    {
+      "id": "se_real_q01",
+      "query": "What is the format for semantic version numbers?",
+      "category": "factual",
+      "expected": "semantic_versioning_2.0.0.txt",
+      "result": "hit",
+      "top_filename": "semantic_versioning_2.0.0.txt",
+      "top_score": 0.5455494959235683,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "se_real_q02",
+      "query": "When should you increment the major version in semantic versioning?",
+      "category": "procedural",
+      "expected": "semantic_versioning_2.0.0.txt",
+      "result": "hit",
+      "top_filename": "semantic_versioning_2.0.0.txt",
+      "top_score": 0.5770488176601837,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "se_real_q03",
+      "query": "What is the difference between minor and patch version increments?",
+      "category": "comparative",
+      "expected": "semantic_versioning_2.0.0.txt",
+      "result": "hit",
+      "top_filename": "semantic_versioning_2.0.0.txt",
+      "top_score": 0.6187400627428349,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "se_real_q04",
+      "query": "How do you create a topic branch in Git workflows?",
+      "category": "procedural",
+      "expected": "git_workflows.txt",
+      "result": "hit",
+      "top_filename": "git_workflows.txt",
+      "top_score": 0.499016019823087,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "se_real_q05",
+      "query": "What is the merge upwards rule in Git workflows?",
+      "category": "factual",
+      "expected": "git_workflows.txt",
+      "result": "hit",
+      "top_filename": "git_workflows.txt",
+      "top_score": 0.578306369030064,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "se_real_q06",
+      "query": "Compare topic branches versus integration branches in Git workflows",
+      "category": "comparative",
+      "expected": "git_workflows.txt",
+      "result": "hit",
+      "top_filename": "git_workflows.txt",
+      "top_score": 0.5479441532005608,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "ha_real_q01",
+      "query": "What are the different types of hospital admission status?",
+      "category": "factual",
+      "expected": "nhs_hospital_admission.txt",
+      "result": "hit",
+      "top_filename": "nhs_hospital_admission.txt",
+      "top_score": 0.48615711728101857,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "ha_real_q02",
+      "query": "What is an admission letter and what information does it contain?",
+      "category": "factual",
+      "expected": "nhs_hospital_admission.txt",
+      "result": "hit",
+      "top_filename": "nhs_hospital_admission.txt",
+      "top_score": 0.45994030968933747,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "ha_real_q03",
+      "query": "What should you bring when going to hospital as a patient?",
+      "category": "procedural",
+      "expected": "nhs_hospital_admission.txt",
+      "result": "hit",
+      "top_filename": "nhs_hospital_admission.txt",
+      "top_score": 0.5300175560329102,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "ha_real_q04",
+      "query": "What is the difference between an outpatient and an inpatient?",
+      "category": "comparative",
+      "expected": "nhs_hospital_admission.txt",
+      "result": "miss",
+      "top_filename": "nhs_inpatient_stay.txt",
+      "top_score": 0.42932430746277184,
+      "hit_at_1": false,
+      "hit_at_3": false,
+      "hit_at_5": true
+    },
+    {
+      "id": "ha_real_q05",
+      "query": "What happens when you arrive at the hospital as an inpatient?",
+      "category": "procedural",
+      "expected": "nhs_inpatient_stay.txt",
+      "result": "miss",
+      "top_filename": "nhs_hospital_admission.txt",
+      "top_score": 0.5165735232890466,
+      "hit_at_1": false,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "ha_real_q06",
+      "query": "What is consent to treatment in hospital?",
+      "category": "factual",
+      "expected": "nhs_inpatient_stay.txt",
+      "result": "hit",
+      "top_filename": "nhs_inpatient_stay.txt",
+      "top_score": 0.5773883495633456,
+      "hit_at_1": true,
+      "hit_at_3": true,
+      "hit_at_5": true
+    },
+    {
+      "id": "unavailable_q01",
+      "query": "What is the annual revenue of the NHS?",
+      "category": "unavailable",
+      "expected": "NONE",
+      "result": "correctly_rejected",
+      "top_score": 0.39602431360170803
+    },
+    {
+      "id": "unavailable_q02",
+      "query": "Who invented the Git version control system?",
+      "category": "unavailable",
+      "expected": "NONE",
+      "result": "correctly_rejected",
+      "top_score": 0.45687037934267716
+    },
+    {
+      "id": "low_relevance_q01",
+      "query": "What is the weather in London today?",
+      "category": "low-relevance",
+      "expected": "NONE",
+      "result": "correctly_rejected",
+      "top_score": 0.35952080567281686
+    }
+  ]
+}

@@ -30,11 +30,18 @@ class MockOpenAIClient:
         def create(self, *, messages: list[dict[str, str]], **_: Any) -> Any:
             question = messages[1]["content"].rsplit("\n\nQuestion:", 1)[-1].strip()
             context = messages[1]["content"].split("\n\nQuestion:", 1)[0]
+            source_marker = "source_filename='"
+            source_start = context.find(source_marker)
+            source = ""
+            if source_start >= 0:
+                source_start += len(source_marker)
+                source = context[source_start:].split("'", 1)[0]
 
             class Message:
                 content = (
                     f"Based only on the retrieved context, the answer to "
-                    f"{question!r} is supported by these passages:\n{context}"
+                    f"{question!r} is supported by these passages:\n{context} "
+                    f"[source: {source}]"
                 )
 
             class Choice:
@@ -136,9 +143,10 @@ def run() -> dict[str, Any]:
         expected_category = str(item["category"])
         parsed = understanding.analyze(query)
         request_id = f"m2-eval-{item['query_id']}-{uuid.uuid4()}"
+        session_id = f"m2-evaluation-{item['query_id']}"
         response = orchestrator.handle(
             query,
-            session_id="m2-evaluation",
+            session_id=session_id,
             top_k=3,
             request_id=request_id,
         )
@@ -160,6 +168,7 @@ def run() -> dict[str, Any]:
         records.append(
             {
                 "query_id": item["query_id"],
+                "session_id": session_id,
                 "domain": item["domain"],
                 "query": query,
                 "expected_category": expected_category,
@@ -220,9 +229,24 @@ def run() -> dict[str, Any]:
         r for r in records if r["expected_category"] == "unavailable-information"
     ]
     grounded = [r for r in available if r["retrieval"]["expected_evidence_found"]]
-    cited = [r for r in grounded if r["response"]["citations"]]
+    mapped_citations = []
+    for record in grounded:
+        retrieved_sources = {
+            (hit["filename"], hit["chunk_id"])
+            for hit in record["retrieval"]["ranked_evidence"]
+        }
+        citations = record["response"]["citations"]
+        if citations and all(
+            (citation["filename"], citation["chunk_id"]) in retrieved_sources
+            for citation in citations
+        ):
+            mapped_citations.append(record)
     no_evidence = [
         r for r in unavailable if r["response"]["no_information_found"]
+    ]
+    mock_accepted = [
+        r for r in mapped_citations
+        if r["response"]["grounded"] and r["final_status"] == "answered"
     ]
     successful = [
         r for r in records
@@ -236,9 +260,7 @@ def run() -> dict[str, Any]:
             or (
                 r in available
                 and r["retrieval"]["expected_evidence_found"]
-                and r["response"]["grounded"]
-                and bool(r["response"]["citations"])
-                and r["final_status"] == "answered"
+                and r in mock_accepted
             )
         )
     ]
@@ -249,15 +271,18 @@ def run() -> dict[str, Any]:
             sum(r["retrieval"]["expected_evidence_found"] for r in available)
             / len(available) if available else 0.0
         ),
-        "grounded_response_rate": (
-            sum(r["response"]["grounded"] for r in grounded) / len(grounded)
-            if grounded else 0.0
+        "mocked_generation_acceptance_rate": (
+            len(mock_accepted) / len(grounded) if grounded else 0.0
         ),
-        "citation_coverage": len(cited) / len(grounded) if grounded else 0.0,
+        "citation_source_mapping_rate": (
+            len(mapped_citations) / len(grounded) if grounded else 0.0
+        ),
         "no_evidence_handling_rate": (
             len(no_evidence) / len(unavailable) if unavailable else 0.0
         ),
-        "end_to_end_success_rate": len(successful) / total if total else 0.0,
+        "mock_pipeline_contract_success_rate": (
+            len(successful) / total if total else 0.0
+        ),
         "ambiguous_detection_rate": (
             sum(
                 r["query_understanding"]["predicted_type"] == "ambiguous"
@@ -305,7 +330,7 @@ def render_markdown(output: dict[str, Any]) -> str:
         f"- Generation path: {methodology['generation_path']}",
         f"- {methodology['llm_quality_claim']}",
         "",
-        "## Actual metrics",
+        "## Mock-boundary metrics",
         "",
         "| Metric | Result |",
         "|---|---:|",

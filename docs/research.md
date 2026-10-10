@@ -1,3 +1,9 @@
+# Historical M1 research proposal
+
+This document records the original M1 research/design proposal. It is not the
+current as-built architecture: later M2/M3 implementation details are documented
+in `../README.md`, `../architecture/`, and `m1-m3-acceptance-matrix.md`.
+
 # Research Documentation — RAG Multi-Agent Knowledge Assistant
 
 ## 1. RAG Architecture

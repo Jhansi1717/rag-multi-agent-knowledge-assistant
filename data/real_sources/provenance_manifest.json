@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-10-07T05:48:29.903627Z",
+  "provenance_type": "REAL_SOURCE_DOCUMENT",
+  "documents": [
+    {
+      "document_id": "semver-2.0.0",
+      "filename": "semantic_versioning_2.0.0.txt",
+      "title": "Semantic Versioning 2.0.0 Specification",
+      "publisher": "semver.org",
+      "canonical_url": "https://semver.org/spec/v2.0.0.html",
+      "retrieved_at": "2026-10-07T05:48:29.903627Z",
+      "sha256": "a35c93be7f9fda0d921334698c669564143085f4d430a4a5489174165d7d6919",
+      "domain": "Software Engineering",
+      "provenance_type": "REAL_SOURCE_DOCUMENT",
+      "approved_for_production": true,
+      "source_scope": "Official documentation from authoritative public organizations",
+      "path": "software_engineering/semantic_versioning_2.0.0.txt"
+    },
+    {
+      "document_id": "git-workflows",
+      "filename": "git_workflows.txt",
+      "title": "Git Workflows Documentation",
+      "publisher": "Git SCM (Software Freedom Conservancy)",
+      "canonical_url": "https://git-scm.com/docs/gitworkflows",
+      "retrieved_at": "2026-10-07T05:48:29.904131Z",
+      "sha256": "aa03624820ebbbb4b70729a4e1e30a86d1af3bddb4f319d0911231dd24b25d29",
+      "domain": "Software Engineering",
+      "provenance_type": "REAL_SOURCE_DOCUMENT",
+      "approved_for_production": true,
+      "source_scope": "Official documentation from authoritative public organizations",
+      "path": "software_engineering/git_workflows.txt"
+    },
+    {
+      "document_id": "nhs-admission",
+      "filename": "nhs_hospital_admission.txt",
+      "title": "Going into hospital as a patient - NHS",
+      "publisher": "National Health Service (NHS)",
+      "canonical_url": "https://www.nhs.uk/nhs-services/hospitals/going-into-hospital/going-into-hospital-as-a-patient/",
+      "retrieved_at": "2026-10-07T05:48:29.904131Z",
+      "sha256": "732d7897a0abcf4359f8192791a2c9351e7cbcb98d8050f9167dff8da169bde7",
+      "domain": "Hospital Administration",
+      "provenance_type": "REAL_SOURCE_DOCUMENT",
+      "approved_for_production": true,
+      "source_scope": "Official documentation from authoritative public organizations",
+      "path": "healthcare_administration/nhs_hospital_admission.txt"
+    },
+    {
+      "document_id": "nhs-inpatient",
+      "filename": "nhs_inpatient_stay.txt",
+      "title": "Staying in hospital as an inpatient - NHS",
+      "publisher": "National Health Service (NHS)",
+      "canonical_url": "https://www.nhs.uk/nhs-services/hospitals/going-into-hospital/staying-in-hospital-as-an-inpatient/",
+      "retrieved_at": "2026-10-07T05:48:29.904131Z",
+      "sha256": "1eaac7c09a635adefd4c6ec89ae763ae7383ea4f10b00d7a721850b99c09e73d",
+      "domain": "Hospital Administration",
+      "provenance_type": "REAL_SOURCE_DOCUMENT",
+      "approved_for_production": true,
+      "source_scope": "Official documentation from authoritative public organizations",
+      "path": "healthcare_administration/nhs_inpatient_stay.txt"
+    }
+  ]
+}

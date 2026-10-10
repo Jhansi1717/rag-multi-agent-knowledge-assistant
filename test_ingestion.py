@@ -1469,6 +1469,8 @@ def test_chunk_document_metadata_preservation():
     _assert(len(chunks) == 1)
     meta = chunks[0].metadata
     _assert(meta.get("department") == "HR")
+    _assert(meta.get("filename") == "policy.pdf")
+    _assert(meta.get("original_filename") == "policy.pdf")
     _assert(meta.get("page_count") == 1)
     _assert(meta.get("has_text") is True)
     _assert(meta.get("token_start") == 0)
