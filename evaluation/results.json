@@ -1,9 +1,12 @@
 {
-  "index": "C:\\Users\\Bhukya Jhansi\\OneDrive\\Desktop\\raginfo\\rag-multi-agent-knowledge-assistant\\data\\evaluation\\index.faiss",
-  "queries_path": "C:\\Users\\Bhukya Jhansi\\OneDrive\\Desktop\\raginfo\\rag-multi-agent-knowledge-assistant\\data\\evaluation\\queries.json",
-  "total_queries": 19,
+  "index": "c:\\Users\\Bhukya Jhansi\\OneDrive\\Desktop\\raginfo\\rag-multi-agent-knowledge-assistant\\data\\evaluation\\index.faiss",
+  "queries_path": "c:\\Users\\Bhukya Jhansi\\OneDrive\\Desktop\\raginfo\\rag-multi-agent-knowledge-assistant\\data\\evaluation\\queries.json",
+  "total_queries": 27,
   "scored_queries_excluding_unavailable": 15,
   "unavailable_queries": 4,
+  "unavailable_no_result_queries": 3,
+  "unavailable_false_positive_queries": 1,
+  "not_applicable_queries": 8,
   "metrics_excluding_unavailable": {
     "hit@1": 100.0,
     "hit@3": 100.0,
@@ -16,17 +19,19 @@
   },
   "domain_wise": {
     "Software Engineering": {
-      "total_queries": 9,
+      "total_queries": 13,
       "scored_queries": 7,
       "unavailable_queries": 2,
+      "not_applicable_queries": 4,
       "hit@1": 100.0,
       "hit@3": 100.0,
       "hit@5": 100.0
     },
     "Hospital Administration": {
-      "total_queries": 10,
+      "total_queries": 14,
       "scored_queries": 8,
       "unavailable_queries": 2,
+      "not_applicable_queries": 4,
       "hit@1": 100.0,
       "hit@3": 100.0,
       "hit@5": 100.0
@@ -34,9 +39,10 @@
   },
   "category_wise": {
     "factual": {
-      "total_queries": 6,
+      "total_queries": 10,
       "scored_queries": 6,
-      "unavailable_queries": 0,
+      "unavailable_queries": 4,
+      "not_applicable_queries": 0,
       "hit@1": 100.0,
       "hit@3": 100.0,
       "hit@5": 100.0
@@ -45,6 +51,7 @@
       "total_queries": 5,
       "scored_queries": 5,
       "unavailable_queries": 0,
+      "not_applicable_queries": 0,
       "hit@1": 100.0,
       "hit@3": 100.0,
       "hit@5": 100.0
@@ -53,92 +60,28 @@
       "total_queries": 4,
       "scored_queries": 4,
       "unavailable_queries": 0,
+      "not_applicable_queries": 0,
       "hit@1": 100.0,
       "hit@3": 100.0,
       "hit@5": 100.0
     },
-    "unavailable-information": {
-      "total_queries": 4,
+    "ambiguous": {
+      "total_queries": 8,
       "scored_queries": 0,
-      "unavailable_queries": 4,
+      "unavailable_queries": 0,
+      "not_applicable_queries": 8,
       "hit@1": null,
       "hit@3": null,
       "hit@5": null
     }
   },
-  "failed_queries": [
-    {
-      "query_id": "se_q08",
-      "domain": "Software Engineering",
-      "category": "unavailable-information",
-      "query": "What is the annual revenue of TechCorp International?",
-      "expected_document": "NONE",
-      "top1": "medication_dosage_reference.csv",
-      "top1_score": 1.7733144760131836,
-      "relevant_rank": null,
-      "reason": "Unavailable-information query: FAISS still returned a nearest neighbor (medication_dosage_reference.csv). No relevant document exists in the KB."
-    },
-    {
-      "query_id": "se_q09",
-      "domain": "Software Engineering",
-      "category": "unavailable-information",
-      "query": "Who invented the Python programming language and in what year?",
-      "expected_document": "NONE",
-      "top1": "coding_standards.docx",
-      "top1_score": 1.4667860269546509,
-      "relevant_rank": null,
-      "reason": "Unavailable-information query: FAISS still returned a nearest neighbor (coding_standards.docx). No relevant document exists in the KB."
-    },
-    {
-      "query_id": "ha_q09",
-      "domain": "Hospital Administration",
-      "category": "unavailable-information",
-      "query": "What was Riverside General Hospital's total revenue last fiscal year?",
-      "expected_document": "NONE",
-      "top1": "patient_admission_policy.pdf",
-      "top1_score": 0.8734406232833862,
-      "relevant_rank": null,
-      "reason": "Unavailable-information query: FAISS still returned a nearest neighbor (patient_admission_policy.pdf). No relevant document exists in the KB."
-    },
-    {
-      "query_id": "ha_q10",
-      "domain": "Hospital Administration",
-      "category": "unavailable-information",
-      "query": "Who won the Nobel Prize in Medicine this year?",
-      "expected_document": "NONE",
-      "top1": "nursing_procedures.docx",
-      "top1_score": 1.8947561979293823,
-      "relevant_rank": null,
-      "reason": "Unavailable-information query: FAISS still returned a nearest neighbor (nursing_procedures.docx). No relevant document exists in the KB."
-    }
-  ],
+  "failed_queries": [],
   "low_relevance_examples": [
     {
-      "query_id": "se_q08",
-      "query": "What is the annual revenue of TechCorp International?",
-      "top1": "medication_dosage_reference.csv",
-      "top1_score": 1.7733144760131836,
-      "expected_document": "NONE"
-    },
-    {
-      "query_id": "se_q09",
-      "query": "Who invented the Python programming language and in what year?",
-      "top1": "coding_standards.docx",
-      "top1_score": 1.4667860269546509,
-      "expected_document": "NONE"
-    },
-    {
       "query_id": "ha_q09",
       "query": "What was Riverside General Hospital's total revenue last fiscal year?",
       "top1": "patient_admission_policy.pdf",
-      "top1_score": 0.8734406232833862,
-      "expected_document": "NONE"
-    },
-    {
-      "query_id": "ha_q10",
-      "query": "Who won the Nobel Prize in Medicine this year?",
-      "top1": "nursing_procedures.docx",
-      "top1_score": 1.8947561979293823,
+      "top1_score": 0.5337772755578493,
       "expected_document": "NONE"
     }
   ],
@@ -155,8 +98,11 @@
         "agile"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "microservices_architecture.pdf",
-      "top1_score": 1.0686993598937988,
+      "top1_score": 0.4833955186467197,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "two-week",
@@ -173,79 +119,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.0686993598937988,
+          "score": 0.4833955186467197,
           "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
+          "document_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea",
+          "chunk_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea_0",
           "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.0686993598937988,
+          "score": 0.4833955186467197,
           "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
+          "document_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea",
+          "chunk_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea_0",
           "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 2,
-          "score": 1.5503625869750977,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 3,
-          "score": 1.5761520862579346,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.0686993598937988,
+          "score": 0.4833955186467197,
           "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
+          "document_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea",
+          "chunk_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea_0",
           "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 2,
-          "score": 1.5503625869750977,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 3,
-          "score": 1.5761520862579346,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 4,
-          "score": 1.5842082500457764,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 5,
-          "score": 1.6373865604400635,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ]
     },
@@ -262,8 +160,11 @@
         "pull request"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "git_workflow.txt",
-      "top1_score": 0.6140148639678955,
+      "top1_score": 0.6195729577187246,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "checkout",
@@ -281,79 +182,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.6140148639678955,
+          "score": 0.6195729577187246,
           "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
+          "document_id": "fc9968b8-a1f3-4a9e-b0df-48b91128a8ee",
+          "chunk_id": "fc9968b8-a1f3-4a9e-b0df-48b91128a8ee_0",
           "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.6140148639678955,
+          "score": 0.6195729577187246,
           "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
+          "document_id": "fc9968b8-a1f3-4a9e-b0df-48b91128a8ee",
+          "chunk_id": "fc9968b8-a1f3-4a9e-b0df-48b91128a8ee_0",
           "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 2,
-          "score": 1.6132205724716187,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 3,
-          "score": 1.675421953201294,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.6140148639678955,
+          "score": 0.6195729577187246,
           "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
+          "document_id": "fc9968b8-a1f3-4a9e-b0df-48b91128a8ee",
+          "chunk_id": "fc9968b8-a1f3-4a9e-b0df-48b91128a8ee_0",
           "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 2,
-          "score": 1.6132205724716187,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 3,
-          "score": 1.675421953201294,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 4,
-          "score": 1.6924818754196167,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 5,
-          "score": 1.6954889297485352,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ]
     },
@@ -369,8 +222,11 @@
         "independently deployable"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "microservices_architecture.pdf",
-      "top1_score": 0.9049203395843506,
+      "top1_score": 0.5249563350340403,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "microservices",
@@ -387,79 +243,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.9049203395843506,
+          "score": 0.5249563350340403,
           "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
+          "document_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea",
+          "chunk_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea_0",
           "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.9049203395843506,
+          "score": 0.5249563350340403,
           "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
+          "document_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea",
+          "chunk_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea_0",
           "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 2,
-          "score": 1.7457751035690308,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 3,
-          "score": 1.783466100692749,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.9049203395843506,
+          "score": 0.5249563350340403,
           "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
+          "document_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea",
+          "chunk_id": "32a3500a-bb8c-4594-ae5c-71d0ac4bc9ea_0",
           "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 2,
-          "score": 1.7457751035690308,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 3,
-          "score": 1.783466100692749,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 4,
-          "score": 1.8070414066314697,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 5,
-          "score": 1.8370354175567627,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
         }
       ]
     },
@@ -474,8 +282,11 @@
         "Classes"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "coding_standards.docx",
-      "top1_score": 1.00276780128479,
+      "top1_score": 0.4993090653859377,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "PascalCase",
@@ -491,79 +302,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.00276780128479,
+          "score": 0.4993090653859377,
           "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
+          "document_id": "6682008e-496c-461f-af27-baa10d5d62cb",
+          "chunk_id": "6682008e-496c-461f-af27-baa10d5d62cb_0",
           "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.00276780128479,
+          "score": 0.4993090653859377,
           "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
+          "document_id": "6682008e-496c-461f-af27-baa10d5d62cb",
+          "chunk_id": "6682008e-496c-461f-af27-baa10d5d62cb_0",
           "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 2,
-          "score": 1.3386536836624146,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 3,
-          "score": 1.5580432415008545,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.00276780128479,
+          "score": 0.4993090653859377,
           "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
+          "document_id": "6682008e-496c-461f-af27-baa10d5d62cb",
+          "chunk_id": "6682008e-496c-461f-af27-baa10d5d62cb_0",
           "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 2,
-          "score": 1.3386536836624146,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 3,
-          "score": 1.5580432415008545,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 4,
-          "score": 1.6505424976348877,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 5,
-          "score": 1.809678077697754,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
         }
       ]
     },
@@ -579,8 +342,11 @@
         "stack trace"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "coding_standards.docx",
-      "top1_score": 1.1996710300445557,
+      "top1_score": 0.4546134337095599,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "structured JSON",
@@ -597,79 +363,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.1996710300445557,
+          "score": 0.4546134337095599,
           "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
+          "document_id": "6682008e-496c-461f-af27-baa10d5d62cb",
+          "chunk_id": "6682008e-496c-461f-af27-baa10d5d62cb_0",
           "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.1996710300445557,
+          "score": 0.4546134337095599,
           "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
+          "document_id": "6682008e-496c-461f-af27-baa10d5d62cb",
+          "chunk_id": "6682008e-496c-461f-af27-baa10d5d62cb_0",
           "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 2,
-          "score": 1.5336796045303345,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 3,
-          "score": 1.5748043060302734,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.1996710300445557,
+          "score": 0.4546134337095599,
           "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
+          "document_id": "6682008e-496c-461f-af27-baa10d5d62cb",
+          "chunk_id": "6682008e-496c-461f-af27-baa10d5d62cb_0",
           "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 2,
-          "score": 1.5336796045303345,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 3,
-          "score": 1.5748043060302734,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 4,
-          "score": 1.5974617004394531,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 5,
-          "score": 1.6992366313934326,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
         }
       ]
     },
@@ -686,8 +404,11 @@
         "Cloud infrastructure"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "programming_languages.csv",
-      "top1_score": 1.108776330947876,
+      "top1_score": 0.4742086608827353,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "Rust",
@@ -705,79 +426,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.108776330947876,
+          "score": 0.4742086608827353,
           "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
+          "document_id": "eb1be7cd-f69b-4513-a475-72088bbb4621",
+          "chunk_id": "eb1be7cd-f69b-4513-a475-72088bbb4621_0",
           "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.108776330947876,
+          "score": 0.4742086608827353,
           "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
+          "document_id": "eb1be7cd-f69b-4513-a475-72088bbb4621",
+          "chunk_id": "eb1be7cd-f69b-4513-a475-72088bbb4621_0",
           "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 2,
-          "score": 1.2864623069763184,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 3,
-          "score": 1.4042994976043701,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.108776330947876,
+          "score": 0.4742086608827353,
           "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
+          "document_id": "eb1be7cd-f69b-4513-a475-72088bbb4621",
+          "chunk_id": "eb1be7cd-f69b-4513-a475-72088bbb4621_0",
           "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 2,
-          "score": 1.2864623069763184,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 3,
-          "score": 1.4042994976043701,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 4,
-          "score": 1.7448616027832031,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 5,
-          "score": 1.9439303874969482,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ]
     },
@@ -794,8 +467,11 @@
         "Go"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "programming_languages.csv",
-      "top1_score": 1.1766002178192139,
+      "top1_score": 0.4594320455709536,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "Static",
@@ -813,277 +489,85 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.1766002178192139,
+          "score": 0.4594320455709536,
           "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
+          "document_id": "eb1be7cd-f69b-4513-a475-72088bbb4621",
+          "chunk_id": "eb1be7cd-f69b-4513-a475-72088bbb4621_0",
           "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.1766002178192139,
+          "score": 0.4594320455709536,
           "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
+          "document_id": "eb1be7cd-f69b-4513-a475-72088bbb4621",
+          "chunk_id": "eb1be7cd-f69b-4513-a475-72088bbb4621_0",
           "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 2,
-          "score": 1.453200340270996,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 3,
-          "score": 1.828291893005371,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.1766002178192139,
+          "score": 0.4594320455709536,
           "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
+          "document_id": "eb1be7cd-f69b-4513-a475-72088bbb4621",
+          "chunk_id": "eb1be7cd-f69b-4513-a475-72088bbb4621_0",
           "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 2,
-          "score": 1.453200340270996,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 3,
-          "score": 1.828291893005371,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 4,
-          "score": 1.9085965156555176,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 5,
-          "score": 1.9679176807403564,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ]
     },
     {
       "query_id": "se_q08",
       "domain": "Software Engineering",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "What is the annual revenue of TechCorp International?",
       "expected_document": "NONE",
       "expected_keywords": [],
       "unavailable": true,
-      "top1": "medication_dosage_reference.csv",
-      "top1_score": 1.7733144760131836,
+      "not_applicable": false,
+      "unavailable_no_result": true,
+      "unavailable_false_positive": false,
+      "top1": null,
+      "top1_score": null,
       "relevant_rank": null,
       "keywords_found_in_top5": [],
       "keyword_coverage": null,
       "hit@1": 0,
       "hit@3": 0,
       "hit@5": 0,
-      "failed": true,
-      "low_relevance": true,
-      "failure_reason": "Unavailable-information query: FAISS still returned a nearest neighbor (medication_dosage_reference.csv). No relevant document exists in the KB.",
-      "top1_results": [
-        {
-          "rank": 1,
-          "score": 1.7733144760131836,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        }
-      ],
-      "top3_results": [
-        {
-          "rank": 1,
-          "score": 1.7733144760131836,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 2,
-          "score": 1.8000894784927368,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 3,
-          "score": 1.8527495861053467,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        }
-      ],
-      "top5_results": [
-        {
-          "rank": 1,
-          "score": 1.7733144760131836,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 2,
-          "score": 1.8000894784927368,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 3,
-          "score": 1.8527495861053467,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 4,
-          "score": 1.867445945739746,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 5,
-          "score": 1.8785595893859863,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        }
-      ]
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": "Unavailable-information query correctly returned no evidence.",
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
     },
     {
       "query_id": "se_q09",
       "domain": "Software Engineering",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "Who invented the Python programming language and in what year?",
       "expected_document": "NONE",
       "expected_keywords": [],
       "unavailable": true,
-      "top1": "coding_standards.docx",
-      "top1_score": 1.4667860269546509,
+      "not_applicable": false,
+      "unavailable_no_result": true,
+      "unavailable_false_positive": false,
+      "top1": null,
+      "top1_score": null,
       "relevant_rank": null,
       "keywords_found_in_top5": [],
       "keyword_coverage": null,
       "hit@1": 0,
       "hit@3": 0,
       "hit@5": 0,
-      "failed": true,
-      "low_relevance": true,
-      "failure_reason": "Unavailable-information query: FAISS still returned a nearest neighbor (coding_standards.docx). No relevant document exists in the KB.",
-      "top1_results": [
-        {
-          "rank": 1,
-          "score": 1.4667860269546509,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        }
-      ],
-      "top3_results": [
-        {
-          "rank": 1,
-          "score": 1.4667860269546509,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 2,
-          "score": 1.4927301406860352,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 3,
-          "score": 2.0410995483398438,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        }
-      ],
-      "top5_results": [
-        {
-          "rank": 1,
-          "score": 1.4667860269546509,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 2,
-          "score": 1.4927301406860352,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 3,
-          "score": 2.0410995483398438,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 4,
-          "score": 2.0449042320251465,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 5,
-          "score": 2.05033540725708,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        }
-      ]
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": "Unavailable-information query correctly returned no evidence.",
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
     },
     {
       "query_id": "ha_q01",
@@ -1096,8 +580,11 @@
         "admission paperwork"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "patient_admission_policy.pdf",
-      "top1_score": 0.7841622233390808,
+      "top1_score": 0.5604871501698361,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "4 hours",
@@ -1113,79 +600,63 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.7841622233390808,
+          "score": 0.5604871501698361,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.7841622233390808,
+          "score": 0.5604871501698361,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         },
         {
           "rank": 2,
-          "score": 1.133350133895874,
+          "score": 0.4687463084992164,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         },
         {
           "rank": 3,
-          "score": 1.1936066150665283,
+          "score": 0.45587025181799595,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.7841622233390808,
+          "score": 0.5604871501698361,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         },
         {
           "rank": 2,
-          "score": 1.133350133895874,
+          "score": 0.4687463084992164,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         },
         {
           "rank": 3,
-          "score": 1.1936066150665283,
+          "score": 0.45587025181799595,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 4,
-          "score": 1.4733498096466064,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 5,
-          "score": 1.7197506427764893,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
         }
       ]
     },
@@ -1201,8 +672,11 @@
         "registration"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "patient_admission_policy.pdf",
-      "top1_score": 1.0745270252227783,
+      "top1_score": 0.48203755862339637,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "insurance card",
@@ -1219,79 +693,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.0745270252227783,
+          "score": 0.48203755862339637,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.0745270252227783,
+          "score": 0.48203755862339637,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 2,
-          "score": 1.2292234897613525,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.3428959846496582,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.0745270252227783,
+          "score": 0.48203755862339637,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 2,
-          "score": 1.2292234897613525,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.3428959846496582,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 4,
-          "score": 1.5591073036193848,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 5,
-          "score": 1.6458317041397095,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ]
     },
@@ -1309,8 +735,11 @@
         "right time"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "nursing_procedures.docx",
-      "top1_score": 1.0980215072631836,
+      "top1_score": 0.47663953707723183,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "right patient",
@@ -1329,79 +758,47 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.0980215072631836,
+          "score": 0.47663953707723183,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.0980215072631836,
+          "score": 0.47663953707723183,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         },
         {
           "rank": 2,
-          "score": 1.2205560207366943,
+          "score": 0.45033770732661593,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 3,
-          "score": 1.4972724914550781,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.0980215072631836,
+          "score": 0.47663953707723183,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         },
         {
           "rank": 2,
-          "score": 1.2205560207366943,
+          "score": 0.45033770732661593,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 3,
-          "score": 1.4972724914550781,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 4,
-          "score": 1.6109673976898193,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 5,
-          "score": 1.7242974042892456,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ]
     },
@@ -1417,8 +814,11 @@
         "hand hygiene"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "nursing_procedures.docx",
-      "top1_score": 0.7397894859313965,
+      "top1_score": 0.5747822034482172,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "alcohol-based rub",
@@ -1435,79 +835,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.7397894859313965,
+          "score": 0.5747822034482172,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.7397894859313965,
+          "score": 0.5747822034482172,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 2,
-          "score": 1.44589364528656,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 3,
-          "score": 1.5658624172210693,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.7397894859313965,
+          "score": 0.5747822034482172,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 2,
-          "score": 1.44589364528656,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 3,
-          "score": 1.5658624172210693,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 4,
-          "score": 1.7070691585540771,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
-        },
-        {
-          "rank": 5,
-          "score": 1.7223358154296875,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ]
     },
@@ -1524,8 +876,11 @@
         "fire"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "emergency_protocols.txt",
-      "top1_score": 1.0488576889038086,
+      "top1_score": 0.4880768182351088,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "Code Blue",
@@ -1543,79 +898,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 1.0488576889038086,
+          "score": 0.4880768182351088,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 1.0488576889038086,
+          "score": 0.4880768182351088,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 2,
-          "score": 1.3743700981140137,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 3,
-          "score": 1.6058635711669922,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 1.0488576889038086,
+          "score": 0.4880768182351088,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 2,
-          "score": 1.3743700981140137,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
-        },
-        {
-          "rank": 3,
-          "score": 1.6058635711669922,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 4,
-          "score": 1.666974663734436,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 5,
-          "score": 1.7826690673828125,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
         }
       ]
     },
@@ -1632,8 +939,11 @@
         "Max_Daily_Dose"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "medication_dosage_reference.csv",
-      "top1_score": 0.9902459383010864,
+      "top1_score": 0.5024504062347731,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "Ibuprofen",
@@ -1651,79 +961,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.9902459383010864,
+          "score": 0.5024504062347731,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.9902459383010864,
+          "score": 0.5024504062347731,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 2,
-          "score": 1.4955779314041138,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.6695008277893066,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.9902459383010864,
+          "score": 0.5024504062347731,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 2,
-          "score": 1.4955779314041138,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.6695008277893066,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 4,
-          "score": 1.7287346124649048,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 5,
-          "score": 1.7840585708618164,
-          "filename": "microservices_architecture.pdf",
-          "document_id": "a9cce005-890a-430d-af71-8c6837864da2",
-          "chunk_id": "a9cce005-890a-430d-af71-8c6837864da2_0",
-          "text_preview": "Microservices and Agile Delivery Guide 1. Agile Sprint Cadence Teams operate in two-week sprints. Each sprint begins with planning, includes daily standups, and ends with a retrospective. Sprint goals must be demo-ready by the review meetin"
         }
       ]
     },
@@ -1739,8 +1001,11 @@
         "Oral"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "medication_dosage_reference.csv",
-      "top1_score": 0.8090687394142151,
+      "top1_score": 0.5527705748627942,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "Acetaminophen",
@@ -1757,79 +1022,31 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.8090687394142151,
+          "score": 0.5527705748627942,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.8090687394142151,
+          "score": 0.5527705748627942,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 2,
-          "score": 1.5553441047668457,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.7333005666732788,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.8090687394142151,
+          "score": 0.5527705748627942,
           "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
+          "document_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e",
+          "chunk_id": "9ede0650-e4ef-4429-994a-9b8a7adc7b9e_0",
           "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 2,
-          "score": 1.5553441047668457,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.7333005666732788,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 4,
-          "score": 1.7410529851913452,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 5,
-          "score": 1.7815717458724976,
-          "filename": "coding_standards.docx",
-          "document_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8",
-          "chunk_id": "a8049a25-9ba4-4b35-89d7-dc298c2d05a8_0",
-          "text_preview": "Engineering Coding Standards  Naming Conventions  Classes use PascalCase. Functions and variables use snake_case. Constants use UPPER_SNAKE_CASE. Module names are lowercase without underscores.  Error Handling  Catch exceptions at service b"
         }
       ]
     },
@@ -1846,8 +1063,11 @@
         "compressions"
       ],
       "unavailable": false,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": false,
       "top1": "emergency_protocols.txt",
-      "top1_score": 0.7052227258682251,
+      "top1_score": 0.5864336370116549,
       "relevant_rank": 1,
       "keywords_found_in_top5": [
         "CPR",
@@ -1865,277 +1085,320 @@
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.7052227258682251,
+          "score": 0.5864336370116549,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.7052227258682251,
+          "score": 0.5864336370116549,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         },
         {
           "rank": 2,
-          "score": 1.0219731330871582,
+          "score": 0.4945663840331489,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.2607263326644897,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.7052227258682251,
+          "score": 0.5864336370116549,
           "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
+          "document_id": "0010ae58-50e0-4229-9363-fb67d319954f",
+          "chunk_id": "0010ae58-50e0-4229-9363-fb67d319954f_0",
           "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
         },
         {
           "rank": 2,
-          "score": 1.0219731330871582,
+          "score": 0.4945663840331489,
           "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
+          "document_id": "cd554246-95f1-4009-894f-ba465bf578af",
+          "chunk_id": "cd554246-95f1-4009-894f-ba465bf578af_0",
           "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 3,
-          "score": 1.2607263326644897,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 4,
-          "score": 1.6149241924285889,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
-        },
-        {
-          "rank": 5,
-          "score": 1.6177729368209839,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
         }
       ]
     },
     {
       "query_id": "ha_q09",
       "domain": "Hospital Administration",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "What was Riverside General Hospital's total revenue last fiscal year?",
       "expected_document": "NONE",
       "expected_keywords": [],
       "unavailable": true,
+      "not_applicable": false,
+      "unavailable_no_result": false,
+      "unavailable_false_positive": true,
       "top1": "patient_admission_policy.pdf",
-      "top1_score": 0.8734406232833862,
+      "top1_score": 0.5337772755578493,
       "relevant_rank": null,
       "keywords_found_in_top5": [],
       "keyword_coverage": null,
       "hit@1": 0,
       "hit@3": 0,
       "hit@5": 0,
-      "failed": true,
+      "failed": false,
       "low_relevance": true,
-      "failure_reason": "Unavailable-information query: FAISS still returned a nearest neighbor (patient_admission_policy.pdf). No relevant document exists in the KB.",
+      "failure_reason": "Unavailable-information query: nearest neighbor returned patient_admission_policy.pdf; no relevant document exists in the KB.",
       "top1_results": [
         {
           "rank": 1,
-          "score": 0.8734406232833862,
+          "score": 0.5337772755578493,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
         }
       ],
       "top3_results": [
         {
           "rank": 1,
-          "score": 0.8734406232833862,
+          "score": 0.5337772755578493,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 2,
-          "score": 1.4182454347610474,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 3,
-          "score": 1.6737555265426636,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
         }
       ],
       "top5_results": [
         {
           "rank": 1,
-          "score": 0.8734406232833862,
+          "score": 0.5337772755578493,
           "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
+          "document_id": "08fa499e-096d-4601-aa10-d8281bb9e745",
+          "chunk_id": "08fa499e-096d-4601-aa10-d8281bb9e745_0",
           "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 2,
-          "score": 1.4182454347610474,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        },
-        {
-          "rank": 3,
-          "score": 1.6737555265426636,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 4,
-          "score": 1.6871446371078491,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 5,
-          "score": 1.8044233322143555,
-          "filename": "git_workflow.txt",
-          "document_id": "883069fc-46da-440b-a311-af67f7a27ae9",
-          "chunk_id": "883069fc-46da-440b-a311-af67f7a27ae9_0",
-          "text_preview": "Git Workflow for Software Teams  1. Branch Naming Feature branches use the format feature/<ticket-id>-short-description. Bug fixes use bugfix/<ticket-id>-short-description. Hotfixes branch from main using hotfix/<ticket-id>.  2. Creating a "
         }
       ]
     },
     {
       "query_id": "ha_q10",
       "domain": "Hospital Administration",
-      "category": "unavailable-information",
+      "category": "factual",
       "query": "Who won the Nobel Prize in Medicine this year?",
       "expected_document": "NONE",
       "expected_keywords": [],
       "unavailable": true,
-      "top1": "nursing_procedures.docx",
-      "top1_score": 1.8947561979293823,
+      "not_applicable": false,
+      "unavailable_no_result": true,
+      "unavailable_false_positive": false,
+      "top1": null,
+      "top1_score": null,
       "relevant_rank": null,
       "keywords_found_in_top5": [],
       "keyword_coverage": null,
       "hit@1": 0,
       "hit@3": 0,
       "hit@5": 0,
-      "failed": true,
-      "low_relevance": true,
-      "failure_reason": "Unavailable-information query: FAISS still returned a nearest neighbor (nursing_procedures.docx). No relevant document exists in the KB.",
-      "top1_results": [
-        {
-          "rank": 1,
-          "score": 1.8947561979293823,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        }
-      ],
-      "top3_results": [
-        {
-          "rank": 1,
-          "score": 1.8947561979293823,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 2,
-          "score": 1.9385614395141602,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 3,
-          "score": 1.97523832321167,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        }
-      ],
-      "top5_results": [
-        {
-          "rank": 1,
-          "score": 1.8947561979293823,
-          "filename": "nursing_procedures.docx",
-          "document_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038",
-          "chunk_id": "c4b00dc0-b6f5-4de1-842f-cd7202c51038_0",
-          "text_preview": "Clinical Nursing Procedures Manual  Vital Signs Monitoring  Measure temperature, pulse, respiration, and blood pressure every 4 hours for standard inpatient units. Critical care units require continuous monitoring.  Medication Administratio"
-        },
-        {
-          "rank": 2,
-          "score": 1.9385614395141602,
-          "filename": "medication_dosage_reference.csv",
-          "document_id": "577e9451-a919-474d-841c-7513cc6a6fd1",
-          "chunk_id": "577e9451-a919-474d-841c-7513cc6a6fd1_0",
-          "text_preview": "Row 1: Medication: Acetaminophen | Standard_Dose: 650 mg | Route: Oral | Frequency: Every 6 hours | Max_Daily_Dose: 3000 mg  Row 2: Medication: Ibuprofen | Standard_Dose: 400 mg | Route: Oral | Frequency: Every 8 hours | Max_Daily_Dose: 120"
-        },
-        {
-          "rank": 3,
-          "score": 1.97523832321167,
-          "filename": "patient_admission_policy.pdf",
-          "document_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1",
-          "chunk_id": "ddbfd2e1-57f4-47ea-ada2-bdbe8e6aeae1_0",
-          "text_preview": "Riverside General Hospital - Patient Admission Policy 1. Registration Requirements Patients must present a government-issued photo ID and insurance card at admission. Emergency admissions may proceed with partial information but must comple"
-        },
-        {
-          "rank": 4,
-          "score": 2.0153393745422363,
-          "filename": "programming_languages.csv",
-          "document_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7",
-          "chunk_id": "3ffed4d9-6720-4dee-bba8-3f010374c4a7_0",
-          "text_preview": "Row 1: Language: Python | Paradigm: Multi-paradigm | Typing: Dynamic | Primary_Use_Case: Data science and backends | Learning_Curve: Low  Row 2: Language: Java | Paradigm: Object-oriented | Typing: Static | Primary_Use_Case: Enterprise appl"
-        },
-        {
-          "rank": 5,
-          "score": 2.0699095726013184,
-          "filename": "emergency_protocols.txt",
-          "document_id": "5436e181-7dc8-435f-9413-4d771a439c31",
-          "chunk_id": "5436e181-7dc8-435f-9413-4d771a439c31_0",
-          "text_preview": "Riverside General Hospital - Emergency Response Protocols  1. Code Blue (Cardiac Arrest) Activate Code Blue for unresponsive patients without a pulse. Step 1: Call the emergency response team via the overhead alert. Step 2: Begin CPR at 100"
-        }
-      ]
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": "Unavailable-information query correctly returned no evidence.",
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "se_q10",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "Which protocol?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "se_q11",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "What about that?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "se_q12",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "That process?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "se_q13",
+      "domain": "Software Engineering",
+      "category": "ambiguous",
+      "query": "Can you explain this?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "ha_q11",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "Which protocol?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "ha_q12",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "What about that?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "ha_q13",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "That process?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
+    },
+    {
+      "query_id": "ha_q14",
+      "domain": "Hospital Administration",
+      "category": "ambiguous",
+      "query": "Can you explain this?",
+      "expected_document": "NONE",
+      "expected_keywords": [],
+      "unavailable": false,
+      "not_applicable": true,
+      "top1": null,
+      "top1_score": null,
+      "relevant_rank": null,
+      "keywords_found_in_top5": [],
+      "keyword_coverage": null,
+      "hit@1": null,
+      "hit@3": null,
+      "hit@5": null,
+      "failed": false,
+      "low_relevance": false,
+      "failure_reason": null,
+      "top1_results": [],
+      "top3_results": [],
+      "top5_results": []
     }
   ]
 }

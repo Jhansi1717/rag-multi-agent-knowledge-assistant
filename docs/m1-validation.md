@@ -2,6 +2,10 @@
 
 Evidence from code, tests, and a live evaluation run. Commands are those in the repository. Unfinished work is not marked implemented.
 
+> Historical M1 validation snapshot. It predates M2/M3 capabilities and does not
+> certify the current index contents or full M1–M3 release gate. See the current
+> acceptance matrix for present-day gaps and test results.
+
 ---
 
 ## Four file formats
@@ -46,8 +50,8 @@ Defaults in `ingestion/chunker.py`: **650** tokens, **75** overlap, cap **800**,
 
 Eval corpus documents are short, so **each file produced 1 chunk**. Tests in `test_m13_ingestion.py` cover multi-chunk paragraph splits on longer synthetic text.
 
-`POST /upload` now uses `ingestion.pipeline.index_file`; it does not use a
-Uploads use the full production pipeline with token-aware chunking.
+`POST /upload` uses `ingestion.pipeline.index_file`; uploads use the full
+production pipeline with token-aware chunking.
 
 ---
 
@@ -71,7 +75,8 @@ Eval artefacts: `data/evaluation/index.faiss`, `data/evaluation/metadata.json`.
 
 Agent path: `RetrievalAgent` adds `rank`, `score`, `text`, `document_id`, `filename`, `metadata`. Orchestrator tests: `python -m pytest test_m14_retrieval.py -v`.
 
-HTTP: `POST /retrieve` runs the M2 orchestrator and returns a structured response.
+HTTP: `POST /retrieve` and `POST /chat` run the shared orchestrator and return a
+structured response; `/chat` carries the M3 clarification/session lifecycle.
 
 ---
 
@@ -126,5 +131,6 @@ Inspected: se_q08 Top-5 is unrelated meds/git/architecture text; se_q09 ranks co
 - Nearest-neighbor search cannot express “not in the KB” without a threshold or intent gate (orchestrator intent gate is Python-only).
 - One vector per eval file mixes sections; Hit@100% is easier on a tiny corpus than on production docs.
 - Extractive answers can include headings; no LLM.
-- API upload/retrieve path is not the validated pipeline.
-- Web Speech API, UI, and OpenAI generation are **not implemented**.
+- This M1 snapshot did not verify the complete live upload/retrieve workflow.
+- Web Speech API, UI, and OpenAI generation were outside M1 scope; M2/M3 later
+	added these capabilities. Their current acceptance status is tracked separately.

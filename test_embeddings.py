@@ -152,3 +152,31 @@ def test_dimension_consistency_across_calls(svc):
     assert v2.shape[-1] == svc.dimension
     assert v3.shape[-1] == svc.dimension
     assert v4.shape[-1] == svc.dimension
+
+
+def test_batch_embedding_rejects_model_row_count_mismatch():
+    class WrongBatchModel:
+        def encode(self, texts, convert_to_numpy=True):
+            return np.ones((1, 3), dtype=np.float32)
+
+    service = object.__new__(EmbeddingService)
+    service._model = WrongBatchModel()
+    service._model_name = "test-model"
+    service._dimension = 3
+
+    with pytest.raises(ValueError, match=r"expected \(2, 3\)"):
+        service.encode_texts(["first", "second"])
+
+
+def test_embedding_rejects_non_finite_model_values():
+    class NonFiniteModel:
+        def encode(self, text, convert_to_numpy=True):
+            return np.array([np.nan, 0.0, 1.0], dtype=np.float32)
+
+    service = object.__new__(EmbeddingService)
+    service._model = NonFiniteModel()
+    service._model_name = "test-model"
+    service._dimension = 3
+
+    with pytest.raises(ValueError, match="non-finite"):
+        service.encode_text("valid input")

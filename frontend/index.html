@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Assistant</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar" aria-label="Conversation History">
+            <header class="sidebar-header">
+                <h1 class="logo">
+                    <span class="logo-icon" aria-hidden="true">✧</span>
+                    Assistant
+                </h1>
+                <button id="new-chat-btn" class="btn primary-btn" aria-label="Start a new conversation">
+                    <span aria-hidden="true">+</span> New Chat
+                </button>
+            </header>
+
+            <nav class="history-container" aria-label="Previous Conversations">
+                <h3 class="section-title">History</h3>
+                <ul id="history-list" class="history-list" role="list">
+                    <!-- History items will be injected here -->
+                </ul>
+            </nav>
+
+            <section class="knowledge-base" aria-labelledby="knowledge-base-title">
+                <button id="knowledge-base-toggle" class="knowledge-base-toggle" type="button" aria-expanded="false" aria-controls="knowledge-base-panel">
+                    <span>
+                        <span class="section-title" id="knowledge-base-title">Knowledge Base</span>
+                        <span class="knowledge-base-subtitle">Documents</span>
+                    </span>
+                    <span aria-hidden="true">▾</span>
+                </button>
+                <div id="knowledge-base-panel" class="knowledge-base-panel" hidden>
+                    <div class="knowledge-base-toolbar">
+                        <label class="kb-file-picker" for="kb-file-input">Upload Documents</label>
+                        <input id="kb-file-input" class="visually-hidden" type="file" accept=".pdf,.docx,.txt,.csv" multiple aria-label="Choose PDF, DOCX, TXT, or CSV documents">
+                    </div>
+                    <div id="kb-dropzone" class="kb-dropzone" role="button" tabindex="0" aria-describedby="kb-dropzone-help">
+                        <strong>Drop documents here</strong>
+                        <span id="kb-dropzone-help">PDF, DOCX, TXT, or CSV</span>
+                    </div>
+                    <button id="kb-upload-btn" class="btn primary-btn kb-upload-btn" type="button" disabled>Upload selected</button>
+                    <div id="kb-file-list" class="kb-file-list" role="status" aria-live="polite"></div>
+                    <div class="kb-documents-heading">Indexed this session</div>
+                    <div id="kb-document-list" class="kb-document-list" role="list" aria-live="polite">
+                        <p class="kb-empty-state">No documents uploaded in this session.</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="sidebar-footer">
+                <button id="clear-chat-btn" class="btn text-btn" aria-label="Clear current session">
+                    <span aria-hidden="true">🗑️</span> Clear Session
+                </button>
+            </footer>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-area" aria-label="Chat Interface">
+            <!-- Header for Mobile/Context -->
+            <header class="chat-header">
+                <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Toggle sidebar" aria-expanded="false" aria-controls="sidebar">
+                    ☰
+                </button>
+                <h2 id="current-session-title">New Conversation</h2>
+                <div class="header-actions">
+                    <span class="status-indicator connected" id="connection-status" aria-label="Connected"></span>
+                </div>
+            </header>
+
+            <!-- Chat Messages -->
+            <div id="chat-messages" class="chat-messages" role="log" aria-live="polite">
+                <!-- Welcome Message -->
+                <div class="message-wrapper">
+                    <div class="message assistant-message welcome-message">
+                        <div class="message-avatar" aria-hidden="true">✧</div>
+                        <div class="message-content">
+                            <p>Hello! I'm your multi-agent knowledge assistant. How can I help you today?</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Messages will be injected here -->
+            </div>
+
+            <!-- Composer Area -->
+            <footer class="composer-container">
+                <div class="composer-wrapper">
+                    <!-- Clarification Banner (hidden by default) -->
+                    <div id="clarification-banner" class="clarification-banner" style="display:none;" role="alert">
+                        <span class="clarification-banner-icon" aria-hidden="true">❓</span>
+                        <span class="clarification-banner-text">Awaiting your clarification — type your answer below</span>
+                    </div>
+
+                    <div id="speech-settings" class="speech-settings" hidden>
+                        <label for="speech-language-select">Speech language
+                            <select id="speech-language-select"></select>
+                        </label>
+                        <label for="speech-voice-select">Voice
+                            <select id="speech-voice-select"></select>
+                        </label>
+                        <p id="speech-voice-status" role="status" aria-live="polite"></p>
+                    </div>
+
+                    <div class="composer-box">
+                        <button id="mic-btn" class="icon-btn mic-btn" aria-label="Voice input">
+                            <span aria-hidden="true">🎤</span>
+                        </button>
+                        <button id="restart-mic-btn" class="icon-btn restart-mic-btn" aria-label="Restart voice input" title="Restart voice input" hidden>
+                            <span aria-hidden="true">↻</span>
+                        </button>
+                        <textarea id="message-input" placeholder="Ask a question..." rows="1" aria-label="Message input"></textarea>
+                        <button id="send-btn" class="icon-btn send-btn" aria-label="Send message">
+                            <span aria-hidden="true">➤</span>
+                        </button>
+                    </div>
+                    <p id="voice-support-status" class="voice-support-status" role="status" aria-live="polite" hidden>
+                        Voice input is not supported in this browser.
+                    </p>
+                    <div class="composer-footer">
+                        <small>Knowledge assistant may make mistakes. Verify important information.</small>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js?v=documents"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/transparency.js"></script>
+    <script src="js/voice.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

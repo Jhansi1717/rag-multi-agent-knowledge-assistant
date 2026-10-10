@@ -7,6 +7,15 @@ from typing import Any, Dict, List, Literal, Optional
 
 QueryType = Literal["factual", "procedural", "comparative", "ambiguous"]
 Routing = Literal["RETRIEVAL", "CLARIFICATION"]
+OrchestratorStatus = Literal["completed", "requires_clarification", "no_relevant_information", "error"]
+
+# Maps legacy M2 status values to canonical M3 orchestration_status values
+_STATUS_MAP: Dict[str, str] = {
+    "answered": "completed",
+    "clarification_needed": "requires_clarification",
+    "unavailable": "no_relevant_information",
+    "error": "error",
+}
 
 
 @dataclass
@@ -70,11 +79,20 @@ class RetrievalHit:
         distance_score: Optional[float] = None,
     ):
         self.rank = rank
+        if distance_score is not None:
+            self.distance_score = distance_score
+        elif score is not None:
+            self.distance_score = score
+        else:
+            self.distance_score = relevance_score if relevance_score is not None else 0.0
         self.relevance_score = (
-            relevance_score if relevance_score is not None else (score or 0.0)
-        )
-        self.distance_score = (
-            distance_score if distance_score is not None else self.relevance_score
+            relevance_score
+            if relevance_score is not None
+            else (
+                1.0 / (1.0 + self.distance_score)
+                if distance_score is not None or score is not None
+                else 0.0
+            )
         )
         self.text = text
         self.document_id = document_id
@@ -85,11 +103,11 @@ class RetrievalHit:
     @property
     def score(self) -> float:
         """Backward-compatible alias for the M1 distance field."""
-        return self.relevance_score
+        return self.distance_score
 
     @score.setter
     def score(self, value: float) -> None:
-        self.relevance_score = value
+        self.distance_score = value
 
 
 @dataclass
@@ -147,13 +165,17 @@ class ResponseResult:
     retrieval_hits: List[RetrievalHit] = field(default_factory=list)
     domain: Optional[str] = None
     status: str = ""
+    orchestration_status: str = ""
     request_id: str = ""
     retrieval: Optional[RetrievalResult] = None
     error: Optional[AgentError] = None
+    m3: Optional[M3ResponseResult] = None
 
     def __post_init__(self) -> None:
         if not self.status:
             self.status = "unavailable" if self.no_information_found else "answered"
+        if not self.orchestration_status:
+            self.orchestration_status = _STATUS_MAP.get(self.status, "completed")
 
     @property
     def intent(self) -> QueryType:
@@ -176,6 +198,106 @@ class AgentError:
 @dataclass
 class ConversationTurn:
     session_id: str
+    turn_index: int
     query: str
     answer: str
-    turn_index: int
+    query_classification: Optional[str] = None
+    clarification_question: Optional[str] = None
+    clarification_answer: Optional[str] = None
+    refined_query: Optional[str] = None
+    referenced_documents: List[str] = field(default_factory=list)
+    citations: List[str] = field(default_factory=list)
+    active_topics: List[str] = field(default_factory=list)
+    referenced_entities: List[str] = field(default_factory=list)
+
+
+@dataclass
+class StageTrace:
+    stage_name: str
+    status: str
+    duration_ms: Optional[float] = None
+
+
+@dataclass
+class EvidenceItem:
+    citation_id: str
+    document_name: str
+    chunk_id: str
+    chunk_text: str
+    similarity_score: float
+    page: Optional[int] = None
+    section: Optional[str] = None
+    page_start: Optional[int] = None
+    page_end: Optional[int] = None
+    row_number: Optional[int] = None
+    row_start: Optional[int] = None
+    row_end: Optional[int] = None
+    document_id: str = ""
+
+
+@dataclass
+class ClarificationResult:
+    original_query: str
+    clarification_needed: bool
+    ambiguity_type: Optional[str] = None
+    reason: Optional[str] = None
+    missing_information: List[str] = field(default_factory=list)
+    clarification_question: Optional[str] = None
+    clarification_id: Optional[str] = None
+
+
+@dataclass
+class ClarificationState:
+    original_query: str = ""
+    needed: bool = False
+    clarification_id: Optional[str] = None
+    question: Optional[str] = None
+    options: List[str] = field(default_factory=list)
+    ambiguity_type: Optional[str] = None
+    missing_information: List[str] = field(default_factory=list)
+    refined_query: Optional[str] = None
+    resolved: bool = False
+    created_at: float = 0.0
+    clarification_answer: Optional[str] = None
+
+
+@dataclass
+class MemoryContext:
+    session_id: str = ""
+    turn_index: int = 0
+    recent_messages: List[Dict[str, str]] = field(default_factory=list)
+    relevant_context: str = ""
+    used_context: bool = False
+    referenced_documents: List[str] = field(default_factory=list)
+    active_topic: Optional[str] = None
+    clarification_state: Optional[ClarificationState] = None
+
+
+@dataclass
+class ContextResolutionResult:
+    original_query: str
+    resolved_query: str
+    context_used: bool = False
+    resolution_reason: str = ""
+    referenced_entities: List[str] = field(default_factory=list)
+
+
+@dataclass
+class TransparencyReport:
+    query_type: str = ""
+    classification_reason: str = ""
+    routing: str = ""
+    retrieved_count: int = 0
+    filtered_count: int = 0
+    retrieval_confidence: float = 0.0
+    grounded: bool = False
+    stages: List[StageTrace] = field(default_factory=list)
+    source_evidence: List[EvidenceItem] = field(default_factory=list)
+    citations: List[Citation] = field(default_factory=list)
+
+
+@dataclass
+class M3ResponseResult:
+    clarification: Optional[ClarificationState] = None
+    memory: Optional[MemoryContext] = None
+    transparency: Optional[TransparencyReport] = None

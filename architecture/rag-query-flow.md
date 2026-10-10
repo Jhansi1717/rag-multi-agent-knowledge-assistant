@@ -1,11 +1,17 @@
-# RAG Query Flow — M1 + M2
+# RAG Query Flow — M1 + M2 + M3
 
 ## Implemented flow
 
 ```text
 User Query
   ↓
-FastAPI POST /retrieve or POST /chat
+FastAPI POST /chat (or backward-compatible POST /retrieve)
+  ↓
+ConversationMemoryAgent
+  ↓
+ContextResolutionAgent
+  ↓
+ClarificationAgent
   ↓
 QueryUnderstandingAgent
   ↓
@@ -19,11 +25,12 @@ Final ResponseResult
 For an ambiguous query:
 
 ```text
-QueryUnderstandingAgent
-  ↓ routing = CLARIFICATION
-Structured clarification-needed response
-  ↓
-M3 and later: multi-turn clarification
+Memory → Context resolution → ClarificationAgent
+  ↓ unresolved/incomplete
+Clarification-needed response; no retrieval occurs
+  ↓ user answer with session/clarification state
+Refined query → QueryUnderstandingAgent → RetrievalAgent → ResponseGenerationAgent
+  → TransparencyBuilder → response → memory
 ```
 
 ## Query understanding
@@ -40,6 +47,14 @@ Classification is deterministic and rule-based:
 `unavailable-information` is a factual query condition, not a fifth category.
 Classification confidence is deterministic application-level evidence, not a
 calibrated probability.
+
+## M3 context and clarification
+
+Context resolution rewrites pronouns, topic continuations, and numbered
+references only when bounded per-session context identifies a target. It does
+not guess when multiple topics are plausible or context is absent; those cases
+route to clarification. Clarification state preserves the original query,
+question, answer, and refined query so the pipeline can resume.
 
 ## Retrieval
 
@@ -112,7 +127,8 @@ handling, 100.0% ambiguous detection, and 95.0% outcome-based end-to-end
 success. One unavailable-information query retrieved sufficient-looking
 evidence and was retained as an observed limitation.
 
-## Future: M3 and later
+## Beyond M3
 
-Multi-turn clarification, hybrid retrieval, reranking, UI, voice, and managed
-vector services are not part of the implemented M1+M2 backend.
+Hybrid retrieval, reranking, and managed vector services are not part of the
+current implementation. Browser UI, STT/TTS, clarification, memory, and
+transparency are implemented in M3.

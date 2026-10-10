@@ -1,31 +1,30 @@
-import os
-import shutil
+import faiss
+import pytest
 from fastapi.testclient import TestClient
+import app as app_module
 from app import app
 
 client = TestClient(app)
 
-def setup_clean_env():
-    # Remove local database and uploads before test
-    if os.path.exists("data/index.faiss"): os.remove("data/index.faiss")
-    if os.path.exists("data/metadata.json"): os.remove("data/metadata.json")
-    if os.path.exists("data/uploads"): shutil.rmtree("data/uploads")
-    os.makedirs("data/uploads", exist_ok=True)
-    
-    # Reload app vector_store so it's fresh
-    from app import vector_store
-    vector_store.index.reset()
+@pytest.fixture
+def isolated_data(tmp_path, monkeypatch):
+    vector_store = app_module.vector_store
+    vector_store.index = faiss.IndexFlatL2(vector_store.dimension)
     vector_store.metadata = {}
     vector_store._indexed_sources = {}
     vector_store._last_reindexed_source = None
+    vector_store.index_path = str(tmp_path / "index.faiss")
+    vector_store.meta_path = str(tmp_path / "metadata.json")
+    upload_dir = tmp_path / "uploads"
+    upload_dir.mkdir()
+    monkeypatch.setattr(app_module, "UPLOAD_DIR", str(upload_dir))
 
-def test_semantic_retrieval():
-    setup_clean_env()
-    print("--- Test Environment Cleaned ---")
+
+def test_semantic_retrieval(tmp_path, isolated_data):
     
     # 1. Upload a document
-    test_file_path = "retrieval_test_doc.txt"
-    with open(test_file_path, "w") as f:
+    test_file_path = tmp_path / "retrieval_test_doc.txt"
+    with open(test_file_path, "w", encoding="utf-8") as f:
         f.write("Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. ")
         f.write("Specific applications of AI include expert systems, natural language processing, speech recognition and machine vision. ")
         f.write("Machine learning is a subset of artificial intelligence.")
@@ -38,8 +37,6 @@ def test_semantic_retrieval():
     upload_data = upload_resp.json()
     print(f"Uploaded successfully. Document ID: {upload_data['document_id']}")
     print(f"Generated {upload_data['chunk_count']} chunks.")
-    
-    os.remove(test_file_path)
     
     # 2. Query the semantic retrieval endpoint
     print("\n--- Performing Semantic Retrieval ---")

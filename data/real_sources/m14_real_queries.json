@@ -1,0 +1,109 @@
+{
+  "queries": [
+    {
+      "id": "se_real_q01",
+      "query": "What is the format for semantic version numbers?",
+      "category": "factual",
+      "expected_document": "semantic_versioning_2.0.0.txt",
+      "expected_domain": "software_engineering"
+    },
+    {
+      "id": "se_real_q02",
+      "query": "When should you increment the major version in semantic versioning?",
+      "category": "procedural",
+      "expected_document": "semantic_versioning_2.0.0.txt",
+      "expected_domain": "software_engineering"
+    },
+    {
+      "id": "se_real_q03",
+      "query": "What is the difference between minor and patch version increments?",
+      "category": "comparative",
+      "expected_document": "semantic_versioning_2.0.0.txt",
+      "expected_domain": "software_engineering"
+    },
+    {
+      "id": "se_real_q04",
+      "query": "How do you create a topic branch in Git workflows?",
+      "category": "procedural",
+      "expected_document": "git_workflows.txt",
+      "expected_domain": "software_engineering"
+    },
+    {
+      "id": "se_real_q05",
+      "query": "What is the merge upwards rule in Git workflows?",
+      "category": "factual",
+      "expected_document": "git_workflows.txt",
+      "expected_domain": "software_engineering"
+    },
+    {
+      "id": "se_real_q06",
+      "query": "Compare topic branches versus integration branches in Git workflows",
+      "category": "comparative",
+      "expected_document": "git_workflows.txt",
+      "expected_domain": "software_engineering"
+    },
+    {
+      "id": "ha_real_q01",
+      "query": "What are the different types of hospital admission status?",
+      "category": "factual",
+      "expected_document": "nhs_hospital_admission.txt",
+      "expected_domain": "healthcare_administration"
+    },
+    {
+      "id": "ha_real_q02",
+      "query": "What is an admission letter and what information does it contain?",
+      "category": "factual",
+      "expected_document": "nhs_hospital_admission.txt",
+      "expected_domain": "healthcare_administration"
+    },
+    {
+      "id": "ha_real_q03",
+      "query": "What should you bring when going to hospital as a patient?",
+      "category": "procedural",
+      "expected_document": "nhs_hospital_admission.txt",
+      "expected_domain": "healthcare_administration"
+    },
+    {
+      "id": "ha_real_q04",
+      "query": "What is the difference between an outpatient and an inpatient?",
+      "category": "comparative",
+      "expected_document": "nhs_hospital_admission.txt",
+      "expected_domain": "healthcare_administration"
+    },
+    {
+      "id": "ha_real_q05",
+      "query": "What happens when you arrive at the hospital as an inpatient?",
+      "category": "procedural",
+      "expected_document": "nhs_inpatient_stay.txt",
+      "expected_domain": "healthcare_administration"
+    },
+    {
+      "id": "ha_real_q06",
+      "query": "What is consent to treatment in hospital?",
+      "category": "factual",
+      "expected_document": "nhs_inpatient_stay.txt",
+      "expected_domain": "healthcare_administration"
+    },
+    {
+      "id": "unavailable_q01",
+      "query": "What is the annual revenue of the NHS?",
+      "category": "unavailable",
+      "expected_document": "NONE",
+      "expected_domain": null
+    },
+    {
+      "id": "unavailable_q02",
+      "query": "Who invented the Git version control system?",
+      "category": "unavailable",
+      "expected_document": "NONE",
+      "expected_domain": null
+    },
+    {
+      "id": "low_relevance_q01",
+      "query": "What is the weather in London today?",
+      "category": "low-relevance",
+      "expected_document": "NONE",
+      "expected_domain": null
+    }
+  ]
+}

@@ -1,10 +1,10 @@
-# M2 Orchestration — M2 COMPLETED
+# Multi-Agent Orchestration — M1–M3 As Built
 
 The implementation is a fixed sequential pipeline of plain Python classes. It
 does not use LangChain, LangGraph, autonomous planning, or agent-to-agent
 negotiation.
 
-## Implemented sequence
+## M2 retrieval/generation sub-sequence
 
 ```mermaid
 sequenceDiagram
@@ -19,7 +19,7 @@ sequenceDiagram
     Q-->>O: QueryUnderstandingResult
     alt routing = CLARIFICATION
         O-->>U: clarification-needed response
-        Note right of U: M3 clarification is future
+        Note right of U: M3 handles clarification before final query classification
     else routing = RETRIEVAL
         O->>R: retrieve(normalized_query, query_type, domain, top_k)
         R-->>O: RetrievalResult
@@ -29,7 +29,50 @@ sequenceDiagram
     end
 ```
 
-`ConversationMemoryAgent` records turns but is not an additional resolution stage.
+This is the retrieval/generation sub-sequence after context resolution and
+clarification. The full request begins with per-session memory, resolves context,
+and evaluates the resolved request for clarification before the final Query
+Understanding classification.
+
+## Full M3 request lifecycle
+
+```mermaid
+sequenceDiagram
+    participant U as User/API
+    participant O as Orchestrator
+    participant M as ConversationMemoryAgent
+    participant C as ContextResolutionAgent
+    participant L as ClarificationAgent
+    participant Q as QueryUnderstandingAgent
+    participant R as RetrievalAgent
+    participant G as ResponseGenerationAgent
+    participant T as TransparencyBuilder
+
+    U->>O: handle(query, session_id, clarification_id)
+    O->>M: select relevant turns/context
+    M-->>O: context, active topics, pending clarification
+    O->>C: resolve query from context
+    C-->>O: resolved query and referenced entities
+    O->>L: analyze resolved query
+    alt clarification needed
+        O->>M: persist original query and question
+        O-->>U: clarification-needed response
+    else pipeline continues
+        O->>Q: analyze resolved query
+        Q-->>O: type, confidence, route
+        O->>R: retrieve normalized resolved query
+        R-->>O: ranked evidence and metadata
+        O->>G: generate resolved query from evidence
+        G-->>O: answer and citations
+        O->>T: map actual evidence, citations, confidence, stages
+        T-->>O: transparency report
+        O->>M: persist query, answer, topics, sources
+        O-->>U: structured response
+    end
+```
+
+Clarification answers resume from the stored original request and continue
+through Query Understanding, Retrieval, Response Generation, and Transparency.
 Every completed response carries a generated `request_id`.
 
 ## M2.1 Query understanding
@@ -77,8 +120,7 @@ Classification, retrieval, generation, and malformed-output failures return a
 structured `AgentError` with the failing agent, code, and message. The API maps
 these failures to HTTP 500 responses.
 
-## Future: M3 and later
+## Beyond M3
 
-The current clarification response is intentionally minimal. Rich follow-up
-questions, multi-turn clarification state, and autonomous planning are future
-work.
+Hybrid retrieval, reranking, persistent sessions, autonomous planning, and
+agent-to-agent negotiation are future work.

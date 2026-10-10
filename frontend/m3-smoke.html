@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M3 Frontend Smoke Tests</title>
+    <style>
+        :root { color-scheme: light; font-family: system-ui, sans-serif; }
+        body { margin: 2rem auto; max-width: 58rem; padding: 0 1rem; color: #17202a; }
+        button { cursor: pointer; font: inherit; padding: .55rem .8rem; }
+        #results { list-style: none; padding: 0; }
+        #results li { border-left: .35rem solid #8a9; margin: .4rem 0; padding: .5rem .75rem; }
+        #results .pass { border-color: #18864b; background: #eefaf2; }
+        #results .fail { border-color: #b42318; background: #fff1f0; }
+        #test-chat { border: 1px solid #ccd3d8; margin-top: 1rem; min-height: 8rem; padding: 1rem; }
+        .manual { background: #f5f7f9; margin-top: 1rem; padding: 1rem 1.25rem; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>M3 Frontend Smoke Tests</h1>
+        <p>Runs real frontend modules with deterministic Web Speech API stubs. Backend-integrated checks are listed below for manual verification.</p>
+        <button id="run-tests" type="button">Run automated smoke tests</button>
+        <ol id="results" aria-live="polite"></ol>
+        <div id="chat-messages" aria-label="Smoke-test chat output"></div>
+        <section class="manual" aria-labelledby="manual-title">
+            <h2 id="manual-title">Manual verification</h2>
+            <ol>
+                <li>Submit an ambiguous query in the main app and verify the clarification response appears.</li>
+                <li>Answer the clarification and verify the same session resumes through retrieval and response generation.</li>
+                <li>Create two conversations, switch between them, and verify messages do not leak across sessions.</li>
+                <li>Start a new conversation and verify the previous conversation is no longer active.</li>
+            </ol>
+        </section>
+    </main>
+
+    <script>
+        (() => {
+            const recognitionInstances = [];
+            class MockRecognition {
+                constructor() {
+                    this.startCount = 0;
+                    this.stopCount = 0;
+                    this.active = false;
+                    recognitionInstances.push(this);
+                }
+                start() {
+                    this.startCount += 1;
+                    this.active = true;
+                    if (this.onstart) this.onstart();
+                }
+                stop() {
+                    this.stopCount += 1;
+                    this.active = false;
+                    if (this.onend) this.onend();
+                }
+                emitResult(results, resultIndex = 0) {
+                    this.onresult?.({ resultIndex, results });
+                }
+                emitTranscript(text, isFinal = true) {
+                    this.emitResult([{ isFinal, 0: { transcript: text } }]);
+                }
+                emitError(error) {
+                    this.active = false;
+                    this.onerror?.({ error });
+                    this.onend?.();
+                }
+            }
+            const speechCalls = [];
+            const utterances = [];
+            const voices = [
+                { name: 'English test voice', lang: 'en-US', voiceURI: 'en-test' },
+                { name: 'French test voice', lang: 'fr-FR', voiceURI: 'fr-test' }
+            ];
+            const mockSynthesis = {
+                speaking: false,
+                paused: false,
+                speak(utterance) {
+                    speechCalls.push('speak');
+                    utterances.push(utterance);
+                    this.speaking = true;
+                    utterance.onstart?.();
+                },
+                pause() { speechCalls.push('pause'); this.paused = true; },
+                resume() { speechCalls.push('resume'); this.paused = false; },
+                cancel() { speechCalls.push('cancel'); this.speaking = false; this.paused = false; },
+                getVoices() { return voices; }
+            };
+            function MockUtterance(text) { this.text = text; }
+            Object.defineProperty(window, 'SpeechRecognition', {
+                value: MockRecognition,
+                configurable: true,
+                writable: true
+            });
+            Object.defineProperty(window, 'speechSynthesis', {
+                value: mockSynthesis,
+                configurable: true,
+                writable: true
+            });
+            Object.defineProperty(window, 'SpeechSynthesisUtterance', {
+                value: MockUtterance,
+                configurable: true,
+                writable: true
+            });
+            window.__m3Smoke = { recognitionInstances, speechCalls, utterances, voices };
+        })();
+    </script>
+    <script src="js/voice.js"></script>
+    <script src="js/speech.js"></script>
+    <script src="js/transparency.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/m3-smoke.js"></script>
+</body>
+</html>

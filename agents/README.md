@@ -4,7 +4,7 @@ The M2 agents are plain Python classes coordinated by a fixed sequential
 orchestrator. They do not use LangChain, LangGraph, autonomous planning, or
 agent-to-agent negotiation.
 
-## Implemented M2 flow
+## Retrieval and generation path
 
 ```text
                          User Query
@@ -34,6 +34,10 @@ Classification determines the question type. Retrieval determines whether the
 knowledge base contains sufficient evidence. `unavailable` is therefore a
 response/evidence status, not a query classification.
 
+The full M3 request also uses per-session memory, contextual query resolution,
+clarification state, and a transparency report around this retrieval/generation
+path. See [`../architecture/multi-agent-orchestration.md`](../architecture/multi-agent-orchestration.md).
+
 ## Agent responsibilities
 
 | Agent | Input | Output |
@@ -54,7 +58,9 @@ The deterministic classifier returns exactly four query types:
 
 Factual, procedural, and comparative queries route to retrieval. Ambiguous
 queries route to the minimal clarification-needed response; richer
-multi-turn clarification is planned for M3.
+multi-turn clarification is implemented by `ClarificationAgent` and the
+orchestrator. Complete comparative requests continue when two targets are
+identifiable; missing targets are clarified.
 
 Classification confidence is deterministic application-level evidence. It is
 not a calibrated probability.

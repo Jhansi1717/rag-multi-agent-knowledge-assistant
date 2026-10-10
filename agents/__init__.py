@@ -12,9 +12,16 @@ from agents.models import (
     Citation,
     ParsedQuery,
     QueryUnderstandingResult,
-    ResponseResult,
     RetrievalHit,
     RetrievalResult,
+    ResponseResult,
+    StageTrace,
+    EvidenceItem,
+    ClarificationResult,
+    ClarificationState,
+    MemoryContext,
+    TransparencyReport,
+    M3ResponseResult,
 )
 
 __all__ = [
@@ -32,4 +39,11 @@ __all__ = [
     "RetrievalHit",
     "RetrievalResult",
     "ResponseResult",
+    "StageTrace",
+    "EvidenceItem",
+    "ClarificationResult",
+    "ClarificationState",
+    "MemoryContext",
+    "TransparencyReport",
+    "M3ResponseResult",
 ]

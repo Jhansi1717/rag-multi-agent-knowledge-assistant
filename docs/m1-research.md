@@ -75,7 +75,8 @@ Query → QueryUnderstandingAgent
 ```
 
 Unavailable information is not a query-understanding category. It is determined
-from retrieval evidence, and `POST /retrieve` uses the M2 orchestrator.
+from retrieval evidence. Both `/retrieve` and `/chat` enter the current M3
+orchestrator; `/retrieve` is retained as a backward-compatible route.
 
 ---
 
@@ -86,14 +87,20 @@ from retrieval evidence, and `POST /retrieve` uses the M2 orchestrator.
 | Query Understanding | `query_understanding.py` | Normalize text; classify factual / procedural / comparative / ambiguous; deterministic confidence and routing |
 | Retrieval | `retrieval_agent.py` | Semantic Top-K hits with L2 distance, derived relevance, threshold filtering, and metadata |
 | Response Generation | `response_generation.py` | Optional grounded LLM response using retrieved context and metadata citations |
-| Clarification | `clarification.py` | Legacy helper module; the M2 orchestrator returns its own structured clarification response |
-| Conversation Memory | `memory.py` | Records turns per `session_id`; not a required resolution stage |
+| Clarification | `clarification.py`, `orchestrator.py` | Targeted ambiguity handling, pending state, answer capture, refined-query continuation |
+| Conversation Memory | `memory.py` | Bounded per-session turns, relevant-context selection, clarification state, topics, sources, and citations |
+| Context Resolution | `context_resolution.py` | Resolves pronouns, continuations, and numbered references when context identifies a target |
+| Transparency | `transparency.py` | Maps actual retrieval hits, citations, confidence, and stage traces |
 
 ---
 
 ## Web Speech API STT/TTS
 
-**FUTURE / designed only.** Browser `SpeechRecognition` and `SpeechSynthesis` would convert speech ↔ text at the client. The backend stays text (`/retrieve` or a future `/chat`). No STT/TTS code ships in M1.
+**M1 scope:** browser voice was future work. **Current M3 implementation:**
+`frontend/js/voice.js` wraps browser `SpeechRecognition` for editable text
+transcripts; `frontend/js/speech.js` wraps browser `speechSynthesis`. The backend
+remains text-only, with transcript text sent through `/chat` after submission.
+Browser support and microphone permission remain platform-dependent.
 
 ---
 

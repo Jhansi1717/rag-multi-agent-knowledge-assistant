@@ -10,6 +10,7 @@ Provides:
 """
 
 import os
+from typing import Optional
 import pandas as pd
 import fitz  # PyMuPDF
 import docx
@@ -79,7 +80,7 @@ class DocumentExtractor:
 # Phase 3.1 — Unified extraction entry point
 # ---------------------------------------------------------------------------
 
-def extract_document(file_path: str) -> Document:
+def extract_document(file_path: str, original_filename: Optional[str] = None) -> Document:
     """Validate *file_path*, extract its text, and return a :class:`Document`.
 
     This is the single public entry point for the ingestion package.
@@ -103,6 +104,9 @@ def extract_document(file_path: str) -> Document:
     ----------
     file_path:
         Absolute or relative path to a PDF, DOCX, TXT, or CSV file.
+    original_filename:
+        Optional original filename to use instead of the basename of file_path.
+        This is useful when the file was saved with a temporary UUID filename.
 
     Returns
     -------
@@ -122,7 +126,8 @@ def extract_document(file_path: str) -> Document:
     validate_file_path(file_path)
 
     ext: str = os.path.splitext(file_path)[1].lower()
-    filename: str = os.path.basename(file_path)
+    # Use original_filename if provided, otherwise use basename of file_path
+    filename: str = original_filename if original_filename else os.path.basename(file_path)
 
     # 2. Dispatch to the format-specific extractor.
     if ext == ".pdf":

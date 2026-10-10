@@ -51,7 +51,7 @@ def test_factual_generation_is_grounded_and_cited():
 
 
 def test_procedural_prompt_requests_supported_numbered_steps():
-    llm = FakeLLM("1. Run the documented command.")
+    llm = FakeLLM("1. Run the documented command. [source: guide.txt]")
     ResponseGenerationAgent(llm_client=llm).generate(
         "How do I create a feature branch?",
         [hit()],
@@ -65,7 +65,7 @@ def test_procedural_prompt_requests_supported_numbered_steps():
 
 
 def test_comparative_prompt_is_context_only():
-    llm = FakeLLM("The context supports a comparison.")
+    llm = FakeLLM("The context supports a comparison. [source: one.txt]")
     ResponseGenerationAgent(llm_client=llm).generate(
         "Compare two workflows.",
         [hit("one.txt"), hit("two.txt")],
